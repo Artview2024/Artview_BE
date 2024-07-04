@@ -1,5 +1,5 @@
 package com.backend.Artview.domain.test.service;
 
-public interface TestService {
+public interface Service {
     String getTest(Long id);
 }

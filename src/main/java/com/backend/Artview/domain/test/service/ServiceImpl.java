@@ -1,17 +1,16 @@
 package com.backend.Artview.domain.test.service;
 
-import com.backend.Artview.domain.test.repository.TestRepository;
+import com.backend.Artview.domain.test.repository.Repository;
 import com.backend.Artview.domain.test.domain.Tests;
 import com.backend.Artview.domain.test.exception.TestErrorCode;
 import com.backend.Artview.domain.test.exception.TestException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
-public class TestServiceImpl implements TestService {
+public class ServiceImpl implements Service {
 
-    private final TestRepository testRepository;
+    private final Repository testRepository;
 
     @Override
     public String getTest(Long id) {

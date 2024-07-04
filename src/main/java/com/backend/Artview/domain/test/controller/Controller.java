@@ -1,17 +1,14 @@
 package com.backend.Artview.domain.test.controller;
 
-import com.backend.Artview.domain.test.service.TestService;
-import com.backend.Artview.global.constant.SuccessCode;
+import com.backend.Artview.domain.test.service.Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/test")
 @RequiredArgsConstructor
-public class TestApiController {
-    private final TestService testService;
+public class Controller {
+    private final Service testService;
 
     @GetMapping("/{id}")
     public String getTestController(@PathVariable("id") Long id){
