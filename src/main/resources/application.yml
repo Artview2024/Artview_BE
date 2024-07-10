@@ -26,5 +26,11 @@ cloud:
     stack:
       auto: false
 
+logging:
+  level:
+    org:
+      springframework: debug
+
 server :
   port : 8081
+
