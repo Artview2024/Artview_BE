@@ -41,7 +41,6 @@ jobs:
       - name: 🧁 gradle build 중입니다.
         run: ./gradlew build -x test
 
-      # Docker에 로그인, docker image를 빌드하고 Docker Hub로 푸시
       - name: 🧁 docker image build 후 docker hub에 push합니다.
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
