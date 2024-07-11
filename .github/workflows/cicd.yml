@@ -41,15 +41,12 @@ jobs:
       - name: 🧁 gradle build 중입니다.
         run: ./gradlew build -x test
 
-# Docker에 로그인, docker image를 빌드하고 Docker Hub로 푸시
+      # Docker에 로그인, docker image를 빌드하고 Docker Hub로 푸시
       - name: 🧁 docker image build 후 docker hub에 push합니다.
         run: |
-        # docker에 로그인
-              docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        # 이미지 생성
-               docker build -f Dockerfile -t ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_IMAGE }} .
-        # docker hub에 이미지 push
-               docker push ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_IMAGE }}
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_IMAGE }} .
+          docker push ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_IMAGE }}
 
       # Deploy에서 ssh-action을 이용해 원격으로 EC2에 명령어 입력
       - name: 🧁 docker hub에서 pull 후 deploy합니다.
@@ -59,10 +56,7 @@ jobs:
           host: ${{ secrets.AWS_HOST }} # EC2 퍼블릭 IPv4 DNS
           key: ${{ secrets.AWS_KEY }}
           script: |
-          # docker에서 올린 이미지 pull
-                    sudo docker pull ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_IMAGE }}
-                    sudo docker rm -f $(docker ps -qa) #
-          # 컨테이너를 시작하고, 만약 업데이트된 이미지를 사용하고 있다면 이전 버전의 컨테이너를 중지하고 새 버전으로 교체
-                    docker compose up -d
-          # docker prune으로 사용하지 않는 도커 오브젝트 정리하여 서버 용량 확보하기
-                    docker image prune -f
+            sudo docker pull ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_IMAGE }}
+            sudo docker rm -f $(docker ps -qa)
+            docker compose up -d
+            docker image prune -f
