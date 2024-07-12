@@ -55,7 +55,6 @@ jobs:
           host: ${{ secrets.AWS_HOST }} # EC2 퍼블릭 IPv4 DNS
           key: ${{ secrets.AWS_KEY }}
           script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_IMAGE }}
             sudo docker rm -f $(docker ps -qa)
             docker compose up -d
