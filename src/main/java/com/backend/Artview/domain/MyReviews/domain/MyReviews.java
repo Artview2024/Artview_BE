@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.review.domain;
+package com.backend.Artview.domain.MyReviews.domain;
 
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -6,11 +6,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "Reviews")
+@Table(name = "MyReviews")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reviews extends BaseEntity {
+public class MyReviews extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +29,10 @@ public class Reviews extends BaseEntity {
     @Column(name = "note", nullable = false)
     private String note;
 
+    @OneToMany(mappedBy = "Reviews")
+    private List<MyExhibitionImages> myExhibitionImages = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "visited_exhibitions_id")
+    private VisitedExhibitions visitedExhibitions;
 }
