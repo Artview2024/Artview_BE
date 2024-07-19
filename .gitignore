@@ -38,3 +38,6 @@ out/
 
 ### yml 파일 ###
 src/main/resources/*.yml
+
+### data.sql 파일 ###\
+src/main/resources/data.sql
