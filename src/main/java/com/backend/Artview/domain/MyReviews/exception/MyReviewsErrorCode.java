@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.review.exception;
+package com.backend.Artview.domain.MyReviews.exception;
 
 import com.backend.Artview.global.code.BaseErrorCode;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ReviewErrorCode implements BaseErrorCode {
+public enum MyReviewsErrorCode implements BaseErrorCode {
 
     TEST_NOT_FOUND(HttpStatus.NOT_FOUND,404,"TEST값을 찾을 수 없습니다.");
 
