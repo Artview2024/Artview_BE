@@ -21,23 +21,25 @@ public class MyReviews extends BaseEntity {
     @Column(name = "my_reviwes_id", unique = true)
     private Long id;
 
-    @Column(name = "art_title", nullable = false)
-    private String artTitle;
+    @Column(name = "exhibitions_title", nullable = false)
+    private String exhibitionsTitle;
 
-    @Column(name = "artist", nullable = false)
-    private String artist;
+    @Column(name = "visited_date", nullable = false)
+    private String visitedDate;
 
-    @Column(name = "note", nullable = false)
-    private String note;
+    @Column(name = "grade", nullable = false)
+    private float grade;
+
+    @Column(name = "main_image_url", nullable = false)
+    private String main_image_url;
 
     @OneToMany(mappedBy = "myReviews",fetch = FetchType.LAZY)
     private List<MyExhibitionImages> myExhibitionImages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "visited_exhibitions_id")
-    private VisitedExhibitions visitedExhibitions;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private Users users;
+
+    @OneToMany(mappedBy = "MyReviews")
+    private List<MyReviewsContents> myReviewsContents= new ArrayList<>();
 }
