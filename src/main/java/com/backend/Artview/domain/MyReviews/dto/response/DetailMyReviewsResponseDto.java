@@ -5,8 +5,6 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
 public record DetailMyReviewsResponseDto(
         Long id,
         String name,
