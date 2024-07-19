@@ -1,6 +1,5 @@
 package com.backend.Artview.domain.MyReviews.domain;
 
-import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,10 +20,13 @@ public class VisitedExhibitions extends BaseEntity {
     @Column(name = "visited_exhibitions_id")
     private Long id;
 
+    @Column(name = "visited_date")
+    private String visitedDate;
+
+    @Column(name = "grade")
+    private int grade;
+
     @OneToMany(mappedBy = "VisitedExhibitions")
     private List<MyReviews> myReviews = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Users users;
 }

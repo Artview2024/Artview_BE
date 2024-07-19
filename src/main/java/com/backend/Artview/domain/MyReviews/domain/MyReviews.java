@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.MyReviews.domain;
 
+import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,10 +30,14 @@ public class MyReviews extends BaseEntity {
     @Column(name = "note", nullable = false)
     private String note;
 
-    @OneToMany(mappedBy = "Reviews")
+    @OneToMany(mappedBy = "myReviews",fetch = FetchType.LAZY)
     private List<MyExhibitionImages> myExhibitionImages = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "visited_exhibitions_id")
     private VisitedExhibitions visitedExhibitions;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    private Users users;
 }
