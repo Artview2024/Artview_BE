@@ -24,6 +24,9 @@ public class MyReviews extends BaseEntity {
     @Column(name = "exhibitions_title", nullable = false)
     private String exhibitionsTitle;
 
+    @Column(name = "exhibitions_location", nullable = false)
+    private String exhibitionsLocation;
+
     @Column(name = "visited_date", nullable = false)
     private String visitedDate;
 
@@ -33,13 +36,10 @@ public class MyReviews extends BaseEntity {
     @Column(name = "main_image_url", nullable = false)
     private String mainImageUrl;
 
-    @OneToMany(mappedBy = "myReviews",fetch = FetchType.LAZY)
-    private List<MyExhibitionImages> myExhibitionImages = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private Users users;
 
-    @OneToMany(mappedBy = "myReviews")
+    @OneToMany(mappedBy = "myReviews",fetch = FetchType.LAZY)
     private List<MyReviewsContents> myReviewsContents= new ArrayList<>();
 }

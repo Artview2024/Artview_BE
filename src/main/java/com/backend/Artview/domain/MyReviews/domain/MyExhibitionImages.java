@@ -20,8 +20,8 @@ public class MyExhibitionImages extends BaseEntity {
     @Column(name = "my_exhibition_images_url")
     private String myExhibitionImages_Url;
 
-    @ManyToOne
-    @JoinColumn(name = "my_reviwes_id")
-    private MyReviews myReviews;
+    @OneToOne
+    @JoinColumn(name = "MyReviewsContents_id")
+    private MyReviewsContents myReviewsContents;
 
 }
