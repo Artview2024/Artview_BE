@@ -13,11 +13,11 @@ public record  AllMyReviewsResponseDto(
 ) {
 
 
-    public static AllMyReviewsResponseDto of(MyReviews myReviews, String imageUrl) {
+    public static AllMyReviewsResponseDto of(MyReviews myReviews) {
         return AllMyReviewsResponseDto.builder()
                 .myReviewsId(myReviews.getId())
-                .imageUrl(imageUrl)
-                .visitedDate(myReviews.getVisitedExhibitions().getVisitedDate())
+                .imageUrl(myReviews.getMainImageUrl())
+                .visitedDate(myReviews.getVisitedDate())
                 .build();
     }
 }

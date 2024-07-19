@@ -27,6 +27,6 @@ public class MyReviewsContents extends BaseEntity {
     private String note;
 
     @ManyToOne
-    @JoinColumn(name = "my_reviwes_id")
+    @JoinColumn(name = "MyReviews_id")
     private MyReviews myReviews;
 }

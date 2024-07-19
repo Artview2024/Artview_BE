@@ -31,7 +31,7 @@ public class MyReviews extends BaseEntity {
     private float grade;
 
     @Column(name = "main_image_url", nullable = false)
-    private String main_image_url;
+    private String mainImageUrl;
 
     @OneToMany(mappedBy = "myReviews",fetch = FetchType.LAZY)
     private List<MyExhibitionImages> myExhibitionImages = new ArrayList<>();
@@ -40,6 +40,6 @@ public class MyReviews extends BaseEntity {
     @JoinColumn(name = "users_id")
     private Users users;
 
-    @OneToMany(mappedBy = "MyReviews")
+    @OneToMany(mappedBy = "myReviews")
     private List<MyReviewsContents> myReviewsContents= new ArrayList<>();
 }
