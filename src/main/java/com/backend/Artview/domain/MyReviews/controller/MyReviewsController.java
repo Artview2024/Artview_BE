@@ -21,4 +21,10 @@ public class MyReviewsController {
         return myReviewsService.findAllMyReviews(userId);
     }
 
+    //전시 기록 상세 조회
+    @GetMapping("/{reviewsId}")
+    public DetailMyReviewsResponseDto findDetailMyReviews(@PathVariable Long reviewsId){
+        return myReviewsService.findDetailMyReviews(reviewsId);
+    }
+
 }

@@ -4,6 +4,7 @@ package com.backend.Artview.domain.MyReviews.service;
 import com.backend.Artview.domain.MyReviews.domain.MyExhibitionImages;
 import com.backend.Artview.domain.MyReviews.domain.MyReviews;
 import com.backend.Artview.domain.MyReviews.dto.response.AllMyReviewsResponseDto;
+import com.backend.Artview.domain.MyReviews.dto.response.DetailMyReviewsResponseDto;
 import com.backend.Artview.domain.MyReviews.repository.MyReviewsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MyReviewsServiceImpl implements MyReviewsService {
+ public class MyReviewsServiceImpl implements MyReviewsService {
 
     private final MyReviewsRepository myReviewsRepository;
 
@@ -21,6 +22,11 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     public List<AllMyReviewsResponseDto> findAllMyReviews(Long userId) {
         List<MyReviews> allMyReviewsFromRepository = findAllMyReviewsFromRepository(userId);
         return allMyReviewsFromRepository.stream().map(v -> AllMyReviewsResponseDto.of(v, findMyReviewsMainImages(v))).collect(Collectors.toList());
+    }
+
+    @Override
+    public DetailMyReviewsResponseDto findDetailMyReviews(Long reviewsId) {
+        return null;
     }
 
     public List<MyReviews> findAllMyReviewsFromRepository(Long userId) {
