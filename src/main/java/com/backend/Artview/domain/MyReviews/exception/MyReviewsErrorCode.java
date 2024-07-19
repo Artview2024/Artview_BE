@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum MyReviewsErrorCode implements BaseErrorCode {
 
-    TEST_NOT_FOUND(HttpStatus.NOT_FOUND,404,"TEST값을 찾을 수 없습니다.");
+    MY_REVIEWS_NOT_FOUND(HttpStatus.NOT_FOUND,404,"ReviewId에 해당하는 리뷰를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final int statusCode;

@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.MyReviews.controller;
 
 import com.backend.Artview.domain.MyReviews.dto.response.AllMyReviewsResponseDto;
+import com.backend.Artview.domain.MyReviews.dto.response.DetailMyReviewsResponseDto;
 import com.backend.Artview.domain.MyReviews.service.MyReviewsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,16 @@ class MyReviewsControllerTest {
     @Test
     @DisplayName("유저 Id가 10001번인 회원의 Reviews 조회에 성공해야 한다.")
     void findAllMyReviews() {
-        int UserId = 10001;
-        List<AllMyReviewsResponseDto> allMyReviews = myReviewsService.findAllMyReviews((long) UserId);
+        Long userId = 10001L;
+        List<AllMyReviewsResponseDto> allMyReviews = myReviewsService.findAllMyReviews(userId);
         assertThat(allMyReviews).isNotNull();
+    }
+
+    @Test
+    @DisplayName("ReviesId가 10001번인 리뷰의 조회에 성공해야 한다.")
+    void findDetailMyReviews(){
+        Long reviewsId = 10001L;
+        DetailMyReviewsResponseDto detailMyReviews = myReviewsService.findDetailMyReviews(reviewsId);
+        assertThat(detailMyReviews).isNotNull();
     }
 }

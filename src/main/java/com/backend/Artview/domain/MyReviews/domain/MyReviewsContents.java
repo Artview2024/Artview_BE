@@ -7,6 +7,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,4 +32,7 @@ public class MyReviewsContents extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "MyReviews_id")
     private MyReviews myReviews;
+
+    @OneToOne(mappedBy = "myReviewsContents")
+    private MyExhibitionImages myExhibitionImage;
 }
