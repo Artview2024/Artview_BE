@@ -20,9 +20,6 @@ public class MyExhibitionImages extends BaseEntity {
     @Column(name = "my_exhibition_images_url")
     private String myExhibitionImages_Url;
 
-    @Column(name = "is_main_image")
-    private boolean IsMainImage;
-
     @ManyToOne
     @JoinColumn(name = "my_reviwes_id")
     private MyReviews myReviews;

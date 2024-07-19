@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
     @Override
     public List<AllMyReviewsResponseDto> findAllMyReviews(Long userId) {
         List<MyReviews> allMyReviewsFromRepository = findAllMyReviewsFromRepository(userId);
-        return allMyReviewsFromRepository.stream().map(v -> AllMyReviewsResponseDto.of(v, findMyReviewsMainImages(v))).collect(Collectors.toList());
+        return allMyReviewsFromRepository.stream().map(v -> AllMyReviewsResponseDto.of(v)).collect(Collectors.toList());
     }
 
     @Override
@@ -31,10 +31,6 @@ import java.util.stream.Collectors;
 
     public List<MyReviews> findAllMyReviewsFromRepository(Long userId) {
         return myReviewsRepository.findAllByUsersId(userId);
-    }
-
-    public String findMyReviewsMainImages(MyReviews myReviews) {
-        return findMyExhibitionImages(myReviews).stream().filter(v -> v.isIsMainImage()).toString();
     }
 
     public List<MyExhibitionImages> findMyExhibitionImages(MyReviews myReviews) {
