@@ -1,11 +1,11 @@
-package com.backend.Artview.domain.MyReviews.dto.response;
+package com.backend.Artview.domain.MyReviews.dto;
 
 import com.backend.Artview.domain.MyReviews.domain.MyReviewsContents;
 import lombok.Builder;
 
 
 @Builder
-record ArtList(
+public record ArtList(
         String image,
         String title,
         String artist,
