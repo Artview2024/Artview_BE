@@ -14,7 +14,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import static com.backend.Artview.global.exception.UtilErrorCode.S3_UPLOAD_FAILED;
+import static com.backend.Artview.global.exception.S3exception.S3UtilErrorCode.S3_UPLOAD_FAILED;
 
 @Component
 @RequiredArgsConstructor
