@@ -2,6 +2,7 @@ package com.backend.Artview.domain.MyReviews.dto;
 
 import com.backend.Artview.domain.MyReviews.domain.MyReviewsContents;
 import lombok.Builder;
+import lombok.Getter;
 
 
 @Builder
@@ -13,7 +14,7 @@ public record ArtList(
 ) {
     public static ArtList of(MyReviewsContents MyReviewsContents){
         return ArtList.builder()
-                .image(MyReviewsContents.getMyExhibitionImage().getMyExhibitionImages_Url())
+                .image(MyReviewsContents.getMyExhibitionImage().getMyExhibitionImagesUrl())
                 .title(MyReviewsContents.getArtTitle())
                 .artist(MyReviewsContents.getArtist())
                 .contents(MyReviewsContents.getNote())
