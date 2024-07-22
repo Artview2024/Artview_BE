@@ -6,6 +6,8 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,9 +22,11 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @CreatedDate
+    @CreationTimestamp //insert할 떄 시간 자동으로 들어== DEFAULT CURRENT_TIMESTAMP
     @Column(updatable = false)
     private LocalDateTime createDate;
 
     @LastModifiedDate
+    @UpdateTimestamp //update문 돌아갈 때 자동으로 시간 저장
     private LocalDateTime updateDate;
 }

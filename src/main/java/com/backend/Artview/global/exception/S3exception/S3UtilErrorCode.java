@@ -1,4 +1,4 @@
-package com.backend.Artview.global.exception;
+package com.backend.Artview.global.exception.S3exception;
 
 import com.backend.Artview.global.code.BaseErrorCode;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum UtilErrorCode implements BaseErrorCode {
+public enum S3UtilErrorCode implements BaseErrorCode {
 
     //S3 관련
     S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 500, "S3 파일 업로드에 실패했습니다."),

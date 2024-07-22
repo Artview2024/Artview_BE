@@ -2,6 +2,7 @@ package com.backend.Artview.domain.MyReviews.dto.response;
 
 import com.backend.Artview.domain.MyReviews.domain.MyReviews;
 import com.backend.Artview.domain.MyReviews.domain.MyReviewsContents;
+import com.backend.Artview.domain.MyReviews.dto.ArtList;
 import lombok.Builder;
 
 import java.util.List;
