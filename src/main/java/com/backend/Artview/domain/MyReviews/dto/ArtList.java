@@ -2,8 +2,6 @@ package com.backend.Artview.domain.MyReviews.dto;
 
 import com.backend.Artview.domain.MyReviews.domain.MyReviewsContents;
 import lombok.Builder;
-import lombok.Getter;
-
 
 @Builder
 public record ArtList(

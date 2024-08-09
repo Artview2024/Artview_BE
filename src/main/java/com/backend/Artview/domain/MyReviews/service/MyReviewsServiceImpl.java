@@ -58,6 +58,11 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         return myReviewsRepository.save(myReviews).getId();
     }
 
+    @Override
+    public void refactorMyReviews(MyReviewsSaveReqeustDto requestDto) {
+
+    }
+
     public MyReviewsContents addMyReviewsContentToMyReviews(MyReviews myReviews, ArtList artList) {
         MyReviewsContents myReviewsContents = MyReviewsContents.toEntity(myReviews, artList); //MyReviewsContents 엔티티 생성
         myReviews.addContents(myReviewsContents);

@@ -30,8 +30,15 @@ public class MyReviewsController {
 
     //전시 기록 작성하기(등록하기)
     @PostMapping("/save")
-    public Long saveMyReviews(@RequestBody MyReviewsSaveReqeustDto requestDto){
+    public Long saveMyReviews(@RequestBody MyReviewsSaveReqeustDto requestDto) {
         return myReviewsService.saveMyReviews(requestDto);
+    }
+
+
+    //전시 기록 수정하기
+    @PatchMapping("/modify")
+    public void refactorMyReviews(@RequestBody MyReviewsSaveReqeustDto requestDto){
+        myReviewsService.refactorMyReviews(requestDto);
     }
 
 }

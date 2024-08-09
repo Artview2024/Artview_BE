@@ -14,4 +14,6 @@ public interface MyReviewsService {
     DetailMyReviewsResponseDto findDetailMyReviews(Long reviewsId);
 
     Long saveMyReviews(MyReviewsSaveReqeustDto requestDto);
+
+    void refactorMyReviews(MyReviewsSaveReqeustDto requestDto);
 }
