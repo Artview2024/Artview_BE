@@ -33,4 +33,8 @@ public class MyExhibitionImages extends BaseEntity {
                 .build();
     }
 
+    public void updateMyExhibitionImages(String myExhibitionImagesUrl){
+        this.myExhibitionImagesUrl = myExhibitionImagesUrl;
+    }
+
 }
