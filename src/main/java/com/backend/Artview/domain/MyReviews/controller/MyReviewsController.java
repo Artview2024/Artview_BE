@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.MyReviews.controller;
 
+import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsSaveReqeustDto;
 import com.backend.Artview.domain.MyReviews.dto.response.AllMyReviewsResponseDto;
 import com.backend.Artview.domain.MyReviews.dto.response.DetailMyReviewsResponseDto;
@@ -37,7 +38,7 @@ public class MyReviewsController {
 
     //전시 기록 수정하기
     @PatchMapping("/modify")
-    public void refactorMyReviews(@RequestBody MyReviewsSaveReqeustDto requestDto){
+    public void refactorMyReviews(@RequestBody MyReviewsModifyRequestDto requestDto){
         myReviewsService.refactorMyReviews(requestDto);
     }
 
