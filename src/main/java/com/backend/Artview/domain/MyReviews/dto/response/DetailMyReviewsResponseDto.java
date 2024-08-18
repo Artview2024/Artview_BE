@@ -26,7 +26,7 @@ public record DetailMyReviewsResponseDto(
                 .date(myReview.getVisitedDate())
                 .gallery(myReview.getExhibitionsLocation())
                 .mainImage(myReview.getMainImageUrl())
-                .rating(Float.toString(myReview.getGrade()))
+                .rating(myReview.getGrade())
                 .artList(myReviewsContents.stream().map(v->ArtList.of(v)).collect(Collectors.toList()))
                 .build();
     }
