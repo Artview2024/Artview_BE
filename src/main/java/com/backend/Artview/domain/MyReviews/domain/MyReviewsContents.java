@@ -2,12 +2,8 @@ package com.backend.Artview.domain.MyReviews.domain;
 
 import com.backend.Artview.domain.MyReviews.dto.ArtList;
 import com.backend.Artview.global.domain.BaseEntity;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -21,14 +17,17 @@ public class MyReviewsContents extends BaseEntity {
     @Column(name = "my_reviews_contents_id", unique = true)
     private Long id;
 
-    @Column(name = "art_title", nullable = false)
+    @Column(name = "art_title")
     private String artTitle;
 
-    @Column(name = "artist", nullable = false)
+    @Column(name = "artist")
     private String artist;
 
-    @Column(name = "note", nullable = false)
+    @Column(name = "note")
     private String note;
+
+    @Column(name = "number")
+    private int number;
 
     @ManyToOne
     @JoinColumn(name = "MyReviews_id")
@@ -37,11 +36,12 @@ public class MyReviewsContents extends BaseEntity {
     @OneToOne(mappedBy = "myReviewsContents", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MyExhibitionImages myExhibitionImage;
 
-    public static MyReviewsContents toEntity(MyReviews myReviews, ArtList artList) {
+    public static MyReviewsContents toEntity(MyReviews myReviews, ArtList artList, int contentNumber) {
         return MyReviewsContents.builder()
                 .artTitle(artList.title())
                 .artist(artList.artist())
                 .note(artList.contents())
+                .number(contentNumber)
                 .myReviews(myReviews)
                 .build();
     }
@@ -53,4 +53,11 @@ public class MyReviewsContents extends BaseEntity {
     public void addImages(MyExhibitionImages myExhibitionImages) {
         this.myExhibitionImage = myExhibitionImages;
     }
+
+    public void updateMyReviewsContents(ArtList artList){
+        this.artTitle = artList.title();
+        this.artist = artList.artist();
+        this.note = artList.contents();
+    }
+
 }
