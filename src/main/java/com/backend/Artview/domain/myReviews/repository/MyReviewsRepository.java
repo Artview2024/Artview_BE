@@ -1,7 +1,7 @@
-package com.backend.Artview.domain.MyReviews.repository;
+package com.backend.Artview.domain.myReviews.repository;
 
 
-import com.backend.Artview.domain.MyReviews.domain.MyReviews;
+import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

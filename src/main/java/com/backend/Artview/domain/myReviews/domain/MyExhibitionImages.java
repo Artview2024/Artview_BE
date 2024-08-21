@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.MyReviews.domain;
+package com.backend.Artview.domain.myReviews.domain;
 
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;

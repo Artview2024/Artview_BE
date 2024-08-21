@@ -1,6 +1,6 @@
-package com.backend.Artview.domain.MyReviews.dto;
+package com.backend.Artview.domain.myReviews.dto;
 
-import com.backend.Artview.domain.MyReviews.domain.MyReviewsContents;
+import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
 import lombok.Builder;
 
 @Builder

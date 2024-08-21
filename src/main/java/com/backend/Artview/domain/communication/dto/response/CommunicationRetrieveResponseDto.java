@@ -1,7 +1,6 @@
-package com.backend.Artview.domain.Communication.dto;
+package com.backend.Artview.domain.communication.dto.response;
 
-import com.backend.Artview.domain.MyReviews.domain.MyReviews;
-import com.backend.Artview.domain.MyReviews.dto.response.AllMyReviewsResponseDto;
+import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import lombok.Builder;
 
 import java.util.List;

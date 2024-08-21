@@ -1,10 +1,10 @@
-package com.backend.Artview.domain.MyReviews.controller;
+package com.backend.Artview.domain.myReviews.controller;
 
-import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsModifyRequestDto;
-import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsSaveReqeustDto;
-import com.backend.Artview.domain.MyReviews.dto.response.AllMyReviewsResponseDto;
-import com.backend.Artview.domain.MyReviews.dto.response.DetailMyReviewsResponseDto;
-import com.backend.Artview.domain.MyReviews.service.MyReviewsService;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveReqeustDto;
+import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
+import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
+import com.backend.Artview.domain.myReviews.service.MyReviewsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

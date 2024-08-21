@@ -1,6 +1,6 @@
-package com.backend.Artview.domain.MyReviews.domain;
+package com.backend.Artview.domain.myReviews.domain;
 
-import com.backend.Artview.domain.MyReviews.dto.ArtList;
+import com.backend.Artview.domain.myReviews.dto.ArtList;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

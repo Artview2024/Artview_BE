@@ -1,7 +1,7 @@
-package com.backend.Artview.domain.MyReviews.domain;
+package com.backend.Artview.domain.myReviews.domain;
 
-import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsModifyRequestDto;
-import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsSaveReqeustDto;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveReqeustDto;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -11,8 +11,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.rmi.server.LogStream.log;
 
 @DynamicUpdate
 @Entity

@@ -1,6 +1,6 @@
-package com.backend.Artview.domain.MyReviews.dto.request;
+package com.backend.Artview.domain.myReviews.dto.request;
 
-import com.backend.Artview.domain.MyReviews.dto.ArtList;
+import com.backend.Artview.domain.myReviews.dto.ArtList;
 
 import java.util.List;
 

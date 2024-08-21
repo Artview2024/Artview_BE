@@ -1,8 +1,8 @@
-package com.backend.Artview.domain.MyReviews.controller;
+package com.backend.Artview.domain.myReviews.controller;
 
-import com.backend.Artview.domain.MyReviews.dto.response.AllMyReviewsResponseDto;
-import com.backend.Artview.domain.MyReviews.dto.response.DetailMyReviewsResponseDto;
-import com.backend.Artview.domain.MyReviews.service.MyReviewsService;
+import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
+import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
+import com.backend.Artview.domain.myReviews.service.MyReviewsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,16 +1,16 @@
-package com.backend.Artview.domain.MyReviews.service;
+package com.backend.Artview.domain.myReviews.service;
 
 
-import com.backend.Artview.domain.MyReviews.domain.MyExhibitionImages;
-import com.backend.Artview.domain.MyReviews.domain.MyReviews;
-import com.backend.Artview.domain.MyReviews.domain.MyReviewsContents;
-import com.backend.Artview.domain.MyReviews.dto.ArtList;
-import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsModifyRequestDto;
-import com.backend.Artview.domain.MyReviews.dto.request.MyReviewsSaveReqeustDto;
-import com.backend.Artview.domain.MyReviews.dto.response.AllMyReviewsResponseDto;
-import com.backend.Artview.domain.MyReviews.dto.response.DetailMyReviewsResponseDto;
-import com.backend.Artview.domain.MyReviews.exception.MyReviewsException;
-import com.backend.Artview.domain.MyReviews.repository.MyReviewsRepository;
+import com.backend.Artview.domain.myReviews.domain.MyExhibitionImages;
+import com.backend.Artview.domain.myReviews.domain.MyReviews;
+import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
+import com.backend.Artview.domain.myReviews.dto.ArtList;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveReqeustDto;
+import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
+import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
+import com.backend.Artview.domain.myReviews.exception.MyReviewsException;
+import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import com.backend.Artview.domain.users.domain.Users;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.backend.Artview.domain.MyReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
+import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.users.exception.UserErrorCode.USER_NOT_FOUND;
 
 @Service

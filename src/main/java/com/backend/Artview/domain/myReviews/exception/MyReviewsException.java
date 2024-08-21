@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.MyReviews.exception;
+package com.backend.Artview.domain.myReviews.exception;
 
 import com.backend.Artview.global.exception.ApplicationException;
 import lombok.Getter;
