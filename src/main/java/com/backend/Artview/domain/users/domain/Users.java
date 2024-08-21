@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.users.domain;
 
-import com.backend.Artview.domain.MyReviews.domain.MyReviews;
+import com.backend.Artview.domain.communication.domain.Communications;
+import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,7 +28,6 @@ public class Users extends BaseEntity {
     @Column(name = "name")
     private String name;
 
-
     @Column(name = "nick_name")
     private String nickName;
 
@@ -36,5 +36,8 @@ public class Users extends BaseEntity {
 
     @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
     private List<MyReviews> myReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private List<Communications> communicationsList = new ArrayList<>();
 
 }
