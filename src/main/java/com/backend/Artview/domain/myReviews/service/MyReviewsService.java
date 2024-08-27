@@ -20,4 +20,6 @@ public interface MyReviewsService {
     void refactorMyReviews(MyReviewsModifyRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages);
 
     String test(MyReviewsSaveRequestDto dto);
+
+    String saveMyReviews(MyReviewsSaveRequestDto requestDto);
 }
