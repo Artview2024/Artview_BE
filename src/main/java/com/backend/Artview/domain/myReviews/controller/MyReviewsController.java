@@ -6,6 +6,7 @@ import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto
 import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.service.MyReviewsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +32,7 @@ public class MyReviewsController {
     }
 
     //전시 기록 작성하기(등록하기)
-    @PostMapping("/save")
+    @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public Long saveMyReviews(@RequestPart(value ="requestDto") MyReviewsSaveRequestDto requestDto,
                               @RequestPart(value="mainImage") MultipartFile mainImage,
                               @RequestPart(value = "contentImages") List<MultipartFile> contentImages
