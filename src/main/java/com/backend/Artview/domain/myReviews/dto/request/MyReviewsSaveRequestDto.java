@@ -1,18 +1,18 @@
 package com.backend.Artview.domain.myReviews.dto.request;
 
-import com.backend.Artview.domain.myReviews.dto.ArtList;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 
-public record MyReviewsSaveReqeustDto(
+public record MyReviewsSaveRequestDto(
         Long id,
         String name,
         String date,
         String gallery,
-        String mainImage,
+        MultipartFile mainImage,
         String rating,
-        List<ArtList> artList
+        List<RequestArtList> artList
 
 ) {
 }

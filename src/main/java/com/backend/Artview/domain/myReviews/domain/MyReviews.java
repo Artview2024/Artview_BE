@@ -1,7 +1,7 @@
 package com.backend.Artview.domain.myReviews.domain;
 
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
-import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveReqeustDto;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -49,13 +49,13 @@ public class MyReviews extends BaseEntity {
     @OneToMany(mappedBy = "myReviews", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MyReviewsContents> myReviewsContents = new ArrayList<>();
 
-    public static MyReviews toEntity(MyReviewsSaveReqeustDto requestDto, Users users) {
+    public static MyReviews toEntity(MyReviewsSaveRequestDto requestDto, String mainImageUrlFromS3 , Users users) {
         return MyReviews.builder()
                 .exhibitionsTitle(requestDto.name())
                 .exhibitionsLocation(requestDto.gallery())
                 .visitedDate(requestDto.date())
                 .grade(requestDto.rating())
-                .mainImageUrl(requestDto.mainImage())
+                .mainImageUrl(mainImageUrlFromS3)
                 .users(users)
                 .myReviewsContents(new ArrayList<>())
                 .build();
@@ -65,12 +65,12 @@ public class MyReviews extends BaseEntity {
         this.myReviewsContents.add(myReviewsContents);
     }
 
-    public void updateMyReviews(MyReviewsModifyRequestDto requestDto) {
+    public void updateMyReviews(MyReviewsModifyRequestDto requestDto, String mainImageUrl) {
         this.exhibitionsTitle = requestDto.name();
         this.exhibitionsLocation = requestDto.gallery();
         this.visitedDate = requestDto.date();
         this.grade = requestDto.rating();
-        this.mainImageUrl = requestDto.mainImage();
+        this.mainImageUrl = mainImageUrl;
     }
 
 }
