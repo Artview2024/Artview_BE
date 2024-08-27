@@ -31,18 +31,12 @@ public class MyReviewsController {
     }
 
     //전시 기록 작성하기(등록하기)
-//    @PostMapping("/save")
-//    public Long saveMyReviews(@RequestPart(value ="requestDto") MyReviewsSaveRequestDto requestDto,
-//                              @RequestPart(value="mainImage") MultipartFile mainImage,
-//                              @RequestPart(value = "contentImages") List<MultipartFile> contentImages
-//    ) {
-//        return myReviewsService.saveMyReviews(requestDto,mainImage,contentImages);
-//    }
-
     @PostMapping("/save")
-    public String saveMyReviews(@ModelAttribute MyReviewsSaveRequestDto requestDto
+    public Long saveMyReviews(@RequestPart(value ="requestDto") MyReviewsSaveRequestDto requestDto,
+                              @RequestPart(value="mainImage") MultipartFile mainImage,
+                              @RequestPart(value = "contentImages") List<MultipartFile> contentImages
     ) {
-        return myReviewsService.saveMyReviews(requestDto);
+        return myReviewsService.saveMyReviews(requestDto,mainImage,contentImages);
     }
 
 
@@ -53,10 +47,4 @@ public class MyReviewsController {
                                   @RequestPart(value = "contentImages") List<MultipartFile> contentImages){
         myReviewsService.refactorMyReviews(requestDto,mainImage,contentImages);
     }
-
-    @PatchMapping("/test")
-    public String test(@RequestPart MyReviewsSaveRequestDto dto){
-        return myReviewsService.test(dto);
-    }
-
 }

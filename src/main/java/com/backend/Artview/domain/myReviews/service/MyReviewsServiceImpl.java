@@ -76,18 +76,6 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         myReviews.updateMyReviews(requestDto,uploadImageUrlToS3(mainImage));
     }
 
-    @Override
-    public String test(MyReviewsSaveRequestDto dto) {
-        String s = uploadImageUrlToS3(dto.mainImage());
-        return s;
-    }
-
-    @Override
-    public String saveMyReviews(MyReviewsSaveRequestDto requestDto) {
-        String s = uploadImageUrlToS3(requestDto.mainImage());
-        return s;
-    }
-
     private String uploadImageUrlToS3(MultipartFile multipartFileImage) {
         log("uploadImageUrlToS3 : "+multipartFileImage.getOriginalFilename());
         if(!multipartFileImage.isEmpty())

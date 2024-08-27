@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 public record RequestArtList(
-        String image,
+//        String image,
         String title,
         String artist,
         String contents
