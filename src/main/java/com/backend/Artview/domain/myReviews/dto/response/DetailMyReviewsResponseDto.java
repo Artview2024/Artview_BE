@@ -2,7 +2,6 @@ package com.backend.Artview.domain.myReviews.dto.response;
 
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
-import com.backend.Artview.domain.myReviews.dto.ArtList;
 import lombok.Builder;
 
 import java.util.List;
@@ -16,10 +15,10 @@ public record DetailMyReviewsResponseDto(
         String gallery,//갤러리 이름
         String mainImage,
         String rating,//별점
-        List<ArtList> artList//내용
+        List<ResponseArtList> artList//내용
 ) {
 
-    public static DetailMyReviewsResponseDto of(MyReviews myReview,List<MyReviewsContents> myReviewsContents) {
+    public static DetailMyReviewsResponseDto of(MyReviews myReview, List<MyReviewsContents> myReviewsContents) {
         return DetailMyReviewsResponseDto.builder()
                 .id(myReview.getId())
                 .name(myReview.getExhibitionsTitle())
@@ -27,7 +26,7 @@ public record DetailMyReviewsResponseDto(
                 .gallery(myReview.getExhibitionsLocation())
                 .mainImage(myReview.getMainImageUrl())
                 .rating(myReview.getGrade())
-                .artList(myReviewsContents.stream().map(v->ArtList.of(v)).collect(Collectors.toList()))
+                .artList(myReviewsContents.stream().map(v->ResponseArtList.of(v)).collect(Collectors.toList())) //
                 .build();
     }
 }

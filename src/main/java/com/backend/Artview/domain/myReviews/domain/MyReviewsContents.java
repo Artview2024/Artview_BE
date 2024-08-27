@@ -1,6 +1,6 @@
 package com.backend.Artview.domain.myReviews.domain;
 
-import com.backend.Artview.domain.myReviews.dto.ArtList;
+import com.backend.Artview.domain.myReviews.dto.request.RequestArtList;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,12 +36,11 @@ public class MyReviewsContents extends BaseEntity {
     @OneToOne(mappedBy = "myReviewsContents", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MyExhibitionImages myExhibitionImage;
 
-    public static MyReviewsContents toEntity(MyReviews myReviews, ArtList artList, int contentNumber) {
+    public static MyReviewsContents toEntity(MyReviews myReviews, RequestArtList artList) {
         return MyReviewsContents.builder()
                 .artTitle(artList.title())
                 .artist(artList.artist())
                 .note(artList.contents())
-                .number(contentNumber)
                 .myReviews(myReviews)
                 .build();
     }
@@ -54,7 +53,7 @@ public class MyReviewsContents extends BaseEntity {
         this.myExhibitionImage = myExhibitionImages;
     }
 
-    public void updateMyReviewsContents(ArtList artList){
+    public void updateMyReviewsContents(RequestArtList artList){
         this.artTitle = artList.title();
         this.artist = artList.artist();
         this.note = artList.contents();

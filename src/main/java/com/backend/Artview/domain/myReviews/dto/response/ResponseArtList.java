@@ -1,17 +1,18 @@
-package com.backend.Artview.domain.myReviews.dto;
+package com.backend.Artview.domain.myReviews.dto.response;
 
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
+import com.backend.Artview.domain.myReviews.dto.request.RequestArtList;
 import lombok.Builder;
 
 @Builder
-public record ArtList(
+public record ResponseArtList(
         String image,
         String title,
         String artist,
         String contents
 ) {
-    public static ArtList of(MyReviewsContents MyReviewsContents){
-        return ArtList.builder()
+    public static ResponseArtList of(MyReviewsContents MyReviewsContents){
+        return ResponseArtList.builder()
                 .image(MyReviewsContents.getMyExhibitionImage().getMyExhibitionImagesUrl())
                 .title(MyReviewsContents.getArtTitle())
                 .artist(MyReviewsContents.getArtist())
