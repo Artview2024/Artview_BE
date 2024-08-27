@@ -18,8 +18,4 @@ public interface MyReviewsService {
     Long saveMyReviews(MyReviewsSaveRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages);
 
     void refactorMyReviews(MyReviewsModifyRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages);
-
-    String test(MyReviewsSaveRequestDto dto);
-
-    String saveMyReviews(MyReviewsSaveRequestDto requestDto);
 }

@@ -10,7 +10,6 @@ public record MyReviewsSaveRequestDto(
         String name,
         String date,
         String gallery,
-        MultipartFile mainImage,
         String rating,
         List<RequestArtList> artList
 
