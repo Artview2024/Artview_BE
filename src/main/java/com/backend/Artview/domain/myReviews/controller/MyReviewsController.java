@@ -2,9 +2,11 @@ package com.backend.Artview.domain.myReviews.controller;
 
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
+import com.backend.Artview.domain.myReviews.dto.request.TestDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.service.MyReviewsService;
+import com.backend.Artview.global.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 public class MyReviewsController {
 
     private final MyReviewsService myReviewsService;
+    private final S3Util s3Util;
 
     //나의 전시 기록을 조회
     @GetMapping("/all/{userId}")
@@ -47,5 +50,11 @@ public class MyReviewsController {
                                   @RequestPart(value="mainImage") MultipartFile mainImage,
                                   @RequestPart(value = "contentImages") List<MultipartFile> contentImages){
         myReviewsService.refactorMyReviews(requestDto,mainImage,contentImages);
+    }
+
+    //전시 기록 작성하기(등록하기)
+    @PostMapping("/test")
+    public String test(@ModelAttribute TestDto testDto) {
+        return s3Util.uploadFileToS3Bucket(testDto.getMainImage());
     }
 }
