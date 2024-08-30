@@ -15,7 +15,9 @@ public interface MyReviewsService {
 
     DetailMyReviewsResponseDto findDetailMyReviews(Long reviewsId);
 
-    Long saveMyReviews(MyReviewsSaveRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages);
+//    Long saveMyReviews(MyReviewsSaveRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages);
+
+    Long saveMyReviews(MyReviewsSaveRequestDto requestDto);
 
     void refactorMyReviews(MyReviewsModifyRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages);
 }

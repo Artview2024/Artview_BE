@@ -51,10 +51,10 @@ public class MyReviews extends BaseEntity {
 
     public static MyReviews toEntity(MyReviewsSaveRequestDto requestDto, String mainImageUrlFromS3 , Users users) {
         return MyReviews.builder()
-                .exhibitionsTitle(requestDto.name())
-                .exhibitionsLocation(requestDto.gallery())
-                .visitedDate(requestDto.date())
-                .grade(requestDto.rating())
+                .exhibitionsTitle(requestDto.getName())
+                .exhibitionsLocation(requestDto.getGallery())
+                .visitedDate(requestDto.getDate())
+                .grade(requestDto.getRating())
                 .mainImageUrl(mainImageUrlFromS3)
                 .users(users)
                 .myReviewsContents(new ArrayList<>())

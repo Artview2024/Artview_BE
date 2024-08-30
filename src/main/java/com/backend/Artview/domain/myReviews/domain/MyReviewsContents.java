@@ -38,9 +38,9 @@ public class MyReviewsContents extends BaseEntity {
 
     public static MyReviewsContents toEntity(MyReviews myReviews, RequestArtList artList) {
         return MyReviewsContents.builder()
-                .artTitle(artList.title())
-                .artist(artList.artist())
-                .note(artList.contents())
+                .artTitle(artList.getTitle())
+                .artist(artList.getArtist())
+                .note(artList.getContents())
                 .myReviews(myReviews)
                 .build();
     }
@@ -54,9 +54,9 @@ public class MyReviewsContents extends BaseEntity {
     }
 
     public void updateMyReviewsContents(RequestArtList artList){
-        this.artTitle = artList.title();
-        this.artist = artList.artist();
-        this.note = artList.contents();
+        this.artTitle = artList.getTitle();
+        this.artist = artList.getArtist();
+        this.note = artList.getContents();
     }
 
 }
