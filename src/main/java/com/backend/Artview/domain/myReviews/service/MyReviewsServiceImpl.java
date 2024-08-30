@@ -51,16 +51,31 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         return DetailMyReviewsResponseDto.of(myReview, myReview.getMyReviewsContents());
     }
 
+//    @Override
+//    @Transactional
+//    public Long saveMyReviews(MyReviewsSaveRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages) {
+//
+//        Users user = usersRepository.findById(requestDto.id()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+//        MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(mainImage) ,user);
+//
+//        for(int i = 0; i<requestDto.artList().size(); i++) {
+//            MyReviewsContents myReviewsContents = addMyReviewsContentToMyReviews(myReviews, requestDto.artList().get(i));
+//            addMyExhibitionImagesToMyReviewsContent(myReviewsContents,contentImages.get(i));
+//        }
+//
+//        return myReviewsRepository.save(myReviews).getId();
+//    }
+
     @Override
     @Transactional
-    public Long saveMyReviews(MyReviewsSaveRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages) {
+    public Long saveMyReviews(MyReviewsSaveRequestDto requestDto) {
 
-        Users user = usersRepository.findById(requestDto.id()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(mainImage) ,user);
+        Users user = usersRepository.findById(requestDto.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(requestDto.getMainImage()) ,user);
 
-        for(int i = 0; i<requestDto.artList().size(); i++) {
-            MyReviewsContents myReviewsContents = addMyReviewsContentToMyReviews(myReviews, requestDto.artList().get(i));
-            addMyExhibitionImagesToMyReviewsContent(myReviewsContents,contentImages.get(i));
+        for(int i = 0; i<requestDto.getArtList().size(); i++) {
+            MyReviewsContents myReviewsContents = addMyReviewsContentToMyReviews(myReviews, requestDto.getArtList().get(i));
+            addMyExhibitionImagesToMyReviewsContent(myReviewsContents, requestDto.getArtList().get(i).getImage());
         }
 
         return myReviewsRepository.save(myReviews).getId();
@@ -77,9 +92,10 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     }
 
     private String uploadImageUrlToS3(MultipartFile multipartFileImage) {
-        log("uploadImageUrlToS3 : "+multipartFileImage.getOriginalFilename());
-        if(!multipartFileImage.isEmpty())
+        if(!multipartFileImage.isEmpty()) {
+            log("uploadImageUrlToS3 : "+multipartFileImage.getOriginalFilename());
             return s3Util.uploadFileToS3Bucket(multipartFileImage);
+        }
         else return null;
     }
 

@@ -2,12 +2,15 @@ package com.backend.Artview.domain.myReviews.controller;
 
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
+import com.backend.Artview.domain.myReviews.dto.request.RequestArtList;
 import com.backend.Artview.domain.myReviews.dto.request.TestDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.service.MyReviewsService;
 import com.backend.Artview.global.util.S3Util;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyReviewsController {
 
+    private static final Logger log = LoggerFactory.getLogger(MyReviewsController.class);
     private final MyReviewsService myReviewsService;
     private final S3Util s3Util;
 
@@ -35,12 +39,19 @@ public class MyReviewsController {
     }
 
     //전시 기록 작성하기(등록하기)
+//    @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public Long saveMyReviews(@RequestPart(value ="requestDto") MyReviewsSaveRequestDto requestDto,
+//                              @RequestPart(value="mainImage") MultipartFile mainImage,
+//                              @RequestPart(value = "contentImages") List<MultipartFile> contentImages
+//    ) {
+//        return myReviewsService.saveMyReviews(requestDto,mainImage,contentImages);
+//    }
+
+    //전시 기록 작성하기(등록하기)
     @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Long saveMyReviews(@RequestPart(value ="requestDto") MyReviewsSaveRequestDto requestDto,
-                              @RequestPart(value="mainImage") MultipartFile mainImage,
-                              @RequestPart(value = "contentImages") List<MultipartFile> contentImages
+    public Long saveMyReviews(@ModelAttribute MyReviewsSaveRequestDto requestDto
     ) {
-        return myReviewsService.saveMyReviews(requestDto,mainImage,contentImages);
+        return myReviewsService.saveMyReviews(requestDto);
     }
 
 
