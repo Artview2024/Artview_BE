@@ -2,7 +2,6 @@ package com.backend.Artview.domain.myReviews.controller;
 
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
-import com.backend.Artview.domain.myReviews.dto.request.RequestArtList;
 import com.backend.Artview.domain.myReviews.dto.request.TestDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -56,11 +54,17 @@ public class MyReviewsController {
 
 
     //전시 기록 수정하기
+//    @PatchMapping("/modify")
+//    public void refactorMyReviews(@RequestPart MyReviewsModifyRequestDto requestDto,
+//                                  @RequestPart(value="mainImage") MultipartFile mainImage,
+//                                  @RequestPart(value = "contentImages") List<MultipartFile> contentImages){
+//        myReviewsService.refactorMyReviews(requestDto,mainImage,contentImages);
+//    }
+
+    //전시 기록 수정하기
     @PatchMapping("/modify")
-    public void refactorMyReviews(@RequestPart MyReviewsModifyRequestDto requestDto,
-                                  @RequestPart(value="mainImage") MultipartFile mainImage,
-                                  @RequestPart(value = "contentImages") List<MultipartFile> contentImages){
-        myReviewsService.refactorMyReviews(requestDto,mainImage,contentImages);
+    public void refactorMyReviews(@ModelAttribute MyReviewsModifyRequestDto requestDto){
+        myReviewsService.refactorMyReviews(requestDto);
     }
 
     //전시 기록 작성하기(등록하기)

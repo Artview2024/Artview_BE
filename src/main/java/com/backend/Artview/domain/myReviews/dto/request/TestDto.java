@@ -14,9 +14,9 @@ import java.util.List;
 //    @JsonProperty("gallery") String gallery,
 //    @JsonProperty("mainImage") MultipartFile mainImage,
 //    @JsonProperty("rating") String rating,
-//    @JsonProperty("artList") List<RequestArtList> artList){
+//    @JsonProperty("artList") List<SaveRequestArtList> artList){
 //
-////    public TestDto(Long id, String name, String date, String gallery, MultipartFile mainImage, String rating, List<RequestArtList> artList){
+////    public TestDto(Long id, String name, String date, String gallery, MultipartFile mainImage, String rating, List<SaveRequestArtList> artList){
 ////        this.id = id;
 ////        this.name = name;
 ////        this.date = date;

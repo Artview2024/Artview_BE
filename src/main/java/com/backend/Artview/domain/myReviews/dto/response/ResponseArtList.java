@@ -1,7 +1,6 @@
 package com.backend.Artview.domain.myReviews.dto.response;
 
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
-import com.backend.Artview.domain.myReviews.dto.request.RequestArtList;
 import lombok.Builder;
 
 @Builder

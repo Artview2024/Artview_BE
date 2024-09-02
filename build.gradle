@@ -44,6 +44,9 @@ dependencies {
 	//assertj
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.assertj:assertj-core:3.19.0'
+
+	implementation 'mysql:mysql-connector-java:8.0.33'
+
 }
 
 tasks.named('test') {

@@ -66,10 +66,10 @@ public class MyReviews extends BaseEntity {
     }
 
     public void updateMyReviews(MyReviewsModifyRequestDto requestDto, String mainImageUrl) {
-        this.exhibitionsTitle = requestDto.name();
-        this.exhibitionsLocation = requestDto.gallery();
-        this.visitedDate = requestDto.date();
-        this.grade = requestDto.rating();
+        this.exhibitionsTitle = requestDto.getName();
+        this.exhibitionsLocation = requestDto.getGallery();
+        this.visitedDate = requestDto.getDate();
+        this.grade = requestDto.getRating();
         this.mainImageUrl = mainImageUrl;
     }
 

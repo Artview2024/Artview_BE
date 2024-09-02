@@ -4,7 +4,8 @@ package com.backend.Artview.domain.myReviews.service;
 import com.backend.Artview.domain.myReviews.domain.MyExhibitionImages;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
-import com.backend.Artview.domain.myReviews.dto.request.RequestArtList;
+import com.backend.Artview.domain.myReviews.dto.request.ModifyRequestArtList;
+import com.backend.Artview.domain.myReviews.dto.request.SaveRequestArtList;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
@@ -81,46 +82,57 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         return myReviewsRepository.save(myReviews).getId();
     }
 
+//    @Override
+//    @Transactional
+//    public void refactorMyReviews(MyReviewsModifyRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages) {
+//        MyReviews myReviews = findDetailMyReviewsByReviewsId(requestDto.myReviewsId());
+//        List<SaveRequestArtList> artLists = requestDto.artList();
+//
+//        updateAccordingToType(myReviews,artLists,contentImages); //update타입에 따라 update를 진행
+//        myReviews.updateMyReviews(requestDto,uploadImageUrlToS3(mainImage));
+//    }
+
     @Override
     @Transactional
-    public void refactorMyReviews(MyReviewsModifyRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages) {
-        MyReviews myReviews = findDetailMyReviewsByReviewsId(requestDto.myReviewsId());
-        List<RequestArtList> artLists = requestDto.artList();
+    public void refactorMyReviews(MyReviewsModifyRequestDto requestDto) {
+        MyReviews myReviews = findDetailMyReviewsByReviewsId(requestDto.getMyReviewsId());
+        List<ModifyRequestArtList> artLists = requestDto.getArtList();
 
-        updateAccordingToType(myReviews,artLists,contentImages); //update타입에 따라 update를 진행
-        myReviews.updateMyReviews(requestDto,uploadImageUrlToS3(mainImage));
+        updateAccordingToType(myReviews,artLists); //update타입에 따라 update를 진행
+        myReviews.updateMyReviews(requestDto,uploadImageUrlToS3(requestDto.getMainImage()));
     }
 
     private String uploadImageUrlToS3(MultipartFile multipartFileImage) {
         if(!multipartFileImage.isEmpty()) {
-            log("uploadImageUrlToS3 : "+multipartFileImage.getOriginalFilename());
             return s3Util.uploadFileToS3Bucket(multipartFileImage);
         }
         else return null;
     }
 
-    private void updateAccordingToType(MyReviews myReviews, List<RequestArtList> artLists, List<MultipartFile> contentImages){
+    private void updateAccordingToType(MyReviews myReviews, List<ModifyRequestArtList> artLists){
         if(myReviews.getMyReviewsContents().size() == artLists.size()){ //content를 수정만 하는 경우
-            updateContents(myReviews.getMyReviewsContents(), artLists, contentImages);
-        } else saveAllMyContentsAndMyExhibitionImages(myReviews,artLists, contentImages); //content를 수정만 하거나, 수정하고 추가하는 경우
+            updateContents(myReviews.getMyReviewsContents(), artLists);
+        } else saveAllMyContentsAndMyExhibitionImages(myReviews,artLists); //content를 수정 + 추가하는 경우 -> 추가하는 건 multipartFIle 저장필요
     }
 
-    private void saveAllMyContentsAndMyExhibitionImages(MyReviews myReviews, List<RequestArtList> artLists, List<MultipartFile> contentImages){
+    private void saveAllMyContentsAndMyExhibitionImages(MyReviews myReviews, List<ModifyRequestArtList> artLists){
         for (int i = myReviews.getMyReviewsContents().size(); i < artLists.size(); i++) {
             MyReviewsContents myReviewsContents = addMyReviewsContentToMyReviews(myReviews, artLists.get(i));
-            addMyExhibitionImagesToMyReviewsContent(myReviewsContents, contentImages.get(i));
+            addMyExhibitionImagesToMyReviewsContent(myReviewsContents, artLists.get(i).getAddImage());
         }
     }
 
-    private void updateContents(List<MyReviewsContents> myReviewsContents, List<RequestArtList> artLists,List<MultipartFile> contentImages) {
+    private void updateContents(List<MyReviewsContents> myReviewsContents, List<ModifyRequestArtList> artLists) {
         for (int i = 0; i <myReviewsContents.size(); i++) {
             MyReviewsContents myReviewsContent = myReviewsContents.get(i);
-            myReviewsContent.getMyExhibitionImage().updateMyExhibitionImages(uploadImageUrlToS3(contentImages.get(i)));
             myReviewsContent.updateMyReviewsContents(artLists.get(i));
+            if (artLists.get(i).getAddImage() != null) { //추가된 이미지가 있는 경우 추가
+                addMyExhibitionImagesToMyReviewsContent(myReviewsContent, artLists.get(i).getAddImage());
+            }
         }
     }
 
-    public MyReviewsContents addMyReviewsContentToMyReviews(MyReviews myReviews, RequestArtList artList) {
+    public <T> MyReviewsContents addMyReviewsContentToMyReviews(MyReviews myReviews, T artList) {
         MyReviewsContents myReviewsContents = MyReviewsContents.toEntity(myReviews, artList); //MyReviewsContents 엔티티 생성
         myReviews.addContents(myReviewsContents);
         myReviewsContents.belongsToMyReviews(myReviews);
@@ -128,6 +140,7 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     }
 
     public void addMyExhibitionImagesToMyReviewsContent(MyReviewsContents myReviewsContents, MultipartFile contentImages) {
+        System.out.println("addMyExhibitionImagesToMyReviewsContent 진입 : "+contentImages.getOriginalFilename());
         MyExhibitionImages myExhibitionImages = MyExhibitionImages.toEntity(uploadImageUrlToS3(contentImages), myReviewsContents);
         myReviewsContents.addImages(myExhibitionImages);
     }

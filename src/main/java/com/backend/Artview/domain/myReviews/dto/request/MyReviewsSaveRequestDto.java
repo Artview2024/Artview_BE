@@ -13,7 +13,7 @@ import java.util.List;
 //        String date,
 //        String gallery,
 //        String rating,
-//        List<RequestArtList> artList
+//        List<SaveRequestArtList> artList
 //
 //) {
 //}
@@ -27,5 +27,5 @@ public class MyReviewsSaveRequestDto {
     String gallery;
     MultipartFile mainImage;
     String rating;
-    List<RequestArtList> artList;
+    List<SaveRequestArtList> artList;
 }
