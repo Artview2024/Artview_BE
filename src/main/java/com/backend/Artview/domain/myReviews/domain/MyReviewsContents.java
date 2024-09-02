@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.myReviews.domain;
 
-import com.backend.Artview.domain.myReviews.dto.request.RequestArtList;
+import com.backend.Artview.domain.myReviews.dto.request.ModifyRequestArtList;
+import com.backend.Artview.domain.myReviews.dto.request.SaveRequestArtList;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,13 +37,31 @@ public class MyReviewsContents extends BaseEntity {
     @OneToOne(mappedBy = "myReviewsContents", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MyExhibitionImages myExhibitionImage;
 
-    public static MyReviewsContents toEntity(MyReviews myReviews, RequestArtList artList) {
-        return MyReviewsContents.builder()
-                .artTitle(artList.getTitle())
-                .artist(artList.getArtist())
-                .note(artList.getContents())
-                .myReviews(myReviews)
-                .build();
+    public static <T> MyReviewsContents toEntity(MyReviews myReviews, T artList) {
+//        return MyReviewsContents.builder()
+//                .artTitle(artList.getTitle())
+//                .artist(artList.getArtist())
+//                .note(artList.getContents())
+//                .myReviews(myReviews)
+//                .build();
+
+        if (artList instanceof SaveRequestArtList) {
+            SaveRequestArtList saveArtList = (SaveRequestArtList) artList;
+            return MyReviewsContents.builder()
+                    .artTitle(saveArtList.getTitle())
+                    .artist(saveArtList.getArtist())
+                    .note(saveArtList.getContents())
+                    .myReviews(myReviews)
+                    .build();
+        } else {
+            ModifyRequestArtList modifyArtList = (ModifyRequestArtList) artList;
+            return MyReviewsContents.builder()
+                    .artTitle(modifyArtList.getTitle())
+                    .artist(modifyArtList.getArtist())
+                    .note(modifyArtList.getContents())
+                    .myReviews(myReviews)
+                    .build();
+        }
     }
 
     public void belongsToMyReviews(MyReviews myReviews) {
@@ -53,7 +72,7 @@ public class MyReviewsContents extends BaseEntity {
         this.myExhibitionImage = myExhibitionImages;
     }
 
-    public void updateMyReviewsContents(RequestArtList artList){
+    public void updateMyReviewsContents(ModifyRequestArtList artList){
         this.artTitle = artList.getTitle();
         this.artist = artList.getArtist();
         this.note = artList.getContents();

@@ -5,13 +5,13 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 //@Builder
-//public record RequestArtList(
+//public record SaveRequestArtList(
 //        @JsonProperty("image") MultipartFile image,
 //        @JsonProperty("title") String title,
 //        @JsonProperty("artist") String artist,
 //        @JsonProperty("contents") String contents
 //) {
-//    public RequestArtList(MultipartFile image, String title, String artist, String contents) {
+//    public SaveRequestArtList(MultipartFile image, String title, String artist, String contents) {
 //        this.image = image;
 //        this.title = title;
 //        this.artist = artist;
@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class RequestArtList{
+public class SaveRequestArtList {
     MultipartFile image;
     String title;
     String artist;
