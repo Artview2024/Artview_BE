@@ -5,6 +5,7 @@ import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.communication.domain.CommunicationImages;
 import com.backend.Artview.domain.communication.domain.CommunicationsKeyword;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
+import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.exception.MyReviewsException;
@@ -57,6 +58,12 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         communications.addCommunicationsKeyword(communicationsKeywordList);
 
         return communicationsRepository.save(communications).getId();
+    }
+
+    @Override
+    @Transactional
+    public Long saveComment(CommunicationsCommentRequestDto dto, Long userId) {
+        return 0L;
     }
 
     public Users findUsersById(Long userId) {

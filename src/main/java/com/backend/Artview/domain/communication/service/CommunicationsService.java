@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.communication.service;
 
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
+import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 
 public interface CommunicationsService {
@@ -10,4 +11,6 @@ public interface CommunicationsService {
 
     //소통 기록 게시하기(저장하기)
     Long saveCommunications(CommunicationSaveRequestDto dto, Long userId);
+
+    Long saveComment(CommunicationsCommentRequestDto dto, Long userId);
 }

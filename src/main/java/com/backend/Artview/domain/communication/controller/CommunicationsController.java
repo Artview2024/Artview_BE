@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.communication.controller;
 
+import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
 import com.backend.Artview.domain.communication.service.CommunicationsService;
@@ -24,6 +25,12 @@ public class CommunicationsController {
     @PostMapping("/save")
     public Long save(@RequestBody CommunicationSaveRequestDto dto) {
         return communicationsService.saveCommunications(dto, userId);
+    }
+
+    //소통 댓글 등록하기
+    @PostMapping("/comment")
+    public Long comment(@RequestBody CommunicationsCommentRequestDto dto){
+        return communicationsService.saveComment(dto,userId);
     }
 
 }
