@@ -7,17 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 
-//public record MyReviewsSaveRequestDto(
-//        Long id,
-//        String name,
-//        String date,
-//        String gallery,
-//        String rating,
-//        List<SaveRequestArtList> artList
-//
-//) {
-//}
-
 @Getter
 @Setter
 public class MyReviewsSaveRequestDto {

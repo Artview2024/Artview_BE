@@ -5,7 +5,6 @@ import com.backend.Artview.domain.myReviews.domain.MyExhibitionImages;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
 import com.backend.Artview.domain.myReviews.dto.request.ModifyRequestArtList;
-import com.backend.Artview.domain.myReviews.dto.request.SaveRequestArtList;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
@@ -140,7 +139,6 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     }
 
     public void addMyExhibitionImagesToMyReviewsContent(MyReviewsContents myReviewsContents, MultipartFile contentImages) {
-        System.out.println("addMyExhibitionImagesToMyReviewsContent 진입 : "+contentImages.getOriginalFilename());
         MyExhibitionImages myExhibitionImages = MyExhibitionImages.toEntity(uploadImageUrlToS3(contentImages), myReviewsContents);
         myReviewsContents.addImages(myExhibitionImages);
     }
