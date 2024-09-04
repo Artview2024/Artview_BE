@@ -1,11 +1,15 @@
 package com.backend.Artview.domain.communication.service;
 
+import com.backend.Artview.domain.communication.Repository.CommentRepository;
 import com.backend.Artview.domain.communication.Repository.CommunicationsRepository;
+import com.backend.Artview.domain.communication.domain.Comment;
 import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.communication.domain.CommunicationImages;
 import com.backend.Artview.domain.communication.domain.CommunicationsKeyword;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
+import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
+import com.backend.Artview.domain.communication.exception.CommunicationException;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.exception.MyReviewsException;
 import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
@@ -19,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.backend.Artview.domain.communication.exception.CommunicationErrorCode.COMMENT_NOT_FOUND;
+import static com.backend.Artview.domain.communication.exception.CommunicationErrorCode.COMMUNICATION_NOT_FOUND;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.USER_MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.users.exception.UserErrorCode.*;
@@ -30,6 +36,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final MyReviewsRepository myReviewsRepository;
     private final CommunicationsRepository communicationsRepository;
     private final UsersRepository usersRepository;
+    private final CommentRepository commentRepository;
 
 
     @Override
@@ -48,7 +55,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     @Transactional
     public Long saveCommunications(CommunicationSaveRequestDto dto, Long userId) {
         verifyMyReviewsIdExists(dto.myReviewId());
-        Communications communications = Communications.toEntity(dto,findUsersById(userId));
+        Communications communications = Communications.toEntity(dto,findUsersByUserId(userId));
 
         List<CommunicationImages> communicationImagesList = dto.images().stream().map(image -> CommunicationImages.toEntity(image, communications)).toList();
         List<CommunicationsKeyword> communicationsKeywordList = dto.keyword().stream().map(keyword -> CommunicationsKeyword.toEntity(keyword, communications)).toList();
@@ -59,8 +66,26 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         return communicationsRepository.save(communications).getId();
     }
 
-    public Users findUsersById(Long userId) {
+    @Override
+    @Transactional
+    public Long saveComment(CommunicationsCommentRequestDto dto, Long userId) {
+        Users user = findUsersByUserId(userId);
+        Communications communications = findCommunicationsByCommunicationsId(dto.communicationsId());
+        Comment parentContent = (dto.parentContentId()!=null)?findCommentByCommentId(dto.parentContentId()):null;
+        Comment comment = Comment.toEntity(dto,user,communications,parentContent);
+        return commentRepository.save(comment).getId();
+    }
+
+    public Comment findCommentByCommentId(Long commentId){
+        return commentRepository.findById(commentId).orElseThrow(()->new CommunicationException(COMMENT_NOT_FOUND));
+    }
+
+    public Users findUsersByUserId(Long userId) {
         return usersRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+    }
+
+    public Communications findCommunicationsByCommunicationsId(Long communicationsId){
+        return communicationsRepository.findById(communicationsId).orElseThrow(() -> new CommunicationException(COMMUNICATION_NOT_FOUND));
     }
 
     public void verifyMyReviewsIdExists(Long myReviewsId){

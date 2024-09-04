@@ -6,6 +6,7 @@ import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,11 +36,14 @@ public class Communications extends BaseEntity {
     @JoinColumn(name = "users_id")
     private Users users;
 
-    @OneToMany(mappedBy = "communications", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "communications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CommunicationsKeyword> communicationsKeywordsList;
 
-    @OneToMany(mappedBy = "communications", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "communications", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CommunicationImages> communicationImagesList;
+
+    @OneToMany(mappedBy = "communications",fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
 
     public static Communications toEntity(CommunicationSaveRequestDto dto, Users users) {

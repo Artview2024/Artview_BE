@@ -1,7 +1,5 @@
 package com.backend.Artview.domain.communication.dto.request;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 public record CommunicationSaveRequestDto(
