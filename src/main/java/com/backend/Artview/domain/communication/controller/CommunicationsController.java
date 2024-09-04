@@ -4,6 +4,7 @@ import com.backend.Artview.domain.communication.domain.Comment;
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
+import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 import com.backend.Artview.domain.communication.service.CommunicationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,12 @@ public class CommunicationsController {
     @PostMapping("/comment")
     public Long comment(@RequestBody CommunicationsCommentRequestDto dto){
         return communicationsService.saveComment(dto,userId);
+    }
+
+    //소통 기록 상세보기 - 내용 조회
+    @GetMapping("/content/{communicationsId}")
+    public DetailCommunicationsContentResponseDto detailCommunicationsContent(@PathVariable Long communicationsId){
+        return communicationsService.detailCommunicationsContent(communicationsId,userId);
     }
 
 }
