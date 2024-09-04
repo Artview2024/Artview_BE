@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.communication.controller;
 
+import com.backend.Artview.domain.communication.domain.Comment;
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
