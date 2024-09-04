@@ -2,6 +2,8 @@ package com.backend.Artview.domain.users.domain;
 
 import com.backend.Artview.domain.communication.domain.Comment;
 import com.backend.Artview.domain.communication.domain.Communications;
+import com.backend.Artview.domain.communication.domain.Like;
+import com.backend.Artview.domain.communication.domain.Scrap;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -44,4 +46,9 @@ public class Users extends BaseEntity {
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private List<Comment> commentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
+    private List<Like> likeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
+    private List<Scrap> scrapList = new ArrayList<>();
 }

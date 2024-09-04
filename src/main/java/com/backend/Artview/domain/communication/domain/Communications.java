@@ -43,7 +43,13 @@ public class Communications extends BaseEntity {
     private List<CommunicationImages> communicationImagesList;
 
     @OneToMany(mappedBy = "communications",fetch = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "communications",fetch = FetchType.LAZY)
+    private List<Like> likeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "communications",fetch = FetchType.LAZY)
+    private List<Scrap> scrapList = new ArrayList<>();
 
 
     public static Communications toEntity(CommunicationSaveRequestDto dto, Users users) {

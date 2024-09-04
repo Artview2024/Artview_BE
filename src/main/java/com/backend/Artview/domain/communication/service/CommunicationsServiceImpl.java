@@ -2,6 +2,8 @@ package com.backend.Artview.domain.communication.service;
 
 import com.backend.Artview.domain.communication.Repository.CommentRepository;
 import com.backend.Artview.domain.communication.Repository.CommunicationsRepository;
+import com.backend.Artview.domain.communication.Repository.LikeRepository;
+import com.backend.Artview.domain.communication.Repository.ScrapRepository;
 import com.backend.Artview.domain.communication.domain.Comment;
 import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.communication.domain.CommunicationImages;
@@ -9,6 +11,7 @@ import com.backend.Artview.domain.communication.domain.CommunicationsKeyword;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
+import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 import com.backend.Artview.domain.communication.exception.CommunicationException;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.exception.MyReviewsException;
@@ -37,6 +40,8 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final CommunicationsRepository communicationsRepository;
     private final UsersRepository usersRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
+    private final ScrapRepository scrapRepository;
 
 
     @Override
@@ -74,6 +79,15 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         Comment parentContent = (dto.parentContentId()!=null)?findCommentByCommentId(dto.parentContentId()):null;
         Comment comment = Comment.toEntity(dto,user,communications,parentContent);
         return commentRepository.save(comment).getId();
+    }
+
+    @Override
+    @Transactional
+    public DetailCommunicationsContentResponseDto detailCommunicationsContent(Long communicationsId,Long userId) {
+        Communications communications = findCommunicationsByCommunicationsId(communicationsId);
+        boolean isHeartClicked = likeRepository.existsByCommunicationsIdAndUsersId(communicationsId, userId);
+        boolean isScrapClicked = scrapRepository.existsByCommunicationsIdAndUsersId(communicationsId,userId);
+        return DetailCommunicationsContentResponseDto.of(communications,isHeartClicked,isScrapClicked);
     }
 
     public Comment findCommentByCommentId(Long commentId){

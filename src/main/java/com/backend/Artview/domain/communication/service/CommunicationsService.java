@@ -3,6 +3,7 @@ package com.backend.Artview.domain.communication.service;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
+import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 
 public interface CommunicationsService {
 
@@ -13,4 +14,6 @@ public interface CommunicationsService {
     Long saveCommunications(CommunicationSaveRequestDto dto, Long userId);
 
     Long saveComment(CommunicationsCommentRequestDto dto, Long userId);
+
+    DetailCommunicationsContentResponseDto detailCommunicationsContent(Long communicationsId, Long userId);
 }
