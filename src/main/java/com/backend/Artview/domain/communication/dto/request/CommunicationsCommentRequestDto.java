@@ -1,7 +1,8 @@
 package com.backend.Artview.domain.communication.dto.request;
 
 public record CommunicationsCommentRequestDto(
-        Long myReviewId,		//전시기록 id
-        String comment	//댓글 내용
+        Long communicationsId,//소통 게시물 id
+        String content,	//댓글 내용
+        Long parentContentId //부모 댓글 id -> 부모 댓글이 없다면 null
 ) {
 }
