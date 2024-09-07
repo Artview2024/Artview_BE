@@ -19,7 +19,7 @@ public record DetailCommunicationsContentResponseDto(
         String content, // 글쓰기 내용
         List<String> keyword, //감상 키워드
         boolean isHeartClicked, //좋아요 클릭 여부
-        boolean isScrapClicked //감상 키워드 클릭 여부
+        boolean isScrapClicked //스크랩 클릭 여부
 ) {
     public static DetailCommunicationsContentResponseDto of(Communications communications,boolean isHeartClicked, boolean isScrapClicked) {
         return DetailCommunicationsContentResponseDto.builder()
