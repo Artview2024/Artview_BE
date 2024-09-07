@@ -3,6 +3,7 @@ package com.backend.Artview.domain.communication.dto.response;
 import com.backend.Artview.domain.communication.domain.CommunicationImages;
 import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.communication.domain.CommunicationsKeyword;
+import com.backend.Artview.domain.users.domain.Users;
 import lombok.Builder;
 
 import java.util.List;
@@ -19,9 +20,12 @@ public record DetailCommunicationsContentResponseDto(
         String content, // 글쓰기 내용
         List<String> keyword, //감상 키워드
         boolean isHeartClicked, //좋아요 클릭 여부
-        boolean isScrapClicked //스크랩 클릭 여부
+        boolean isScrapClicked, //스크랩 클릭 여부
+        Long writerId, //작성자 id
+        String writerName, //작성자 이름
+        String writerImage
 ) {
-    public static DetailCommunicationsContentResponseDto of(Communications communications,boolean isHeartClicked, boolean isScrapClicked) {
+    public static DetailCommunicationsContentResponseDto of(Communications communications,boolean isHeartClicked, boolean isScrapClicked, Users user) {
         return DetailCommunicationsContentResponseDto.builder()
                 .communicationsId(communications.getId())
                 .contentImage(communications.getCommunicationImagesList().stream().map(CommunicationImages::getImageUrl).collect(Collectors.toList()))
@@ -33,6 +37,9 @@ public record DetailCommunicationsContentResponseDto(
                 .keyword(communications.getCommunicationsKeywordsList().stream().map(CommunicationsKeyword::getKeyword).collect(Collectors.toList()))
                 .isHeartClicked(isHeartClicked)
                 .isScrapClicked(isScrapClicked)
+                .writerId(user.getId())
+                .writerName(user.getName())
+                .writerImage(user.getUserImage())
                 .build();
     }
 }
