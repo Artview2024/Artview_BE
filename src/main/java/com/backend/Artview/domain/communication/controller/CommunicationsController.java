@@ -1,13 +1,15 @@
 package com.backend.Artview.domain.communication.controller;
 
-import com.backend.Artview.domain.communication.domain.Comment;
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
+import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 import com.backend.Artview.domain.communication.service.CommunicationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/communications")
@@ -39,6 +41,12 @@ public class CommunicationsController {
     @GetMapping("/content/{communicationsId}")
     public DetailCommunicationsContentResponseDto detailCommunicationsContent(@PathVariable Long communicationsId){
         return communicationsService.detailCommunicationsContent(communicationsId,userId);
+    }
+
+    //소통 기록 상세보기 - 댓글 조회
+    @GetMapping("/comment/{communicationsId}")
+    public List<DetailCommunicationsCommentResponseDto> detailCommunicationsComment(@PathVariable Long communicationsId){
+        return communicationsService.detailCommunicationsComment(communicationsId,userId);
     }
 
 }
