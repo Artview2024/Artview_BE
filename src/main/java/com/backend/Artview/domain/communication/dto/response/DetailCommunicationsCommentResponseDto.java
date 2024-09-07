@@ -10,20 +10,20 @@ import java.util.List;
 
 @Builder
 public record DetailCommunicationsCommentResponseDto(
-        Long userId,
+        Long writerId,
         LocalDateTime createDate,
-        String username,
-        String userImage,
+        String writername,
+        String writerImage,
         String content, //가장 상위 댓글
         List<DetailCommunicationsCommentResponseDto> replies //대댓글
 ) {
 
     public static DetailCommunicationsCommentResponseDto of(Comment comment) {
         return DetailCommunicationsCommentResponseDto.builder()
-                .userId(comment.getUsers().getId())
+                .writerId(comment.getUsers().getId())
                 .createDate(comment.getCreateDate())
-                .username(comment.getUsers().getName())
-                .userImage(comment.getUsers().getUserImage())
+                .writername(comment.getUsers().getName())
+                .writerImage(comment.getUsers().getUserImage())
                 .content(comment.getContent())
                 .replies(new ArrayList<>())
                 .build();
