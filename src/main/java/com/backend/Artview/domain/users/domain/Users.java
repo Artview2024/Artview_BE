@@ -37,6 +37,9 @@ public class Users extends BaseEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "user_image")
+    private String userImage;
+
     @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
     private List<MyReviews> myReviews = new ArrayList<>();
 
