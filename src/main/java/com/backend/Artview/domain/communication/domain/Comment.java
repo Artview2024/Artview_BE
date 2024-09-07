@@ -40,7 +40,6 @@ public class Comment extends BaseEntity {
     private Comment parentContent; //부모 댓글
 
     public static Comment toEntity(CommunicationsCommentRequestDto dto, Users users, Communications communications, Comment parentContent) {
-        System.out.println("parentContent : "+parentContent);
         return Comment.builder()
                 .content(dto.content())
                 .users(users)
