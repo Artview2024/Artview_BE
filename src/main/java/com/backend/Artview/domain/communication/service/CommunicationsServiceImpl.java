@@ -4,12 +4,10 @@ import com.backend.Artview.domain.communication.Repository.CommentRepository;
 import com.backend.Artview.domain.communication.Repository.CommunicationsRepository;
 import com.backend.Artview.domain.communication.Repository.LikeRepository;
 import com.backend.Artview.domain.communication.Repository.ScrapRepository;
-import com.backend.Artview.domain.communication.domain.Comment;
-import com.backend.Artview.domain.communication.domain.Communications;
-import com.backend.Artview.domain.communication.domain.CommunicationImages;
-import com.backend.Artview.domain.communication.domain.CommunicationsKeyword;
+import com.backend.Artview.domain.communication.domain.*;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
+import com.backend.Artview.domain.communication.dto.request.LikeRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
@@ -22,12 +20,10 @@ import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.backend.Artview.domain.communication.exception.CommunicationErrorCode.COMMENT_NOT_FOUND;
 import static com.backend.Artview.domain.communication.exception.CommunicationErrorCode.COMMUNICATION_NOT_FOUND;
@@ -122,6 +118,24 @@ public class CommunicationsServiceImpl implements CommunicationsService {
                 });
 
         return new ArrayList<>(parentCommentMap.values());
+    }
+
+    @Override
+    @Transactional
+    public void likeSave(LikeRequestDto dto, Long userId) {
+        likeRepository.save(getLike(dto, userId));
+    }
+
+    @Override
+    @Transactional
+    public void likeDelete(LikeRequestDto dto, Long userId) {
+        likeRepository.deleteByCommunicationsIdAndUsersId(dto.communicationsId(),userId);
+    }
+
+    private Like getLike(LikeRequestDto dto, Long userId) {
+        Communications communications = findCommunicationsByCommunicationsId(dto.communicationsId());
+        Users user = findUsersByUserId(userId);
+        return Like.toEntity(communications, user);
     }
 
 

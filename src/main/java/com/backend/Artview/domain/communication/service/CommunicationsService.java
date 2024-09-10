@@ -2,6 +2,7 @@ package com.backend.Artview.domain.communication.service;
 
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
+import com.backend.Artview.domain.communication.dto.request.LikeRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
@@ -21,4 +22,8 @@ public interface CommunicationsService {
     DetailCommunicationsContentResponseDto detailCommunicationsContent(Long communicationsId, Long userId);
 
     List<DetailCommunicationsCommentResponseDto> detailCommunicationsComment(Long communicationsId, Long userId);
+
+    void likeSave(LikeRequestDto dto, Long userId);
+
+    void likeDelete(LikeRequestDto dto, Long userId);
 }
