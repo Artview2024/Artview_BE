@@ -10,9 +10,10 @@ import java.util.List;
 
 @Builder
 public record DetailCommunicationsCommentResponseDto(
+        Long commentId, //댓글 id
         Long writerId,
         LocalDateTime createDate,
-        String writername,
+        String writerName,
         String writerImage,
         String content, //가장 상위 댓글
         List<DetailCommunicationsCommentResponseDto> replies //대댓글
@@ -20,9 +21,10 @@ public record DetailCommunicationsCommentResponseDto(
 
     public static DetailCommunicationsCommentResponseDto of(Comment comment) {
         return DetailCommunicationsCommentResponseDto.builder()
+                .commentId(comment.getId())
                 .writerId(comment.getUsers().getId())
                 .createDate(comment.getCreateDate())
-                .writername(comment.getUsers().getName())
+                .writerName(comment.getUsers().getName())
                 .writerImage(comment.getUsers().getUserImage())
                 .content(comment.getContent())
                 .replies(new ArrayList<>())

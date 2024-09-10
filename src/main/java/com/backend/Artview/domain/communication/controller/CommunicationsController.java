@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.communication.controller;
 
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
+import com.backend.Artview.domain.communication.dto.request.LikeRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
@@ -43,10 +44,21 @@ public class CommunicationsController {
         return communicationsService.detailCommunicationsContent(communicationsId,userId);
     }
 
-    //소통 기록 상세보기 - 댓글 조회
+    //소통 기록 상세보기 - 댓글 조회 - 중복 등록하지 못하도록 로직 수정 필요
     @GetMapping("/comment/{communicationsId}")
     public List<DetailCommunicationsCommentResponseDto> detailCommunicationsComment(@PathVariable Long communicationsId){
         return communicationsService.detailCommunicationsComment(communicationsId,userId);
     }
 
+    //소통 좋아요 등록하기
+    @PostMapping("/like")
+    public void communicationsSaveLike(@RequestBody LikeRequestDto dto){
+        communicationsService.toggleLike(dto, userId);
+    }
+
+    //소통 좋아요 삭제하기
+    @DeleteMapping("/like")
+    public void communicationsDeleteLike(@RequestBody LikeRequestDto dto){
+        communicationsService.toggleLike(dto, userId);
+    }
 }
