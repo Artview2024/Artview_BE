@@ -23,7 +23,5 @@ public interface CommunicationsService {
 
     List<DetailCommunicationsCommentResponseDto> detailCommunicationsComment(Long communicationsId, Long userId);
 
-    void likeSave(LikeRequestDto dto, Long userId);
-
-    void likeDelete(LikeRequestDto dto, Long userId);
+    void toggleLike(LikeRequestDto dto, Long userId);
 }

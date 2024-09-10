@@ -25,8 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.backend.Artview.domain.communication.exception.CommunicationErrorCode.COMMENT_NOT_FOUND;
-import static com.backend.Artview.domain.communication.exception.CommunicationErrorCode.COMMUNICATION_NOT_FOUND;
+import static com.backend.Artview.domain.communication.exception.CommunicationErrorCode.*;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.USER_MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.users.exception.UserErrorCode.*;
@@ -84,9 +83,9 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     @Transactional
     public DetailCommunicationsContentResponseDto detailCommunicationsContent(Long communicationsId, Long userId) {
         Communications communications = findCommunicationsByCommunicationsId(communicationsId);
-        boolean isHeartClicked = likeRepository.existsByCommunicationsIdAndUsersId(communicationsId, userId);
+        boolean isHeartClicked = verifyUserSaveLike(communicationsId, userId);
         boolean isScrapClicked = scrapRepository.existsByCommunicationsIdAndUsersId(communicationsId, userId);
-        return DetailCommunicationsContentResponseDto.of(communications, isHeartClicked, isScrapClicked,communications.getUsers());
+        return DetailCommunicationsContentResponseDto.of(communications, isHeartClicked, isScrapClicked, communications.getUsers());
     }
 
     @Override
@@ -122,14 +121,27 @@ public class CommunicationsServiceImpl implements CommunicationsService {
 
     @Override
     @Transactional
-    public void likeSave(LikeRequestDto dto, Long userId) {
-        likeRepository.save(getLike(dto, userId));
+    public void toggleLike(LikeRequestDto dto, Long userId) {
+        Like like = getLike(dto, userId);
+        // 유저가 좋아요를 눌렀는지 확인
+        if (verifyUserSaveLike(dto.communicationsId(), userId)) //유저가 이미 like를 눌렀음
+            deleteLike(dto.isUserClickLick(),like);
+        else
+            saveLike(dto.isUserClickLick(), like);
     }
 
-    @Override
-    @Transactional
-    public void likeDelete(LikeRequestDto dto, Long userId) {
-        likeRepository.deleteByCommunicationsIdAndUsersId(dto.communicationsId(),userId);
+    public void saveLike(boolean isUserClickLike, Like like) {
+        if (isUserClickLike) throw new CommunicationException(USER_ALREADY_REGISTER_LIKE);
+        likeRepository.save(like);
+    }
+
+    public void deleteLike(boolean isUserClickLlike, Like like) {
+        if (!isUserClickLlike) throw new CommunicationException(USER_NOT_REGISTER_LIKE);
+        likeRepository.deleteByCommunicationsIdAndUsersId(like.getCommunications().getId(), like.getUsers().getId());
+    }
+
+    public boolean verifyUserSaveLike(Long communicationsId, Long userId) {
+        return likeRepository.existsByCommunicationsIdAndUsersId(communicationsId, userId);
     }
 
     private Like getLike(LikeRequestDto dto, Long userId) {
