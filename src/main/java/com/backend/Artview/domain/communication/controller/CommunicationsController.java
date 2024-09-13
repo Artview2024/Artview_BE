@@ -61,4 +61,10 @@ public class CommunicationsController {
     public void communicationsDeleteLike(@RequestBody LikeRequestDto dto){
         communicationsService.toggleLike(dto, userId);
     }
+
+    //소통 페이지 둘러보기 - 전체
+    @GetMapping("/main/all/{cursor}") //cursor : 페이지번호
+    public void findAllCommunications(@PathVariable int cursor){
+        communicationsService.findAllCommunications(cursor, userId);
+    }
 }
