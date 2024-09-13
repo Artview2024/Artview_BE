@@ -24,4 +24,7 @@ public interface CommunicationsService {
     List<DetailCommunicationsCommentResponseDto> detailCommunicationsComment(Long communicationsId, Long userId);
 
     void toggleLike(LikeRequestDto dto, Long userId);
+
+    void findAllCommunications(int cursor, Long userId);
+
 }

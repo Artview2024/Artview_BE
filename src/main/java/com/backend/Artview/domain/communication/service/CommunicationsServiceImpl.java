@@ -130,6 +130,11 @@ public class CommunicationsServiceImpl implements CommunicationsService {
             saveLike(dto.isUserClickLick(), like);
     }
 
+    @Override
+    public void findAllCommunications(int cursor, Long userId) {
+
+    }
+
     public void saveLike(boolean isUserClickLike, Like like) {
         if (isUserClickLike) throw new CommunicationException(USER_ALREADY_REGISTER_LIKE);
         likeRepository.save(like);
