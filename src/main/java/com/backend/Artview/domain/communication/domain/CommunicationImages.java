@@ -20,13 +20,17 @@ public class CommunicationImages extends BaseEntity {
     @Column(name = "communications_images_url")
     private String imageUrl;
 
+    @Column(name = "communications_images_title")
+    private String imageTitle;
+
     @ManyToOne
     @JoinColumn(name = "communications_id")
     private Communications communications;
 
-    public static CommunicationImages toEntity(String image,Communications communications) {
+    public static CommunicationImages toEntity(String image,String imageTitle,Communications communications) {
         return CommunicationImages.builder()
                 .imageUrl(image)
+                .imageTitle(imageTitle)
                 .communications(communications)
                 .build();
     }

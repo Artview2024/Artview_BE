@@ -7,12 +7,13 @@ import com.backend.Artview.domain.users.domain.Users;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Builder
 public record DetailCommunicationsContentResponseDto(
         Long communicationsId,
-        List<String> contentImage,
+        Map<String,String> ImageAndTitle,
         String name, //전시회명
         String rate, //별점
         String date, //방문날짜
@@ -20,15 +21,16 @@ public record DetailCommunicationsContentResponseDto(
         String content, // 글쓰기 내용
         List<String> keyword, //감상 키워드
         boolean isHeartClicked, //좋아요 클릭 여부
-        boolean isScrapClicked, //스크랩 클릭 여부
         Long writerId, //작성자 id
         String writerName, //작성자 이름
         String writerImage
+
 ) {
-    public static DetailCommunicationsContentResponseDto of(Communications communications,boolean isHeartClicked, boolean isScrapClicked, Users user) {
+    public static DetailCommunicationsContentResponseDto of(Communications communications,boolean isHeartClicked, Map<String, String> imageAndTitle) {
+        Users user = communications.getUsers();
         return DetailCommunicationsContentResponseDto.builder()
                 .communicationsId(communications.getId())
-                .contentImage(communications.getCommunicationImagesList().stream().map(CommunicationImages::getImageUrl).collect(Collectors.toList()))
+                .ImageAndTitle(imageAndTitle)
                 .name(communications.getName())
                 .rate(communications.getRate())
                 .date(communications.getDate())
@@ -36,7 +38,6 @@ public record DetailCommunicationsContentResponseDto(
                 .content(communications.getContent())
                 .keyword(communications.getCommunicationsKeywordsList().stream().map(CommunicationsKeyword::getKeyword).collect(Collectors.toList()))
                 .isHeartClicked(isHeartClicked)
-                .isScrapClicked(isScrapClicked)
                 .writerId(user.getId())
                 .writerName(user.getName())
                 .writerImage(user.getUserImage())

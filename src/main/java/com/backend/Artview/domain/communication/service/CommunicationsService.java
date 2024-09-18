@@ -4,6 +4,7 @@ import com.backend.Artview.domain.communication.dto.request.CommunicationSaveReq
 import com.backend.Artview.domain.communication.dto.request.CommunicationsCommentRequestDto;
 import com.backend.Artview.domain.communication.dto.request.LikeRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
+import com.backend.Artview.domain.communication.dto.response.CommunicationsMainResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 
@@ -25,6 +26,6 @@ public interface CommunicationsService {
 
     void toggleLike(LikeRequestDto dto, Long userId);
 
-    void findAllCommunications(int cursor, Long userId);
+    CommunicationsMainResponseDto findAllCommunications(Long cursor, Long userId);
 
 }

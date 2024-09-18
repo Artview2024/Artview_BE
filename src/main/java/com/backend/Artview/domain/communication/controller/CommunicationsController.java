@@ -4,6 +4,7 @@ import com.backend.Artview.domain.communication.dto.request.CommunicationsCommen
 import com.backend.Artview.domain.communication.dto.request.LikeRequestDto;
 import com.backend.Artview.domain.communication.dto.response.CommunicationRetrieveResponseDto;
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
+import com.backend.Artview.domain.communication.dto.response.CommunicationsMainResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 import com.backend.Artview.domain.communication.service.CommunicationsService;
@@ -64,7 +65,7 @@ public class CommunicationsController {
 
     //소통 페이지 둘러보기 - 전체
     @GetMapping("/main/all/{cursor}") //cursor : 페이지번호
-    public void findAllCommunications(@PathVariable int cursor){
-        communicationsService.findAllCommunications(cursor, userId);
+    public CommunicationsMainResponseDto findAllCommunications(@PathVariable Long cursor){
+        return communicationsService.findAllCommunications(cursor, userId);
     }
 }
