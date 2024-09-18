@@ -20,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyReviewsController {
 
-    private static final Logger log = LoggerFactory.getLogger(MyReviewsController.class);
     private final MyReviewsService myReviewsService;
     private final S3Util s3Util;
 
