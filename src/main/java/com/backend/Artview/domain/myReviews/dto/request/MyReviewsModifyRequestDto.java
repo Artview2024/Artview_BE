@@ -15,7 +15,7 @@ public class MyReviewsModifyRequestDto{
         String date;
         String gallery;
         MultipartFile mainImage;
-        String originalMainImage;
+        String originMainImage;
         String rating;
         List<ModifyRequestArtList> artList;
 }
