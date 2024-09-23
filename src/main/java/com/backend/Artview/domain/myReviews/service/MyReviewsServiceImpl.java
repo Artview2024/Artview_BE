@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.IMAGE_TYPE_INCORRECT;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.users.exception.UserErrorCode.USER_NOT_FOUND;
 import static java.rmi.server.LogStream.log;
@@ -98,7 +99,15 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         List<ModifyRequestArtList> artLists = requestDto.getArtList();
 
         updateAccordingToType(myReviews,artLists); //update타입에 따라 update를 진행
-        myReviews.updateMyReviews(requestDto,uploadImageUrlToS3(requestDto.getMainImage()));
+        myReviews.updateMyReviews(requestDto,distinguishImageType(requestDto.getMainImage()));
+    }
+
+    public <T>String distinguishImageType(T mainImage){
+        if(mainImage instanceof String){
+            return (String) mainImage;
+        } else if(mainImage instanceof MultipartFile){
+            return uploadImageUrlToS3((MultipartFile) mainImage);
+        } else throw new MyReviewsException(IMAGE_TYPE_INCORRECT);
     }
 
     private String uploadImageUrlToS3(MultipartFile multipartFileImage) {

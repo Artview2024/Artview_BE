@@ -150,7 +150,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     @Transactional
     public CommunicationsMainResponseDto findAllCommunications(Long cursor, Long userId) {
 
-        verifyExistCommunications(cursor);
+//        verifyExistCommunications(cursor);
 
         PageRequest pageRequest = PageRequest.of(0,DEFAULT_PAGE_SIZE,Sort.by("createDate").descending());
 
