@@ -38,12 +38,6 @@ public class MyReviewsContents extends BaseEntity {
     private MyExhibitionImages myExhibitionImage;
 
     public static <T> MyReviewsContents toEntity(MyReviews myReviews, T artList) {
-//        return MyReviewsContents.builder()
-//                .artTitle(artList.getTitle())
-//                .artist(artList.getArtist())
-//                .note(artList.getContents())
-//                .myReviews(myReviews)
-//                .build();
 
         if (artList instanceof SaveRequestArtList) {
             SaveRequestArtList saveArtList = (SaveRequestArtList) artList;
