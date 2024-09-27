@@ -2,7 +2,7 @@ package com.backend.Artview.global.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.backend.Artview.global.exception.S3exception.S3Exception;
+import com.backend.Artview.global.exception.s3Exception.S3Exception;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +14,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import static com.backend.Artview.global.exception.S3exception.S3UtilErrorCode.S3_UPLOAD_FAILED;
+import static com.backend.Artview.global.exception.s3Exception.S3UtilErrorCode.S3_UPLOAD_FAILED;
 
 @Component
 @RequiredArgsConstructor
