@@ -54,4 +54,10 @@ public class Users extends BaseEntity {
 
     @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
     private List<Scrap> scrapList = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "followee",fetch = FetchType.LAZY)
+//    private List<Follow> followee = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "follower",fetch = FetchType.LAZY)
+//    private List<Follow> follower = new ArrayList<>();
 }

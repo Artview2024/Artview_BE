@@ -23,4 +23,6 @@ public interface CommunicationsRepository extends JpaRepository<Communications,L
     Slice<Communications> findCommunicationsByCursorTopBy(@Param("cursor") Long cursor, PageRequest pageRequest);
 
     Slice<Communications> findCommunicationsTopBy(PageRequest pageRequest);
+
+    List<Communications> findAllByUsersId(Long userId);
 }
