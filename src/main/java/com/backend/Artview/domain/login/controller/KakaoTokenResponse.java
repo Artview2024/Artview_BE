@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.users.controller;
+package com.backend.Artview.domain.login.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
