@@ -1,4 +1,4 @@
-package com.backend.Artview.global.exception.jwtException;
+package com.backend.Artview.global.jwt.jwtException;
 
 import com.backend.Artview.global.exception.ApplicationException;
 
