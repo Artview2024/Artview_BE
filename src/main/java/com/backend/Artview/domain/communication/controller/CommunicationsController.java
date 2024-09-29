@@ -8,6 +8,7 @@ import com.backend.Artview.domain.communication.dto.response.CommunicationsMainR
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 import com.backend.Artview.domain.communication.service.CommunicationsService;
+import com.backend.Artview.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class CommunicationsController {
 
     private final CommunicationsService communicationsService;
+    private final JwtProvider jwtProvider;
     private final Long userId = 10001L; //로그인 구현전까지 임시 사용
 
     //소통 기록 불러오기
@@ -29,14 +31,20 @@ public class CommunicationsController {
 
     //소통 기록 게시하기(저장하기)
     @PostMapping("/save")
-    public Long save(@RequestBody CommunicationSaveRequestDto dto) {
-        return communicationsService.saveCommunications(dto, userId);
+    public Long save(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CommunicationSaveRequestDto dto) {
+
+        String accessToken = jwtProvider.getTokenFromHeader(authorizationHeader);
+
+        return communicationsService.saveCommunications(dto, jwtProvider.getUserId(accessToken));
     }
 
     //소통 댓글 등록하기
     @PostMapping("/comment")
-    public Long comment(@RequestBody CommunicationsCommentRequestDto dto){
-        return communicationsService.saveComment(dto,userId);
+    public Long comment(@RequestHeader("Authorization") String authorizationHeader,@RequestBody CommunicationsCommentRequestDto dto){
+
+        String accessToken = jwtProvider.getTokenFromHeader(authorizationHeader);
+
+        return communicationsService.saveComment(dto,jwtProvider.getUserId(accessToken));
     }
 
     //소통 기록 상세보기 - 내용 조회
