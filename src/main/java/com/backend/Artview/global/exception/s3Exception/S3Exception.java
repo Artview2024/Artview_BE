@@ -1,4 +1,4 @@
-package com.backend.Artview.global.exception.S3exception;
+package com.backend.Artview.global.exception.s3Exception;
 
 import com.backend.Artview.global.exception.ApplicationException;
 
