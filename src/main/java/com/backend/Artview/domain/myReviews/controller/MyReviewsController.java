@@ -46,8 +46,7 @@ public class MyReviewsController {
 
     //전시 기록 작성하기(등록하기)
     @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Long saveMyReviews(@ModelAttribute MyReviewsSaveRequestDto requestDto
-    ) {
+    public Long saveMyReviews(@ModelAttribute MyReviewsSaveRequestDto requestDto) {
         return myReviewsService.saveMyReviews(requestDto);
     }
 
