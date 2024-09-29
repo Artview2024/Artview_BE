@@ -1,7 +1,13 @@
-package com.backend.Artview.domain.login.service;
+package com.backend.Artview.domain.auth.service;
 
-import com.backend.Artview.domain.login.domain.KakaoTokenResponseDto;
-import com.backend.Artview.domain.login.domain.KakaoUserInfoResponseDto;
+import com.backend.Artview.domain.auth.domain.response.KakaoSignUpResponseDto;
+import com.backend.Artview.domain.auth.domain.response.KakaoTokenResponseDto;
+import com.backend.Artview.domain.auth.domain.response.KakaoUserInfoResponseDto;
+import com.backend.Artview.domain.users.domain.Users;
+import com.backend.Artview.domain.users.exception.UserException;
+import com.backend.Artview.domain.users.repository.UsersRepository;
+import com.backend.Artview.global.jwt.JwtProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -13,34 +19,60 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.backend.Artview.domain.users.exception.UserErrorCode.DUPLICATE_KAKAO_ID;
+
 
 @Service
 @Slf4j
-public class LoginOauthService {
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService{
 
     @Value("${oauth2.client.registration.kakao.token-uri}")
-    private static String TOKEN_URI;
+    private String TOKEN_URI;
 
     @Value("${oauth2.client.registration.kakao.user-info-uri}")
-    private static String USER_INFO_URI;
+    private String USER_INFO_URI;
 
     @Value("${oauth2.client.registration.kakao.redirect-uri}")
-    private static String REDIRECT_URI;
+    private String REDIRECT_URI;
 
     @Value("${oauth2.client.registration.kakao.grant-type}")
-    private static String GRANT_TYPE;
+    private String GRANT_TYPE;
 
     @Value("${oauth2.client.registration.kakao.client-id}")
-    private static String CLIENT_ID;
+    private String CLIENT_ID;
 
     @Value("${oauth2.client.registration.kakao.client-secret}")
-    private static String CLIENT_SECRET;
+    private String CLIENT_SECRET;
 
     @Value("${oauth2.client.registration.kakao.content-type}")
-    private static String CONTENT_TYPE;
+    private String CONTENT_TYPE;
+
+    private final UsersRepository userRepository;
+    private final JwtProvider jwtProvider;
     RestTemplate rt = new RestTemplate();
 
-    public void getKakaoAccessToken(String code){
+
+    @Override
+    public KakaoSignUpResponseDto signUpWithOauth2(String code) {
+        String kakaoAccessToken = getKakaoAccessToken(code);
+        KakaoUserInfoResponseDto kakaoUserInfo = getUserInfoUsingAccessToken(kakaoAccessToken);
+
+        // 이미 회원가입 된 유저인지 확인
+        validateNotAlreadySignIn(kakaoUserInfo.getId());
+
+        Users user = userRepository.save(Users.toEntity(kakaoUserInfo));
+
+        return KakaoSignUpResponseDto.of(user,jwtProvider.createAccessToken(user.getId()),jwtProvider.createRefreshToken());
+    }
+
+    private void validateNotAlreadySignIn(Long id) {
+        if(userRepository.existsById(id)) throw new UserException(DUPLICATE_KAKAO_ID);
+    }
+
+    public String getKakaoAccessToken(String code){
+        log.info("URI : "+TOKEN_URI);
+        log.info("CONTENT_TYPE : "+CONTENT_TYPE);
 
         // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
         HttpHeaders headers = new HttpHeaders();
@@ -61,20 +93,19 @@ public class LoginOauthService {
 
         // POST 방식으로 Http 요청한다. 그리고 response 변수의 응답 받는다.
         ResponseEntity<KakaoTokenResponseDto> kakaoTokenResponse = rt.exchange(
-                TOKEN_URI, // https://{요청할 서버 주소}
+                TOKEN_URI,
                 HttpMethod.POST, // 요청할 방식
                 kakaoTokenRequest, // 요청할 때 보낼 데이터
                 KakaoTokenResponseDto.class // 요청 시 반환되는 데이터 타입
         );
 
-        log.info("accessTokenStatusCode : "+kakaoTokenResponse.getStatusCode());
         log.info("accessToken : "+kakaoTokenResponse.getBody().getAccess_token());
         log.info("refreshToken : "+kakaoTokenResponse.getBody().getRefresh_token());
 
-        getUserInfo(String.valueOf(kakaoTokenResponse.getBody().getAccess_token()));
+        return kakaoTokenResponse.getBody().getAccess_token();
     }
 
-    public void getUserInfo(String accessToken){
+    public KakaoUserInfoResponseDto getUserInfoUsingAccessToken(String accessToken){
         // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization","Bearer " + accessToken);
@@ -93,5 +124,8 @@ public class LoginOauthService {
 
         log.info("userInfoResponseCode : "+kakaoUserInfoResponse.getStatusCode());
         log.info("userInfoResponse : "+kakaoUserInfoResponse.getBody());
+
+        return kakaoUserInfoResponse.getBody();
     }
+
 }
