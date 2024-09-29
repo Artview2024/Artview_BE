@@ -1,6 +1,6 @@
 package com.backend.Artview.global.jwt;
 
-import com.backend.Artview.global.exception.jwtException.JwtException;
+import com.backend.Artview.global.jwt.jwtException.JwtException;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import static com.backend.Artview.global.exception.jwtException.JwtErrorCode.*;
+import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.*;
 
 @Slf4j
 @Component
@@ -21,7 +21,7 @@ import static com.backend.Artview.global.exception.jwtException.JwtErrorCode.*;
 public class JwtProvider {
 
     @Value("${jwt.secret-key}")
-    private static String secretKey;
+    private String secretKey;
 
     @Value("${jwt.access-expiration-hours}")
     private long accessExpirationHours;
@@ -32,9 +32,10 @@ public class JwtProvider {
     // access token 발급 method
     public String createAccessToken(Long userId) {
         return Jwts.builder()
+                .claim("userId",userId)
                 .setHeaderParam("type","accessToken")
                 .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
-                .setSubject(String.valueOf(userId))  // JWT 토큰 제목
+//                .setSubject(String.valueOf(userId))  // JWT 토큰 제목
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))    // JWT 토큰 발급 시간
                 .setExpiration(Date.from(Instant.now().plus(accessExpirationHours, ChronoUnit.HOURS)))    // JWT 토큰 만료 시간
                 .compact(); // JWT 토큰 생성
@@ -52,16 +53,20 @@ public class JwtProvider {
     // 토큰 subject꺼내기 (유저 id)
     public Long getUserId(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token)
                 .getBody()
                 .get("userId", Long.class);
     }
 
+    public String getTokenFromHeader(String authorizationHeader) {
+        return authorizationHeader.substring(7);
+    }
+
     // refresh 토큰 확인
     public Boolean isRefreshToken(String refreshToken) {
         try {
-            return getHeaderFromJWT(refreshToken).get("type").toString().equals("refresh");
+            return getHeaderFromJWT(refreshToken).get("type").toString().equals("refreshToken");
         } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
             throw new JwtException(EXPIRED_JWT_REFRESH_TOKEN);
@@ -74,7 +79,7 @@ public class JwtProvider {
     // access 토큰 확인
     public Boolean validateAccessToken(String accessToken) {
         try {
-            if (getHeaderFromJWT(accessToken).get("type").toString().equals("access")) return true;
+            if (getHeaderFromJWT(accessToken).get("type").toString().equals("accessToken")) return true;
             else throw new JwtException(TOKEN_TYPE_NOT_MATCH);
         } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
@@ -89,7 +94,7 @@ public class JwtProvider {
 
     public Header getHeaderFromJWT(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token)
                 .getHeader();
     }
