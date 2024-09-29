@@ -1,6 +1,6 @@
 package com.backend.Artview.global.jwt;
 
-import com.backend.Artview.global.exception.jwtException.JwtException;
+import com.backend.Artview.global.jwt.jwtException.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.backend.Artview.global.exception.jwtException.JwtErrorCode.UNAUTHORIZED;
+import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.UNAUTHORIZED;
 
 
 //API 요청이 들어왔을때 컨트롤러로 넘어가기전 토큰을 확인해주는 필터함수
@@ -33,7 +33,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<RequestMatcher> whiteUrlMatchers = Arrays.asList(
             //로그인 관련 URI
-            new AntPathRequestMatcher("login/oauth2/kakao"),
+            new AntPathRequestMatcher("/api/auth/**"),
+
+            //소통 페이지 관련 URI
+            new AntPathRequestMatcher("/api/communications/main/all/{cursor}"),
+            new AntPathRequestMatcher("/api/communications/content/{communicationsId}"),
 
             //기타 URI
             new AntPathRequestMatcher("/api/health")
@@ -42,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        log.info("JwtExceptionFilter 진입");
         //whiteUrlMatcher url일 경우 jwt 인증 건너뛰기
         for (RequestMatcher requestMatcher : whiteUrlMatchers) {
             if (requestMatcher.matches(request)) {
@@ -61,6 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     //AccessToken 가져오기
     private String getAccessTokenFromHttpServletRequest(HttpServletRequest request) {
         String accessToken = request.getHeader(AuthConstants.AUTH_HEADER);
+
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(AuthConstants.TOKEN_TYPE)) {
             return accessToken.split(" ")[1]; //토큰 꺼내기
         }
