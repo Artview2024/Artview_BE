@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.login.domain;
+package com.backend.Artview.domain.auth.domain.response;
 
 import lombok.Data;
 
