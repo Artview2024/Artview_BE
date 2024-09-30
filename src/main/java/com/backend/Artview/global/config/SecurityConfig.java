@@ -41,15 +41,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.
-                formLogin(AbstractHttpConfigurer::disable)
+                formLogin(AbstractHttpConfigurer::disable) //form 기반 로그인 방식을 비활성화. UsernamePasswordAuthenticationFilter를 거치지 않음
                 .httpBasic(HttpBasicConfigurer::disable)
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(authorize ->
-//                        authorize
-//                                .requestMatchers("/**").permitAll()
-//                                .anyRequest().permitAll()
-//                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class);
         return httpSecurity.build();

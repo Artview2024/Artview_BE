@@ -46,7 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JwtExceptionFilter 진입");
+        log.info("JwtAuthenticationFilter 진입");
+
         //whiteUrlMatcher url일 경우 jwt 인증 건너뛰기
         for (RequestMatcher requestMatcher : whiteUrlMatchers) {
             if (requestMatcher.matches(request)) {
@@ -54,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         }
+        log.info("requst 인증하는중");
 
         String accessToken = getAccessTokenFromHttpServletRequest(request);
         jwtProvider.validateAccessToken(accessToken);
@@ -64,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     //AccessToken 가져오기
     private String getAccessTokenFromHttpServletRequest(HttpServletRequest request) {
+        log.info("getAccessTokenFromHttpServletRequest 진입");
         String accessToken = request.getHeader(AuthConstants.AUTH_HEADER);
 
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(AuthConstants.TOKEN_TYPE)) {

@@ -1,12 +1,18 @@
 package com.backend.Artview.domain.auth.service;
 
-import com.backend.Artview.domain.auth.domain.response.KakaoSignUpResponseDto;
-import com.backend.Artview.domain.auth.domain.response.KakaoTokenResponseDto;
-import com.backend.Artview.domain.auth.domain.response.KakaoUserInfoResponseDto;
+import com.backend.Artview.domain.auth.domain.RefreshToken;
+import com.backend.Artview.domain.auth.dto.request.ReissueRequestDto;
+import com.backend.Artview.domain.auth.dto.response.KakaoSignUpResponseDto;
+import com.backend.Artview.domain.auth.dto.response.KakaoTokenResponseDto;
+import com.backend.Artview.domain.auth.dto.response.KakaoUserInfoResponseDto;
+import com.backend.Artview.domain.auth.dto.response.ReissueResponseDto;
+import com.backend.Artview.domain.auth.repository.RefreshTokenRepository;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import com.backend.Artview.global.jwt.JwtProvider;
+import com.backend.Artview.global.jwt.jwtException.JwtException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +26,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import static com.backend.Artview.domain.users.exception.UserErrorCode.DUPLICATE_KAKAO_ID;
+import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.REFRESH_TOKEN_NOT_FOUND;
 
 
 @Service
@@ -49,25 +56,57 @@ public class AuthServiceImpl implements AuthService{
     private String CONTENT_TYPE;
 
     private final UsersRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
     RestTemplate rt = new RestTemplate();
 
 
     @Override
-    public KakaoSignUpResponseDto signUpWithOauth2(String code) {
-        String kakaoAccessToken = getKakaoAccessToken(code);
-        KakaoUserInfoResponseDto kakaoUserInfo = getUserInfoUsingAccessToken(kakaoAccessToken);
+    public KakaoSignUpResponseDto signUpWithOauth2(String kakaoAccessToken) {
+//        String kakaoAccessToken = getKakaoAccessToken(code);
+//        jwtProvider.getTokenFromHeader(kakaoAccessToken);
+
+        KakaoUserInfoResponseDto kakaoUserInfo = getUserInfoUsingAccessToken(jwtProvider.getTokenFromHeader(kakaoAccessToken));
 
         // 이미 회원가입 된 유저인지 확인
         validateNotAlreadySignIn(kakaoUserInfo.getId());
 
         Users user = userRepository.save(Users.toEntity(kakaoUserInfo));
 
-        return KakaoSignUpResponseDto.of(user,jwtProvider.createAccessToken(user.getId()),jwtProvider.createRefreshToken());
+        String userRefreshToken = jwtProvider.createRefreshToken();
+
+        saveUserRefreshToken(userRefreshToken,user);
+
+        return KakaoSignUpResponseDto.of(user,jwtProvider.createAccessToken(user.getId()),userRefreshToken);
     }
 
-    private void validateNotAlreadySignIn(Long id) {
-        if(userRepository.existsById(id)) throw new UserException(DUPLICATE_KAKAO_ID);
+    @Override
+    public ReissueResponseDto reissue(ReissueRequestDto dto) {
+        log.info("reissueService");
+        Long userId = null;
+        try {
+            userId = Long.parseLong(jwtProvider.decodeJwtPayloadSubject(dto.accessToken()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        jwtProvider.validateRefreshToken(dto.refreshToken());
+        validateUsersIdAndRefreshToken(dto.refreshToken(), userId);
+
+        return ReissueResponseDto.of(jwtProvider.createAccessToken(userId),jwtProvider.createRefreshToken());
+    }
+
+    private void validateUsersIdAndRefreshToken(String refreshToken, Long userId){
+        refreshTokenRepository.findByRefreshTokenAndUsersId(refreshToken,userId)
+                .orElseThrow(() -> new JwtException(REFRESH_TOKEN_NOT_FOUND));
+    }
+
+    private void saveUserRefreshToken(String userRefreshToken, Users users) {
+        refreshTokenRepository.save(RefreshToken.toEntity(userRefreshToken,users));
+    }
+
+    private void validateNotAlreadySignIn(Long kakaoId) {
+        if(userRepository.existsByKakaoId(kakaoId)) throw new UserException(DUPLICATE_KAKAO_ID);
     }
 
     public String getKakaoAccessToken(String code){
