@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.users.domain;
 
-import com.backend.Artview.domain.auth.domain.response.KakaoUserInfoResponseDto;
+import com.backend.Artview.domain.auth.domain.RefreshToken;
+import com.backend.Artview.domain.auth.dto.response.KakaoUserInfoResponseDto;
 import com.backend.Artview.domain.communication.domain.Comment;
 import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.communication.domain.Like;
@@ -58,6 +59,9 @@ public class Users extends BaseEntity {
 
     @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
     private List<Scrap> scrapList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "users",fetch = FetchType.LAZY)
+    private RefreshToken refreshToken;
 
 
 //    @OneToMany(mappedBy = "followee",fetch = FetchType.LAZY)

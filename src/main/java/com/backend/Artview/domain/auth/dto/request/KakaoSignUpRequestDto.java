@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.auth.domain.request;
+package com.backend.Artview.domain.auth.dto.request;
 
 public record KakaoSignUpRequestDto(
         String kakaoAccessToken,

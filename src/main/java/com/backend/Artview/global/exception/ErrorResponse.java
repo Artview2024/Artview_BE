@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.FieldError;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 

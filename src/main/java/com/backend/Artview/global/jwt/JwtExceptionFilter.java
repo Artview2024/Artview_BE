@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -34,15 +35,19 @@ OncePerRequestFilter를 사용하면 인증,인가를 한번만 거치고 바로
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info("JwtExceptionFilter 진입");
         log.info("CONNECT URL : " + request.getRequestURI());
         try {
             filterChain.doFilter(request, response);
         } catch (JwtException e) { //HttpStatus.UNAUTHORIZED -> 인가
             handleJwtException(response, e);
         } catch (ForbiddenException e) { //AuthenticationException -> 인증
-                handleJwtException(response, e);
+            handleJwtException(response, e);
+        } catch (HttpClientErrorException e) {
+            handleJwtException(response, e);
         } catch (Exception e) {
             handleJwtException(response, e);
         }
@@ -51,13 +56,14 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
     // Send Error Message to Client
     private void handleJwtException(HttpServletResponse response, Exception exception) throws IOException {
-       log.error("에러 : "+exception.getMessage());
+        log.error("handleJwtException response : " + response);
+        log.error("handleJwtException 에러 : " + exception.getMessage());
 
         BaseErrorCode baseErrorCode;
 
-        if(exception instanceof JwtException jwtException){
+        if (exception instanceof JwtException jwtException) {
             baseErrorCode = jwtException.getErrorCode();
-        } else if(exception instanceof ForbiddenException forbiddenException){
+        } else if (exception instanceof ForbiddenException forbiddenException) {
             baseErrorCode = forbiddenException.getErrorCode();
         } else baseErrorCode = INTERNAL_SERVER_ERROR;
 

@@ -1,17 +1,24 @@
 package com.backend.Artview.global.jwt;
 
 import com.backend.Artview.global.jwt.jwtException.JwtException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 
 import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.*;
 
@@ -28,6 +35,7 @@ public class JwtProvider {
 
     @Value("${jwt.refresh-expiration-hours}")
     private long refreshExpirationHours;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     // access token 발급 method
     public String createAccessToken(Long userId) {
@@ -37,7 +45,7 @@ public class JwtProvider {
                 .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
 //                .setSubject(String.valueOf(userId))  // JWT 토큰 제목
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))    // JWT 토큰 발급 시간
-                .setExpiration(Date.from(Instant.now().plus(accessExpirationHours, ChronoUnit.HOURS)))    // JWT 토큰 만료 시간
+                .setExpiration(Date.from(Instant.now().plus(accessExpirationHours, ChronoUnit.SECONDS)))    // JWT 토큰 만료 시간
                 .compact(); // JWT 토큰 생성
     }
 
@@ -59,12 +67,19 @@ public class JwtProvider {
                 .get("userId", Long.class);
     }
 
+    public String decodeJwtPayloadSubject(String oldAccessToken) throws JsonProcessingException {
+        return objectMapper.readValue(
+                new String(Base64.getDecoder().decode(oldAccessToken.split("\\.")[1]), StandardCharsets.UTF_8),
+                Map.class
+        ).get("sub").toString();
+    }
+
     public String getTokenFromHeader(String authorizationHeader) {
         return authorizationHeader.substring(7);
     }
 
     // refresh 토큰 확인
-    public Boolean isRefreshToken(String refreshToken) {
+    public Boolean validateRefreshToken(String refreshToken) {
         try {
             return getHeaderFromJWT(refreshToken).get("type").toString().equals("refreshToken");
         } catch (ExpiredJwtException e) {
@@ -81,7 +96,7 @@ public class JwtProvider {
         try {
             if (getHeaderFromJWT(accessToken).get("type").toString().equals("accessToken")) return true;
             else throw new JwtException(TOKEN_TYPE_NOT_MATCH);
-        } catch (ExpiredJwtException e) {
+            } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
             log.error("ACCESS TOKEN이 만료되었습니다. 재발급 받아주세요.");
             throw new JwtException(EXPIRED_JWT_ACCESS_TOKEN);
