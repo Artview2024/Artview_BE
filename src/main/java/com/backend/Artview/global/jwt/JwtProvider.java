@@ -40,8 +40,8 @@ public class JwtProvider {
     // access token 발급 method
     public String createAccessToken(Long userId) {
         return Jwts.builder()
-                .claim("userId",userId)
-                .setHeaderParam("type","accessToken")
+                .claim("userId", userId)
+                .setHeaderParam("type", "accessToken")
                 .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
 //                .setSubject(String.valueOf(userId))  // JWT 토큰 제목
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))    // JWT 토큰 발급 시간
@@ -52,7 +52,7 @@ public class JwtProvider {
     // refresh token 발급 method
     public String createRefreshToken() {
         return Jwts.builder()
-                .setHeaderParam("type","refreshToken")
+                .setHeaderParam("type", "refreshToken")
                 .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
                 .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))    // JWT 토큰 만료 시간
                 .compact(); // JWT 토큰 생성
@@ -67,11 +67,15 @@ public class JwtProvider {
                 .get("userId", Long.class);
     }
 
-    public String decodeJwtPayloadSubject(String oldAccessToken) throws JsonProcessingException {
-        return objectMapper.readValue(
-                new String(Base64.getDecoder().decode(oldAccessToken.split("\\.")[1]), StandardCharsets.UTF_8),
-                Map.class
-        ).get("sub").toString();
+    public String decodeJwtPayloadSubject(String oldAccessToken) {
+        try {
+            return objectMapper.readValue(
+                    new String(Base64.getDecoder().decode(oldAccessToken.split("\\.")[1]), StandardCharsets.UTF_8),
+                    Map.class
+            ).get("userId").toString();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getTokenFromHeader(String authorizationHeader) {
@@ -81,7 +85,8 @@ public class JwtProvider {
     // refresh 토큰 확인
     public Boolean validateRefreshToken(String refreshToken) {
         try {
-            return getHeaderFromJWT(refreshToken).get("type").toString().equals("refreshToken");
+             if(getHeaderFromJWT(refreshToken).get("type").toString().equals("refreshToken")) return true;
+             else throw new JwtException(TOKEN_TYPE_NOT_MATCH);
         } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
             throw new JwtException(EXPIRED_JWT_REFRESH_TOKEN);
@@ -96,7 +101,7 @@ public class JwtProvider {
         try {
             if (getHeaderFromJWT(accessToken).get("type").toString().equals("accessToken")) return true;
             else throw new JwtException(TOKEN_TYPE_NOT_MATCH);
-            } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
             log.error("ACCESS TOKEN이 만료되었습니다. 재발급 받아주세요.");
             throw new JwtException(EXPIRED_JWT_ACCESS_TOKEN);

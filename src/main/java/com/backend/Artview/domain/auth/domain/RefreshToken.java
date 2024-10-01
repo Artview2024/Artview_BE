@@ -5,13 +5,14 @@ import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class RefreshToken extends BaseEntity {
 
     @Id
@@ -31,5 +32,9 @@ public class RefreshToken extends BaseEntity {
                 .refreshToken(userRefreshToken)
                 .users(users)
                 .build();
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
