@@ -25,14 +25,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 import static com.backend.Artview.domain.users.exception.UserErrorCode.DUPLICATE_KAKAO_ID;
+import static com.backend.Artview.domain.users.exception.UserErrorCode.USER_REFRESH_TOKEN_NOT_FOUND;
 import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.REFRESH_TOKEN_NOT_FOUND;
 
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     @Value("${oauth2.client.registration.kakao.token-uri}")
     private String TOKEN_URI;
@@ -62,56 +65,86 @@ public class AuthServiceImpl implements AuthService{
 
 
     @Override
-    public KakaoSignUpResponseDto signUpWithOauth2(String kakaoAccessToken) {
-//        String kakaoAccessToken = getKakaoAccessToken(code);
-//        jwtProvider.getTokenFromHeader(kakaoAccessToken);
+    public KakaoSignUpResponseDto signUpWithOauth2(String code) {
+        String kakaoAccessToken = getKakaoAccessToken(code);
 
-        KakaoUserInfoResponseDto kakaoUserInfo = getUserInfoUsingAccessToken(jwtProvider.getTokenFromHeader(kakaoAccessToken));
+        KakaoUserInfoResponseDto kakaoUserInfo = getUserInfoUsingAccessToken(kakaoAccessToken);
 
         // 이미 회원가입 된 유저인지 확인
         validateNotAlreadySignIn(kakaoUserInfo.getId());
 
         Users user = userRepository.save(Users.toEntity(kakaoUserInfo));
 
-        String userRefreshToken = jwtProvider.createRefreshToken();
+        String userRefreshToken = getRefreshTokenFromJwtProvider();
 
-        saveUserRefreshToken(userRefreshToken,user);
+        saveUserRefreshToken(userRefreshToken, user);
 
-        return KakaoSignUpResponseDto.of(user,jwtProvider.createAccessToken(user.getId()),userRefreshToken);
+        return KakaoSignUpResponseDto.of(user, getAccessTokenFromJwtProvider(user.getId()), userRefreshToken);
     }
+
 
     @Override
     public ReissueResponseDto reissue(ReissueRequestDto dto) {
-        log.info("reissueService");
-        Long userId = null;
-        try {
-            userId = Long.parseLong(jwtProvider.decodeJwtPayloadSubject(dto.accessToken()));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        log.info("reissueService");
 
-        jwtProvider.validateRefreshToken(dto.refreshToken());
-        validateUsersIdAndRefreshToken(dto.refreshToken(), userId);
+        Long userId = Long.parseLong(jwtProvider.decodeJwtPayloadSubject(dto.accessToken()));
+        log.info("reissueService userId : " + userId);
 
-        return ReissueResponseDto.of(jwtProvider.createAccessToken(userId),jwtProvider.createRefreshToken());
+        jwtProvider.validateRefreshToken(dto.refreshToken()); //이게 refreshToken인지를 확인
+
+        RefreshToken oldRefreshToken = validateUsersIdAndRefreshToken(dto.refreshToken(), userId); //db에 저장된 유저의 refreshToken인지를 확인
+
+        if (dto.refreshToken().equals(oldRefreshToken.getRefreshToken())) {
+            log.info("받은거랑 같음ㅇㅇㅇㅇㅇㅇㅇㅇ");
+        } else log.info("받은거랑 틀림ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ");
+
+        String accessToken = getAccessTokenFromJwtProvider(userId);
+        String refreshToken = getRefreshTokenFromJwtProvider();
+        
+        if (oldRefreshToken.getRefreshToken().equals(refreshToken)) {
+            log.info("같음ㅇㅇㅇㅇㅇㅇㅇㅇ");
+        } else log.info("틀림ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ");
+
+//        RefreshToken usersRefreshToken = findUsersRefreshTokenByUsersId(userId);
+        oldRefreshToken.updateRefreshToken(refreshToken);
+
+        return ReissueResponseDto.of(accessToken, refreshToken);
     }
 
-    private void validateUsersIdAndRefreshToken(String refreshToken, Long userId){
-        refreshTokenRepository.findByRefreshTokenAndUsersId(refreshToken,userId)
+    private RefreshToken findUsersRefreshTokenByUsersId(Long userId) {
+        return refreshTokenRepository.findByUsersId(userId)
+                .orElseThrow(() -> new UserException(USER_REFRESH_TOKEN_NOT_FOUND));
+    }
+
+    private void updateUsersRefreshToken(String refreshToken) {
+
+    }
+
+    private String getAccessTokenFromJwtProvider(Long userId) {
+        return jwtProvider.createAccessToken(userId);
+    }
+
+    private String getRefreshTokenFromJwtProvider() {
+        return jwtProvider.createRefreshToken();
+    }
+
+
+    private RefreshToken validateUsersIdAndRefreshToken(String refreshToken, Long userId) {
+        return refreshTokenRepository.findByRefreshTokenAndUsersId(refreshToken, userId)
                 .orElseThrow(() -> new JwtException(REFRESH_TOKEN_NOT_FOUND));
     }
 
     private void saveUserRefreshToken(String userRefreshToken, Users users) {
-        refreshTokenRepository.save(RefreshToken.toEntity(userRefreshToken,users));
+        refreshTokenRepository.save(RefreshToken.toEntity(userRefreshToken, users));
     }
 
     private void validateNotAlreadySignIn(Long kakaoId) {
-        if(userRepository.existsByKakaoId(kakaoId)) throw new UserException(DUPLICATE_KAKAO_ID);
+        if (userRepository.existsByKakaoId(kakaoId)) throw new UserException(DUPLICATE_KAKAO_ID);
     }
 
-    public String getKakaoAccessToken(String code){
-        log.info("URI : "+TOKEN_URI);
-        log.info("CONTENT_TYPE : "+CONTENT_TYPE);
+    public String getKakaoAccessToken(String code) {
+        log.info("URI : " + TOKEN_URI);
+        log.info("CONTENT_TYPE : " + CONTENT_TYPE);
 
         // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
         HttpHeaders headers = new HttpHeaders();
@@ -138,16 +171,16 @@ public class AuthServiceImpl implements AuthService{
                 KakaoTokenResponseDto.class // 요청 시 반환되는 데이터 타입
         );
 
-        log.info("accessToken : "+kakaoTokenResponse.getBody().getAccess_token());
-        log.info("refreshToken : "+kakaoTokenResponse.getBody().getRefresh_token());
+        log.info("accessToken : " + kakaoTokenResponse.getBody().getAccess_token());
+        log.info("refreshToken : " + kakaoTokenResponse.getBody().getRefresh_token());
 
         return kakaoTokenResponse.getBody().getAccess_token();
     }
 
-    public KakaoUserInfoResponseDto getUserInfoUsingAccessToken(String accessToken){
+    public KakaoUserInfoResponseDto getUserInfoUsingAccessToken(String accessToken) {
         // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization","Bearer " + accessToken);
+        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-Type", CONTENT_TYPE);
 
         HttpEntity<String> kakaoUserInfoRequest = new HttpEntity<>(headers);
@@ -161,8 +194,8 @@ public class AuthServiceImpl implements AuthService{
                 KakaoUserInfoResponseDto.class // 요청 시 반환되는 데이터 타입
         );
 
-        log.info("userInfoResponseCode : "+kakaoUserInfoResponse.getStatusCode());
-        log.info("userInfoResponse : "+kakaoUserInfoResponse.getBody());
+        log.info("userInfoResponseCode : " + kakaoUserInfoResponse.getStatusCode());
+        log.info("userInfoResponse : " + kakaoUserInfoResponse.getBody());
 
         return kakaoUserInfoResponse.getBody();
     }

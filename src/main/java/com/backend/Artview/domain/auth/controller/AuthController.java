@@ -16,10 +16,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/sign-up") //회원가입
-    public KakaoSignUpResponseDto loginKakao(@RequestHeader("Authorization") String kakaoAccessToken) {
-        log.info("accessToken : " + kakaoAccessToken);
-        return authService.signUpWithOauth2(kakaoAccessToken);
+    @GetMapping("/sign-up") //회원가입
+    public KakaoSignUpResponseDto loginKakao(@RequestParam(name = "code") String code) {
+        log.info("accessToken : " + code);
+        return authService.signUpWithOauth2(code);
     }
 
 
