@@ -3,16 +3,15 @@ package com.backend.Artview.domain.auth.domain;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
+@DynamicUpdate
 public class RefreshToken extends BaseEntity {
 
     @Id

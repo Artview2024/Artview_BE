@@ -12,7 +12,7 @@ import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import com.backend.Artview.global.jwt.JwtProvider;
 import com.backend.Artview.global.jwt.jwtException.JwtException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,11 +25,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
 import static com.backend.Artview.domain.users.exception.UserErrorCode.DUPLICATE_KAKAO_ID;
-import static com.backend.Artview.domain.users.exception.UserErrorCode.USER_REFRESH_TOKEN_NOT_FOUND;
-import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.REFRESH_TOKEN_NOT_FOUND;
+import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.REFRESH_TOKEN_NOT_MATCH;
 
 
 @Service
@@ -65,6 +62,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
+    @Transactional
     public KakaoSignUpResponseDto signUpWithOauth2(String code) {
         String kakaoAccessToken = getKakaoAccessToken(code);
 
@@ -84,40 +82,21 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
+    @Transactional
     public ReissueResponseDto reissue(ReissueRequestDto dto) {
-//        log.info("reissueService");
 
         Long userId = Long.parseLong(jwtProvider.decodeJwtPayloadSubject(dto.accessToken()));
-        log.info("reissueService userId : " + userId);
 
         jwtProvider.validateRefreshToken(dto.refreshToken()); //이게 refreshToken인지를 확인
 
         RefreshToken oldRefreshToken = validateUsersIdAndRefreshToken(dto.refreshToken(), userId); //db에 저장된 유저의 refreshToken인지를 확인
 
-        if (dto.refreshToken().equals(oldRefreshToken.getRefreshToken())) {
-            log.info("받은거랑 같음ㅇㅇㅇㅇㅇㅇㅇㅇ");
-        } else log.info("받은거랑 틀림ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ");
-
         String accessToken = getAccessTokenFromJwtProvider(userId);
         String refreshToken = getRefreshTokenFromJwtProvider();
-        
-        if (oldRefreshToken.getRefreshToken().equals(refreshToken)) {
-            log.info("같음ㅇㅇㅇㅇㅇㅇㅇㅇ");
-        } else log.info("틀림ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ");
 
-//        RefreshToken usersRefreshToken = findUsersRefreshTokenByUsersId(userId);
         oldRefreshToken.updateRefreshToken(refreshToken);
 
         return ReissueResponseDto.of(accessToken, refreshToken);
-    }
-
-    private RefreshToken findUsersRefreshTokenByUsersId(Long userId) {
-        return refreshTokenRepository.findByUsersId(userId)
-                .orElseThrow(() -> new UserException(USER_REFRESH_TOKEN_NOT_FOUND));
-    }
-
-    private void updateUsersRefreshToken(String refreshToken) {
-
     }
 
     private String getAccessTokenFromJwtProvider(Long userId) {
@@ -131,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
 
     private RefreshToken validateUsersIdAndRefreshToken(String refreshToken, Long userId) {
         return refreshTokenRepository.findByRefreshTokenAndUsersId(refreshToken, userId)
-                .orElseThrow(() -> new JwtException(REFRESH_TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new JwtException(REFRESH_TOKEN_NOT_MATCH));
     }
 
     private void saveUserRefreshToken(String userRefreshToken, Users users) {
