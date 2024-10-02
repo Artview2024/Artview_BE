@@ -14,7 +14,7 @@ public enum JwtErrorCode implements BaseErrorCode {
     INVALID_JWT_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 401, "유효하지 않은 REFRESH TOKEN 입니다."),
     EXPIRED_JWT_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 401, "REFRESH TOKEN이 만료되었습니다. 다시 로그인해주세요"),
     TOKEN_TYPE_NOT_MATCH(HttpStatus.UNAUTHORIZED, 401, "토큰 타입이 맞지 않습니다."),
-    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, 404, "해당 유저 ID의 리프레쉬 토큰이 없습니다.");
+    REFRESH_TOKEN_NOT_MATCH(HttpStatus.NOT_FOUND, 404, "해당 유저 ID와 일치하지 않는 REFRESH TOKEN 입니다.");
 
 
     private final HttpStatus httpStatus;
