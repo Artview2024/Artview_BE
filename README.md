@@ -46,3 +46,9 @@
 | `변수명`  | 카멜 케이스 사용 `Ex) jwtToken`                                    |
 | `상수명` | 대문자 사용 `Ex) EXPIRATION_TIME`         |
 | `컬럼명` | 스네이크 케이스 사용 `Ex) user_id`         |
+
+<br>
+
+## **🔍 System Architecture**
+
+![시스템 아키텍처](https://github.com/user-attachments/assets/cf53681c-02dd-469f-afef-70716deb4ea7)
