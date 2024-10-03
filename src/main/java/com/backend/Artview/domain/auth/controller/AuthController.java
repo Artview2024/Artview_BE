@@ -1,9 +1,12 @@
 package com.backend.Artview.domain.auth.controller;
 
+import com.backend.Artview.domain.auth.dto.request.LogOutRequestDto;
 import com.backend.Artview.domain.auth.dto.request.ReissueRequestDto;
 import com.backend.Artview.domain.auth.dto.response.KakaoSignUpResponseDto;
+import com.backend.Artview.domain.auth.dto.response.KakaoUserInfoResponseDto;
 import com.backend.Artview.domain.auth.dto.response.ReissueResponseDto;
 import com.backend.Artview.domain.auth.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -16,22 +19,30 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping("/sign-up") //회원가입
-    public KakaoSignUpResponseDto loginKakao(@RequestParam(name = "code") String code) {
-        log.info("accessToken : " + code);
-        return authService.signUpWithOauth2(code);
+    @GetMapping("/kakao-login/callback") //회원가입
+    public void kakaoLoginCallBack(@RequestParam(name="code") String kakaoCode) {
+        log.info("callback 인가코드 : " + kakaoCode);
     }
 
-
-//    @PostMapping("/login") //로그인
-//    public void login() {
-//
-//    }
+    @GetMapping("/kakao-login") //회원가입
+    public KakaoSignUpResponseDto loginKakao(@RequestParam(name="code") String code) {
+        log.info("인가코드 : " + code);
+        String kakaoAccessToken = authService.getKakaoAccessToken(code);
+        log.info("엑세스토큰 : " + kakaoAccessToken);
+        KakaoUserInfoResponseDto userInfoUsingAccessToken = authService.getUserInfoUsingAccessToken(kakaoAccessToken);
+        return authService.signUpWithOauth2(userInfoUsingAccessToken);
+    }
 
     @PostMapping("/reissue") //accessToken 재발행
     public ReissueResponseDto reissue(@RequestBody ReissueRequestDto dto) {
         log.info("reissue");
         return authService.reissue(dto);
+    }
+
+    @PostMapping("/log-out")
+    public void logOut(@RequestBody LogOutRequestDto dto) {
+        log.info("logOut");
+        authService.logOut(dto);
     }
 
 }
