@@ -26,9 +26,7 @@ public class AuthController {
 
     @GetMapping("/kakao-login") //회원가입
     public KakaoSignUpResponseDto loginKakao(@RequestParam(name="code") String code) {
-        log.info("인가코드 : " + code);
         String kakaoAccessToken = authService.getKakaoAccessToken(code);
-        log.info("엑세스토큰 : " + kakaoAccessToken);
         KakaoUserInfoResponseDto userInfoUsingAccessToken = authService.getUserInfoUsingAccessToken(kakaoAccessToken);
         return authService.signUpWithOauth2(userInfoUsingAccessToken);
     }
@@ -39,9 +37,8 @@ public class AuthController {
         return authService.reissue(dto);
     }
 
-    @PostMapping("/log-out")
+    @DeleteMapping("/log-out")
     public void logOut(@RequestBody LogOutRequestDto dto) {
-        log.info("logOut");
         authService.logOut(dto);
     }
 

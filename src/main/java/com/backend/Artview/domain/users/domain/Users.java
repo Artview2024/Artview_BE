@@ -60,7 +60,7 @@ public class Users extends BaseEntity {
     @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
     private List<Scrap> scrapList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "users",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "users")
     private RefreshToken refreshToken;
 
 

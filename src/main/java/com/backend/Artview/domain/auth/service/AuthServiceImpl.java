@@ -123,27 +123,30 @@ public class AuthServiceImpl implements AuthService {
     public KakaoSignUpResponseDto signUpWithOauth2(KakaoUserInfoResponseDto kakaoUserInfo) {
         Users user;
 
+
         // 이미 회원가입 된 유저인지 확인
         Optional<Users> optionalUsers = validateUserAlreadySignIn(kakaoUserInfo.getId());
 
         if (optionalUsers.isPresent()) {
             user = getUsers(optionalUsers);
-            log.info(user.getName() + "("+ user.getKakaoId()+")" + " 로그인");
-            refreshTokenRepository.findByUsersId(user.getId());
-            deleteUsersRefreshToken(user.getId());
+            log.info(user.getName() + "(" + user.getKakaoId() + ")" + " 로그인");
+            Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByUsersId(user.getId());
+            optionalRefreshToken.ifPresent(userTest -> deleteUsersRefreshToken(userTest.getRefreshToken()));
+            refreshTokenRepository.flush();  // 삭제 후 즉시 플러시
         } else {
-            log.info(kakaoUserInfo.getKakao_account().getProfile().getNickname()+"("+ kakaoUserInfo.getId()+")" + " 회원가입");
+            log.info(kakaoUserInfo.getKakao_account().getProfile().getNickname() + "(" + kakaoUserInfo.getId() + ")" + " 회원가입");
             user = userSignUp(kakaoUserInfo);
         }
 
-        String userRefreshToken = getRefreshTokenFromJwtProvider();
-        saveUserRefreshToken(userRefreshToken, user);
+        String newRefreshToken = getRefreshTokenFromJwtProvider();
+        saveUserRefreshToken(newRefreshToken, user);
 
-        return KakaoSignUpResponseDto.of(user, getAccessTokenFromJwtProvider(user.getId()), userRefreshToken);
+        return KakaoSignUpResponseDto.of(user, getAccessTokenFromJwtProvider(user.getId()), newRefreshToken);
     }
 
-    private void deleteUsersRefreshToken(Long userId) {
-        refreshTokenRepository.deleteByUsersId(userId);
+    public void deleteUsersRefreshToken(String refreshToken) {
+        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+//        refreshTokenRepository.deleteByUsersId(user.getId());
     }
 
 
@@ -171,8 +174,7 @@ public class AuthServiceImpl implements AuthService {
         Long userId = jwtProvider.getUserId(dto.accessToken());
 
         RefreshToken refreshToken = validateUsersIdAndRefreshToken(dto.refreshToken(), userId);
-//        deleteUsersRefreshToken();
-
+        deleteUsersRefreshToken(refreshToken.getRefreshToken());
     }
 
     private Users getUsers(Optional<Users> optionalUsers) {
