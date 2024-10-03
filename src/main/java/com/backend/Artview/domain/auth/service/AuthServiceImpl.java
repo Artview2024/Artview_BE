@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.auth.service;
 
 import com.backend.Artview.domain.auth.domain.RefreshToken;
+import com.backend.Artview.domain.auth.dto.request.LogOutRequestDto;
 import com.backend.Artview.domain.auth.dto.request.ReissueRequestDto;
 import com.backend.Artview.domain.auth.dto.response.KakaoSignUpResponseDto;
 import com.backend.Artview.domain.auth.dto.response.KakaoTokenResponseDto;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 import static com.backend.Artview.domain.users.exception.UserErrorCode.DUPLICATE_KAKAO_ID;
 import static com.backend.Artview.global.jwt.jwtException.JwtErrorCode.REFRESH_TOKEN_NOT_MATCH;
@@ -60,24 +63,87 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     RestTemplate rt = new RestTemplate();
 
+    @Override
+    @Transactional
+    public String getKakaoAccessToken(String code) {
+
+        // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", CONTENT_TYPE);
+
+        // body 데이터를 담을 오브젝트인 MultiValueMap
+        // body는 보통 key, value의 쌍으로 이루어지기 때문에 자바에서 제공해주는 MultiValueMap 타입을 사용한다.
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", GRANT_TYPE);
+        params.add("client_id", CLIENT_ID);
+        params.add("redirect_uri", REDIRECT_URI);
+        params.add("code", code);
+        params.add("client_secret", CLIENT_SECRET);
+
+        // 요청하기 위해 헤더(Header)와 데이터(Body)를 합친다.
+        // kakaoTokenRequest는 데이터(Body)와 헤더(Header)를 Entity가 된다.
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        // POST 방식으로 Http 요청한다. 그리고 response 변수의 응답 받는다.
+        ResponseEntity<KakaoTokenResponseDto> kakaoTokenResponse = rt.exchange(
+                TOKEN_URI,
+                HttpMethod.POST, // 요청할 방식
+                kakaoTokenRequest, // 요청할 때 보낼 데이터
+                KakaoTokenResponseDto.class // 요청 시 반환되는 데이터 타입
+        );
+
+        return kakaoTokenResponse.getBody().getAccess_token();
+    }
 
     @Override
     @Transactional
-    public KakaoSignUpResponseDto signUpWithOauth2(String code) {
-        String kakaoAccessToken = getKakaoAccessToken(code);
+    public KakaoUserInfoResponseDto getUserInfoUsingAccessToken(String kakaoAccessToken) {
+        // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + kakaoAccessToken);
+        headers.add("Content-Type", CONTENT_TYPE);
 
-        KakaoUserInfoResponseDto kakaoUserInfo = getUserInfoUsingAccessToken(kakaoAccessToken);
+        HttpEntity<String> kakaoUserInfoRequest = new HttpEntity<>(headers);
+
+
+        // POST 방식으로 Http 요청한다. 그리고 response 변수의 응답 받는다.
+        ResponseEntity<KakaoUserInfoResponseDto> kakaoUserInfoResponse = rt.exchange(
+                USER_INFO_URI, // https://{요청할 서버 주소}
+                HttpMethod.GET, // 요청할 방식
+                kakaoUserInfoRequest, // 요청할 때 보낼 데이터
+                KakaoUserInfoResponseDto.class // 요청 시 반환되는 데이터 타입
+        );
+
+        return kakaoUserInfoResponse.getBody();
+    }
+
+
+    @Override
+    @Transactional
+    public KakaoSignUpResponseDto signUpWithOauth2(KakaoUserInfoResponseDto kakaoUserInfo) {
+        Users user;
 
         // 이미 회원가입 된 유저인지 확인
-        validateNotAlreadySignIn(kakaoUserInfo.getId());
+        Optional<Users> optionalUsers = validateUserAlreadySignIn(kakaoUserInfo.getId());
 
-        Users user = userRepository.save(Users.toEntity(kakaoUserInfo));
+        if (optionalUsers.isPresent()) {
+            user = getUsers(optionalUsers);
+            log.info(user.getName() + "("+ user.getKakaoId()+")" + " 로그인");
+            refreshTokenRepository.findByUsersId(user.getId());
+            deleteUsersRefreshToken(user.getId());
+        } else {
+            log.info(kakaoUserInfo.getKakao_account().getProfile().getNickname()+"("+ kakaoUserInfo.getId()+")" + " 회원가입");
+            user = userSignUp(kakaoUserInfo);
+        }
 
         String userRefreshToken = getRefreshTokenFromJwtProvider();
-
         saveUserRefreshToken(userRefreshToken, user);
 
         return KakaoSignUpResponseDto.of(user, getAccessTokenFromJwtProvider(user.getId()), userRefreshToken);
+    }
+
+    private void deleteUsersRefreshToken(Long userId) {
+        refreshTokenRepository.deleteByUsersId(userId);
     }
 
 
@@ -97,6 +163,24 @@ public class AuthServiceImpl implements AuthService {
         oldRefreshToken.updateRefreshToken(refreshToken);
 
         return ReissueResponseDto.of(accessToken, refreshToken);
+    }
+
+    @Override
+    @Transactional
+    public void logOut(LogOutRequestDto dto) {
+        Long userId = jwtProvider.getUserId(dto.accessToken());
+
+        RefreshToken refreshToken = validateUsersIdAndRefreshToken(dto.refreshToken(), userId);
+//        deleteUsersRefreshToken();
+
+    }
+
+    private Users getUsers(Optional<Users> optionalUsers) {
+        return optionalUsers.get();
+    }
+
+    private Users userSignUp(KakaoUserInfoResponseDto kakaoUserInfo) {
+        return userRepository.save(Users.toEntity(kakaoUserInfo));
     }
 
     private String getAccessTokenFromJwtProvider(Long userId) {
@@ -121,62 +205,8 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByKakaoId(kakaoId)) throw new UserException(DUPLICATE_KAKAO_ID);
     }
 
-    public String getKakaoAccessToken(String code) {
-        log.info("URI : " + TOKEN_URI);
-        log.info("CONTENT_TYPE : " + CONTENT_TYPE);
-
-        // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", CONTENT_TYPE);
-
-        // body 데이터를 담을 오브젝트인 MultiValueMap를 만들어보자
-        // body는 보통 key, value의 쌍으로 이루어지기 때문에 자바에서 제공해주는 MultiValueMap 타입을 사용한다.
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", GRANT_TYPE);
-        params.add("client_id", CLIENT_ID);
-        params.add("redirect_uri", REDIRECT_URI);
-        params.add("code", code);
-        params.add("client_secret", CLIENT_SECRET);
-
-        // 요청하기 위해 헤더(Header)와 데이터(Body)를 합친다.
-        // kakaoTokenRequest는 데이터(Body)와 헤더(Header)를 Entity가 된다.
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
-
-        // POST 방식으로 Http 요청한다. 그리고 response 변수의 응답 받는다.
-        ResponseEntity<KakaoTokenResponseDto> kakaoTokenResponse = rt.exchange(
-                TOKEN_URI,
-                HttpMethod.POST, // 요청할 방식
-                kakaoTokenRequest, // 요청할 때 보낼 데이터
-                KakaoTokenResponseDto.class // 요청 시 반환되는 데이터 타입
-        );
-
-        log.info("accessToken : " + kakaoTokenResponse.getBody().getAccess_token());
-        log.info("refreshToken : " + kakaoTokenResponse.getBody().getRefresh_token());
-
-        return kakaoTokenResponse.getBody().getAccess_token();
-    }
-
-    public KakaoUserInfoResponseDto getUserInfoUsingAccessToken(String accessToken) {
-        // HTTP POST를 요청할 때 보내는 데이터(body)를 설명해주는 헤더도 만들어 같이 보내줘야 한다.
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("Content-Type", CONTENT_TYPE);
-
-        HttpEntity<String> kakaoUserInfoRequest = new HttpEntity<>(headers);
-
-
-        // POST 방식으로 Http 요청한다. 그리고 response 변수의 응답 받는다.
-        ResponseEntity<KakaoUserInfoResponseDto> kakaoUserInfoResponse = rt.exchange(
-                USER_INFO_URI, // https://{요청할 서버 주소}
-                HttpMethod.GET, // 요청할 방식
-                kakaoUserInfoRequest, // 요청할 때 보낼 데이터
-                KakaoUserInfoResponseDto.class // 요청 시 반환되는 데이터 타입
-        );
-
-        log.info("userInfoResponseCode : " + kakaoUserInfoResponse.getStatusCode());
-        log.info("userInfoResponse : " + kakaoUserInfoResponse.getBody());
-
-        return kakaoUserInfoResponse.getBody();
+    private Optional<Users> validateUserAlreadySignIn(Long kakaoId) {
+        return userRepository.findByKakaoId(kakaoId);
     }
 
 }
