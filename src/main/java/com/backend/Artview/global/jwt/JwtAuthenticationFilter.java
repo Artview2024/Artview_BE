@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //소통 페이지 관련 URI
             new AntPathRequestMatcher("/api/communications/main/all/{cursor}"),
             new AntPathRequestMatcher("/api/communications/content/{communicationsId}"),
+            new AntPathRequestMatcher("/api/communications/comment/{communicationsId}"),
 
             //기타 URI
             new AntPathRequestMatcher("/api/health")
