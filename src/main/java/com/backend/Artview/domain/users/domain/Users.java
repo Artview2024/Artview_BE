@@ -64,11 +64,8 @@ public class Users extends BaseEntity {
     private RefreshToken refreshToken;
 
 
-//    @OneToMany(mappedBy = "followee",fetch = FetchType.LAZY)
-//    private List<Follow> followee = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "follower",fetch = FetchType.LAZY)
-//    private List<Follow> follower = new ArrayList<>();
+    @OneToMany(mappedBy = "follow",fetch = FetchType.LAZY)
+    private List<Follow> follow = new ArrayList<>();
 
     public static Users toEntity(KakaoUserInfoResponseDto kakaoUserInfo) {
         return Users.builder()

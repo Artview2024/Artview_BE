@@ -6,10 +6,7 @@ import com.backend.Artview.domain.users.service.UserService;
 import com.backend.Artview.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,5 +38,10 @@ public class UserController {
     @GetMapping("/myPage/communication")
     public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication() {
         return userService.getMyPageCommunication(10001L);
+    }
+
+    @PutMapping("/follow")
+    public void registerFollow(@RequestHeader("Athentication") String authorizationHeader,@RequestBody followRequestDto dto){
+        userService.registerFollow(authorizationHeader, dto);
     }
 }
