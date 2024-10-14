@@ -4,7 +4,7 @@ import com.backend.Artview.domain.communication.Repository.CommunicationsReposit
 import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
-import com.backend.Artview.domain.users.controller.followRequestDto;
+import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.domain.Users;
@@ -18,10 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.backend.Artview.domain.users.exception.UserErrorCode.USER_NOT_FOUND;
+import static com.backend.Artview.domain.users.exception.UserErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -59,16 +58,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void registerFollow(String authorizationHeader, followRequestDto dto) {
+    public void registerFollow(String authorizationHeader, FollowRequestDto dto) {
         Long usersId = findUsersIdByJwtProvider(authorizationHeader);
         Users follower = findUsersById(usersId);
-        Users followee = findUsersById(dto.UserWantToFollow());
-        if (validateUsersAlreadyFollow(follower, followee)) throw new UserException(USER_NOT_FOUND);
-        followRepository.save(Follow.toEntity(follower, followee));
+        Users followed = findUsersById(dto.followed());
+        if (validateUsersAlreadyFollow(follower, followed)) throw new UserException(USER_ALREADY_FOLLOW);
+        followRepository.save(Follow.toEntity(follower, followed));
     }
 
-    private boolean validateUsersAlreadyFollow(Users follower, Users followee) {
-        return followRepository.existsByFollowerAndFollowee(follower, followee);
+    @Override
+    @Transactional
+    public void deleteFollow(String authorizationHeader, FollowRequestDto dto) {
+        Long usersId = findUsersIdByJwtProvider(authorizationHeader);
+        Users unfollower = findUsersById(usersId);
+        Users unfollowed = findUsersById(dto.followed());
+        if (!validateUsersAlreadyFollow(unfollower, unfollowed)) throw new UserException(USER_ALREADY_UNFOLLOW);
+    }
+
+    private boolean validateUsersAlreadyFollow(Users follower, Users followed) {
+        return followRepository.existsByFollowerAndFollowed(follower, followed);
     }
 
     private Users findUsersById(Long userId) {

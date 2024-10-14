@@ -18,17 +18,17 @@ public class Follow extends BaseEntity {
     public Long Id;
 
     @ManyToOne
-    @JoinColumn(name = "follower")
+    @JoinColumn(name = "follower_id")
     private Users follower; //팔로우를 한 사람
 
     @ManyToOne
-    @JoinColumn(name = "followee")
-    private Users followee; //팔로우를 당한 사람
+    @JoinColumn(name = "followed_id")
+    private Users followed; //팔로우를 당한 사람
 
-    public static Follow toEntity(Users follower, Users followee) {
+    public static Follow toEntity(Users follower, Users followed) {
         return Follow.builder()
                 .follower(follower)
-                .followee(followee)
+                .followed(followed)
                 .build();
     }
 }

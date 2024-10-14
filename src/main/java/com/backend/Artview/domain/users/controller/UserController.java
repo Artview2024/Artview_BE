@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.users.controller;
 
+import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.service.UserService;
@@ -41,7 +42,12 @@ public class UserController {
     }
 
     @PutMapping("/follow")
-    public void registerFollow(@RequestHeader("Athentication") String authorizationHeader,@RequestBody followRequestDto dto){
+    public void registerFollow(@RequestHeader("Athentication") String authorizationHeader,@RequestBody FollowRequestDto dto){
         userService.registerFollow(authorizationHeader, dto);
+    }
+
+    @DeleteMapping("/unfollow")
+    public void deleteFollow(@RequestHeader("Athentication") String authorizationHeader,@RequestBody FollowRequestDto dto){
+        userService.deleteFollow(authorizationHeader, dto);
     }
 }

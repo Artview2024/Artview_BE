@@ -5,5 +5,5 @@ import com.backend.Artview.domain.users.domain.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FollowRepository extends JpaRepository<Follow,Long> {
-    boolean existsByFollowerAndFollowee(Users follower, Users followee);
+    boolean existsByFollowerAndFollowed(Users follower, Users followed);
 }

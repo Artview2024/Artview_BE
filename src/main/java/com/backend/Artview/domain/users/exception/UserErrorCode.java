@@ -18,7 +18,8 @@ public enum UserErrorCode implements BaseErrorCode {
     FOLLOW_USER_NOT_FOUND(NOT_FOUND, 404 ,"팔로우 하려는 유저의 id가 존재하지 않습니다."),
 
     //409
-    USER_ALREADY_FOLLOW(CONFLICT, 409 ,"팔로우 하려는 유저의 id가 존재하지 않습니다.");
+    USER_ALREADY_FOLLOW(CONFLICT, 409 ,"유저가 이미 팔로우 하고 있는 사용자입니다."),
+    USER_ALREADY_UNFOLLOW(CONFLICT, 409 ,"유저가 팔로우 하고 있지 않는 사용자입니다.");
 
     private final HttpStatus httpStatus;
     private final int statusCode;

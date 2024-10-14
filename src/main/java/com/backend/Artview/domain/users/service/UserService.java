@@ -1,6 +1,6 @@
 package com.backend.Artview.domain.users.service;
 
-import com.backend.Artview.domain.users.controller.followRequestDto;
+import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
 
@@ -14,5 +14,7 @@ public interface UserService {
 
     List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication(Long userId);
 
-    void registerFollow(String authorizationHeader, followRequestDto dto);
+    void registerFollow(String authorizationHeader, FollowRequestDto dto);
+
+    void deleteFollow(String authorizationHeader, FollowRequestDto dto);
 }
