@@ -6,7 +6,7 @@ import com.backend.Artview.domain.auth.dto.response.KakaoSignUpResponseDto;
 import com.backend.Artview.domain.auth.dto.response.KakaoUserInfoResponseDto;
 import com.backend.Artview.domain.auth.dto.response.ReissueResponseDto;
 import com.backend.Artview.domain.auth.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.backend.Artview.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtProvider jwtProvider;
 
     @GetMapping("/kakao-login/callback") //회원가입
     public void kakaoLoginCallBack(@RequestParam(name="code") String kakaoCode) {
@@ -42,4 +43,8 @@ public class AuthController {
         authService.logOut(dto);
     }
 
+    @GetMapping("/jwt-access-token")
+    public String jwt(@RequestHeader(name = "userId") Long userId){
+        return jwtProvider.createAccessToken(userId);
+    }
 }

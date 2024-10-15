@@ -39,7 +39,7 @@ public class MyReviews extends BaseEntity {
     @Column(name = "grade")
     private String grade;
 
-    @Column(name = "main_image_url")
+    @Column(name = "main_image_url", length = 500)
     private String mainImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
