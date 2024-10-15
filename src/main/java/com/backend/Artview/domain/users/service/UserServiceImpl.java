@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
         Long usersId = findUsersIdByJwtProvider(authorizationHeader);
         Users follower = findUsersById(usersId);
         Users followed = findUsersById(dto.followed());
+
         if (validateUsersAlreadyFollow(follower, followed)) throw new UserException(USER_ALREADY_FOLLOW);
         followRepository.save(Follow.toEntity(follower, followed));
     }
@@ -72,7 +73,9 @@ public class UserServiceImpl implements UserService {
         Long usersId = findUsersIdByJwtProvider(authorizationHeader);
         Users unfollower = findUsersById(usersId);
         Users unfollowed = findUsersById(dto.followed());
+
         if (!validateUsersAlreadyFollow(unfollower, unfollowed)) throw new UserException(USER_ALREADY_UNFOLLOW);
+        followRepository.deleteByFollowerAndFollowed(unfollower,unfollowed);
     }
 
     private boolean validateUsersAlreadyFollow(Users follower, Users followed) {
@@ -84,6 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private Long findUsersIdByJwtProvider(String authorizationHeader) {
-        return jwtProvider.getUserId(authorizationHeader);
+        String accessToken = jwtProvider.getTokenFromHeader(authorizationHeader);
+        return jwtProvider.getUserId(accessToken);
     }
 }
