@@ -42,12 +42,12 @@ public class UserController {
     }
 
     @PutMapping("/follow")
-    public void registerFollow(@RequestHeader("Athentication") String authorizationHeader,@RequestBody FollowRequestDto dto){
+    public void registerFollow(@RequestHeader("Authorization") String authorizationHeader,@RequestBody FollowRequestDto dto){
         userService.registerFollow(authorizationHeader, dto);
     }
 
     @DeleteMapping("/unfollow")
-    public void deleteFollow(@RequestHeader("Athentication") String authorizationHeader,@RequestBody FollowRequestDto dto){
+    public void deleteFollow(@RequestHeader("Authorization") String authorizationHeader,@RequestBody FollowRequestDto dto){
         userService.deleteFollow(authorizationHeader, dto);
     }
 }
