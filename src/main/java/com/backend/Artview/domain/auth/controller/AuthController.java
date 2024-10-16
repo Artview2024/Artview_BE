@@ -34,7 +34,6 @@ public class AuthController {
 
     @PostMapping("/reissue") //accessToken 재발행
     public ReissueResponseDto reissue(@RequestBody ReissueRequestDto dto) {
-        log.info("reissue");
         return authService.reissue(dto);
     }
 

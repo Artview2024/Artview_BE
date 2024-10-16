@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class MyReviewsModifyRequestDto<T>{
-        Long id;
+
         Long myReviewsId;
         String name;
         String date;

@@ -58,9 +58,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void registerFollow(String authorizationHeader, FollowRequestDto dto) {
-        Long usersId = findUsersIdByJwtProvider(authorizationHeader);
-        Users follower = findUsersById(usersId);
+    public void registerFollow(Long userId , FollowRequestDto dto) {
+        Users follower = findUsersById(userId);
         Users followed = findUsersById(dto.followed());
 
         if (validateUsersAlreadyFollow(follower, followed)) throw new UserException(USER_ALREADY_FOLLOW);
@@ -69,9 +68,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteFollow(String authorizationHeader, FollowRequestDto dto) {
-        Long usersId = findUsersIdByJwtProvider(authorizationHeader);
-        Users unfollower = findUsersById(usersId);
+    public void deleteFollow(Long userId, FollowRequestDto dto) {
+        Users unfollower = findUsersById(userId);
         Users unfollowed = findUsersById(dto.followed());
 
         if (!validateUsersAlreadyFollow(unfollower, unfollowed)) throw new UserException(USER_ALREADY_UNFOLLOW);
