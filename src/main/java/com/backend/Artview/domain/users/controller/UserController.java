@@ -4,6 +4,7 @@ import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.service.UserService;
+import com.backend.Artview.global.customAnnotation.UserId;
 import com.backend.Artview.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,31 +24,27 @@ public class UserController {
 
     private final JwtProvider jwtProvider;
     @GetMapping("/myPage/userInfo")
-    public MyPageUserInfoResponseDto getMyPageUserInfo(@RequestHeader("Authorization") String authorizationHeader) {
-
-        String accessToken = jwtProvider.getTokenFromHeader(authorizationHeader);
-
-        Long userId = jwtProvider.getUserId(accessToken);
+    public MyPageUserInfoResponseDto getMyPageUserInfo(@UserId Long userId) {
         return userService.getMyPageUserInfo(userId);
     }
 
     @GetMapping("/myPage/myReview")
-    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageMyReview() {
-        return userService.getMyPageMyReview(10001L);
+    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageMyReview(@UserId Long userId) {
+        return userService.getMyPageMyReview(userId);
     }
 
     @GetMapping("/myPage/communication")
-    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication() {
-        return userService.getMyPageCommunication(10001L);
+    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication(@UserId Long userId) {
+        return userService.getMyPageCommunication(userId);
     }
 
     @PutMapping("/follow")
-    public void registerFollow(@RequestHeader("Authorization") String authorizationHeader,@RequestBody FollowRequestDto dto){
-        userService.registerFollow(authorizationHeader, dto);
+    public void registerFollow(@UserId Long userId,@RequestBody FollowRequestDto dto){
+        userService.registerFollow(userId, dto);
     }
 
     @DeleteMapping("/unfollow")
-    public void deleteFollow(@RequestHeader("Authorization") String authorizationHeader,@RequestBody FollowRequestDto dto){
-        userService.deleteFollow(authorizationHeader, dto);
+    public void deleteFollow(@UserId Long userId, @RequestBody FollowRequestDto dto){
+        userService.deleteFollow(userId, dto);
     }
 }

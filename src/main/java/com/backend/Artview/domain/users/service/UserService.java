@@ -14,7 +14,7 @@ public interface UserService {
 
     List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication(Long userId);
 
-    void registerFollow(String authorizationHeader, FollowRequestDto dto);
+    void registerFollow(Long userId, FollowRequestDto dto);
 
-    void deleteFollow(String authorizationHeader, FollowRequestDto dto);
+    void deleteFollow(Long userId, FollowRequestDto dto);
 }
