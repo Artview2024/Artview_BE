@@ -1,6 +1,5 @@
 package com.backend.Artview.global.customAnnotation;
 
-import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.global.jwt.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

@@ -18,11 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-//    public final Long userId = 10001L;
-
     private final UserService userService;
 
-    private final JwtProvider jwtProvider;
     @GetMapping("/myPage/userInfo")
     public MyPageUserInfoResponseDto getMyPageUserInfo(@UserId Long userId) {
         return userService.getMyPageUserInfo(userId);

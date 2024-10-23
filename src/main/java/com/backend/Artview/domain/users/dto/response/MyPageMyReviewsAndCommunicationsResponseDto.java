@@ -9,7 +9,8 @@ public record MyPageMyReviewsAndCommunicationsResponseDto(
         Long id,
         String imageUrl,
         String title,
-        String date
+        String date,
+        String gallery
 ) {
 
     public static MyPageMyReviewsAndCommunicationsResponseDto of(MyReviews myReviews){
@@ -18,6 +19,7 @@ public record MyPageMyReviewsAndCommunicationsResponseDto(
                 .imageUrl(myReviews.getMainImageUrl())
                 .title(myReviews.getExhibitionsTitle())
                 .date(myReviews.getVisitedDate())
+                .gallery(myReviews.getExhibitionsLocation())
                 .build();
     }
 
@@ -27,6 +29,7 @@ public record MyPageMyReviewsAndCommunicationsResponseDto(
                 .imageUrl(communications.getCommunicationImagesList().get(0).getImageUrl())
                 .title(communications.getName())
                 .date(communications.getDate())
+                .gallery(communications.getGallery())
                 .build();
     }
 }
