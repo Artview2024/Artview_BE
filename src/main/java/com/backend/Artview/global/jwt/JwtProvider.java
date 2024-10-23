@@ -103,11 +103,9 @@ public class JwtProvider {
             else throw new JwtException(TOKEN_TYPE_NOT_MATCH);
         } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
-            log.error("ACCESS TOKEN이 만료되었습니다. 재발급 받아주세요.");
             throw new JwtException(EXPIRED_JWT_ACCESS_TOKEN);
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
             log.error(e.getMessage());
-            log.error("유효하지 않은 ACCESS TOKEN 입니다");
             throw new JwtException(INVALID_JWT_ACCESS_TOKEN);
         }
     }
