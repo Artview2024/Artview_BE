@@ -152,7 +152,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
 
 //        verifyExistCommunications(cursor);
 
-        PageRequest pageRequest = PageRequest.of(0,DEFAULT_PAGE_SIZE,Sort.by("createDate").descending());
+        PageRequest pageRequest = createPageRequest();
 
         Slice<Communications> communicationsList = cursor==0 ? communicationsRepository.findCommunicationsTopBy(pageRequest)
             : communicationsRepository.findCommunicationsByCursorTopBy(cursor,pageRequest);
@@ -164,6 +164,17 @@ public class CommunicationsServiceImpl implements CommunicationsService {
 
         return CommunicationsMainResponseDto.of(list,communicationsList,nextCursor);
     }
+
+    @Override
+    @Transactional
+    public CommunicationsMainResponseDto findFollowCommunications(Long cursor, Long userId) {
+        return null;
+    }
+
+    private PageRequest createPageRequest() {
+        return PageRequest.of(0,DEFAULT_PAGE_SIZE,Sort.by("createDate").descending());
+    }
+
 
     public Map<String,String> communicationsImageAndTitleToMap(Communications communications){
         return communications.getCommunicationImagesList().stream().collect(
