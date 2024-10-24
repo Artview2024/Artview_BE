@@ -1,11 +1,11 @@
 package com.backend.Artview.domain.users.controller;
 
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
+import com.backend.Artview.domain.users.dto.response.MyPageMyFollowListResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.service.UserService;
 import com.backend.Artview.global.customAnnotation.UserId;
-import com.backend.Artview.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -43,5 +43,14 @@ public class UserController {
     @DeleteMapping("/unfollow")
     public void deleteFollow(@UserId Long userId, @RequestBody FollowRequestDto dto){
         userService.deleteFollow(userId, dto);
+    }
+
+    @GetMapping("/myPage/myFollowingList") //내가 팔로우 하는 사람 리스트
+    public MyPageMyFollowListResponseDto findMyPageMyFollowingList(@UserId Long userId){
+        return userService.findMyPageMyFollowingList(userId);
+    }
+    @GetMapping("/myPage/myFollowerList") //나를 팔로우 하는 사람 리스트
+    public MyPageMyFollowListResponseDto findMyPageMyFollowerList(@UserId Long userId){
+        return userService.findMyPageMyFollowerList(userId);
     }
 }

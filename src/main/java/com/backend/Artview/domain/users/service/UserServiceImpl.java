@@ -6,6 +6,7 @@ import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
+import com.backend.Artview.domain.users.dto.response.MyPageMyFollowListResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
@@ -36,10 +37,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public MyPageUserInfoResponseDto getMyPageUserInfo(Long userId) {
         Users user = findUsersById(userId);
-        int followers = 0;
-        int followees = 0;
+        int following = followRepository.countByGiveFollowUsers(user);
+        int follower = followRepository.countByTakeFollowUsers(user);
         int numberOfReviews = myReviewsRepository.countMyReview(userId);
-        return MyPageUserInfoResponseDto.of(user, followers, followees, numberOfReviews);
+        return MyPageUserInfoResponseDto.of(user, following, follower, numberOfReviews);
     }
 
     @Override
@@ -59,25 +60,41 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void registerFollow(Long userId , FollowRequestDto dto) {
-        Users follower = findUsersById(userId);
-        Users followed = findUsersById(dto.followed());
+        Users giveFollowUser = findUsersById(userId);
+        Users takeFollowUser = findUsersById(dto.takeFollow());
 
-        if (validateUsersAlreadyFollow(follower, followed)) throw new UserException(USER_ALREADY_FOLLOW);
-        followRepository.save(Follow.toEntity(follower, followed));
+        if (validateUsersAlreadyFollow(giveFollowUser, takeFollowUser)) throw new UserException(USER_ALREADY_FOLLOW);
+        followRepository.save(Follow.toEntity(giveFollowUser, takeFollowUser));
     }
 
     @Override
     @Transactional
     public void deleteFollow(Long userId, FollowRequestDto dto) {
-        Users unfollower = findUsersById(userId);
-        Users unfollowed = findUsersById(dto.followed());
+        Users giveFollowUser = findUsersById(userId);
+        Users takeFollowUser = findUsersById(dto.takeFollow());
 
-        if (!validateUsersAlreadyFollow(unfollower, unfollowed)) throw new UserException(USER_ALREADY_UNFOLLOW);
-        followRepository.deleteByFollowerAndFollowed(unfollower,unfollowed);
+        if (!validateUsersAlreadyFollow(giveFollowUser, takeFollowUser)) throw new UserException(USER_ALREADY_UNFOLLOW);
+        followRepository.deleteByGiveFollowUsersAndTakeFollowUsers(giveFollowUser,takeFollowUser);
     }
 
-    private boolean validateUsersAlreadyFollow(Users follower, Users followed) {
-        return followRepository.existsByFollowerAndFollowed(follower, followed);
+    @Override
+    @Transactional
+    public MyPageMyFollowListResponseDto findMyPageMyFollowingList(Long userId) {
+        Users users = findUsersById(userId);
+        List<Users> followingList= followRepository.findMyFollowingList(users);
+        return MyPageMyFollowListResponseDto.of(followingList);
+    }
+
+    @Override
+    @Transactional
+    public MyPageMyFollowListResponseDto findMyPageMyFollowerList(Long userId) {
+        Users users = findUsersById(userId);
+        List<Users> myFollowerList = followRepository.findMyFollowerList(users);
+        return MyPageMyFollowListResponseDto.of(myFollowerList);
+    }
+
+    private boolean validateUsersAlreadyFollow(Users giveFollowUser, Users takeFollowUser) {
+            return followRepository.existsByGiveFollowUsersAndTakeFollowUsers(giveFollowUser, takeFollowUser);
     }
 
     private Users findUsersById(Long userId) {
