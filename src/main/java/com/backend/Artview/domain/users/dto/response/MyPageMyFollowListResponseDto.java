@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 @Builder
 public record MyPageMyFollowListResponseDto(
-        int totalNumber,
         List<FollowInfo> followInfoList
 ) {
 
@@ -32,7 +31,6 @@ public record MyPageMyFollowListResponseDto(
     public static MyPageMyFollowListResponseDto of(List<Users> followingList) {
 
         return MyPageMyFollowListResponseDto.builder()
-                .totalNumber(followingList.size())
                 .followInfoList(followingList.stream().map(FollowInfo::of).collect(Collectors.toList()))
                 .build();
     }

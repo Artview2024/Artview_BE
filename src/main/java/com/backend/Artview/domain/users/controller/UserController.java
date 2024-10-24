@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.users.controller;
 
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
+import com.backend.Artview.domain.users.dto.response.MyPageFollowAndMyReviewsNumberInfoResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageMyFollowListResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
@@ -23,6 +24,11 @@ public class UserController {
     @GetMapping("/myPage/userInfo")
     public MyPageUserInfoResponseDto getMyPageUserInfo(@UserId Long userId) {
         return userService.getMyPageUserInfo(userId);
+    }
+
+    @GetMapping("/myPage/totalNumber")
+    public MyPageFollowAndMyReviewsNumberInfoResponseDto getMyPageTotalNumber(@UserId Long userId) {
+        return userService.getMyPageTotalNumber(userId);
     }
 
     @GetMapping("/myPage/myReview")
