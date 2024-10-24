@@ -6,6 +6,7 @@ import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
+import com.backend.Artview.domain.users.dto.response.MyPageFollowAndMyReviewsNumberInfoResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageMyFollowListResponseDto;
 import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.domain.Users;
@@ -37,10 +38,17 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public MyPageUserInfoResponseDto getMyPageUserInfo(Long userId) {
         Users user = findUsersById(userId);
+        return MyPageUserInfoResponseDto.of(user);
+    }
+
+    @Override
+    @Transactional
+    public MyPageFollowAndMyReviewsNumberInfoResponseDto getMyPageTotalNumber(Long userId) {
+        Users user = findUsersById(userId);
         int following = followRepository.countByGiveFollowUsers(user);
         int follower = followRepository.countByTakeFollowUsers(user);
         int numberOfReviews = myReviewsRepository.countMyReview(userId);
-        return MyPageUserInfoResponseDto.of(user, following, follower, numberOfReviews);
+        return MyPageFollowAndMyReviewsNumberInfoResponseDto.of(following,follower,numberOfReviews);
     }
 
     @Override
