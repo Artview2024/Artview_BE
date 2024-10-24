@@ -4,11 +4,13 @@ import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Builder
 public class Follow extends BaseEntity {
 
@@ -18,17 +20,17 @@ public class Follow extends BaseEntity {
     public Long Id;
 
     @ManyToOne
-    @JoinColumn(name = "follower_id")
-    private Users follower; //팔로우를 한 사람
+    @JoinColumn(name = "give_follow_id")
+    private Users  giveFollowUsers; //팔로우 신청을 한 사람
 
     @ManyToOne
-    @JoinColumn(name = "followed_id")
-    private Users followed; //팔로우를 당한 사람
+    @JoinColumn(name = "take_follow_id")
+    private Users takeFollowUsers; //팔로우 신청을 당한 사람
 
-    public static Follow toEntity(Users follower, Users followed) {
+    public static Follow toEntity(Users giveFollowUser, Users takeFollowUser) {
         return Follow.builder()
-                .follower(follower)
-                .followed(followed)
+                .giveFollowUsers(giveFollowUser)
+                .takeFollowUsers(takeFollowUser)
                 .build();
     }
 }

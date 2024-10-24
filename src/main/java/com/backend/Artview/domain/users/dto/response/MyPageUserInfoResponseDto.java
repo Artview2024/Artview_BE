@@ -8,17 +8,17 @@ public record MyPageUserInfoResponseDto(
         Long userId,
         String userName,
         String userImageUrl,
-        int followees,
+        int following,
         int follower,
         int numberOfMyReviews //관람수
 
 ) {
-    public static MyPageUserInfoResponseDto of(Users user,int followees,int followers,int numberOfMyReviews) {
+    public static MyPageUserInfoResponseDto of(Users user,int following,int followers,int numberOfMyReviews) {
         return MyPageUserInfoResponseDto.builder()
                 .userId(user.getId())
                 .userName(user.getName())
                 .userImageUrl(user.getUserImage())
-                .followees(followees)
+                .following(following)
                 .follower(followers)
                 .numberOfMyReviews(numberOfMyReviews)
                 .build();
