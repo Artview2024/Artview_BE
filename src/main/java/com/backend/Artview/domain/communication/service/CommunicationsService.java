@@ -27,5 +27,4 @@ public interface CommunicationsService {
     void toggleLike(LikeRequestDto dto, Long userId);
 
     CommunicationsMainResponseDto findAllCommunications(Long cursor, Long userId);
-
 }
