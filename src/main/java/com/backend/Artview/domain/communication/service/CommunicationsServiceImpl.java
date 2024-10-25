@@ -17,6 +17,7 @@ import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
+import com.backend.Artview.global.jwt.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +45,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final CommunicationsCustomQueryRepository communicationsCustomQueryRepository;
+    private final JwtProvider jwtProvider;
 
     private final int DEFAULT_PAGE_SIZE = 2;
 
@@ -148,21 +150,33 @@ public class CommunicationsServiceImpl implements CommunicationsService {
 
     @Override
     @Transactional
+    //accessToken이 있어서 사용자의 좋아요 여부도 함께 보내줘야 할 때
     public CommunicationsMainResponseDto findAllCommunications(Long cursor, Long userId) {
 
-//        verifyExistCommunications(cursor);
+        //        verifyExistCommunications(cursor);
 
-        PageRequest pageRequest = PageRequest.of(0,DEFAULT_PAGE_SIZE,Sort.by("createDate").descending());
+        PageRequest pageRequest = createPageRequest();
 
         Slice<Communications> communicationsList = cursor==0 ? communicationsRepository.findCommunicationsTopBy(pageRequest)
-            : communicationsRepository.findCommunicationsByCursorTopBy(cursor,pageRequest);
+                : communicationsRepository.findCommunicationsByCursorTopBy(cursor,pageRequest);
 
-        List<DetailCommunicationsContentResponseDto> list = communicationsList.stream().map(communications -> DetailCommunicationsContentResponseDto.of(communications,
-                verifyUserSaveLike(communications.getId(), userId), communicationsImageAndTitleToMap(communications))).toList();
-
-        Long nextCursor =  communicationsList.hasNext()? communicationsList.getContent().get(communicationsList.getSize() - 1).getId() : null;
+        List<DetailCommunicationsContentResponseDto> list = getDetailCommunicationsContentResponseDtos(userId, communicationsList);
+        Long nextCursor = checkHaveNextCursor(communicationsList);
 
         return CommunicationsMainResponseDto.of(list,communicationsList,nextCursor);
+    }
+
+    private List<DetailCommunicationsContentResponseDto> getDetailCommunicationsContentResponseDtos(Long userId, Slice<Communications> communicationsList) {
+        return communicationsList.stream().map(communications -> DetailCommunicationsContentResponseDto.of(communications,
+                (userId!=null)?verifyUserSaveLike(communications.getId(), userId) : false, communicationsImageAndTitleToMap(communications))).toList();
+    }
+
+    private static Long checkHaveNextCursor(Slice<Communications> communicationsList) {
+        return communicationsList.hasNext()? communicationsList.getContent().get(communicationsList.getSize() - 1).getId() : null;
+    }
+
+    private PageRequest createPageRequest() {
+        return PageRequest.of(0,DEFAULT_PAGE_SIZE,Sort.by("createDate").descending());
     }
 
     public Map<String,String> communicationsImageAndTitleToMap(Communications communications){

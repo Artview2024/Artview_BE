@@ -40,10 +40,9 @@ public class JwtProvider {
     // access token 발급 method
     public String createAccessToken(Long userId) {
         return Jwts.builder()
-                .claim("userId", userId)
                 .setHeaderParam("type", "accessToken")
+                .claim("userId", userId)
                 .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
-//                .setSubject(String.valueOf(userId))  // JWT 토큰 제목
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))    // JWT 토큰 발급 시간
                 .setExpiration(Date.from(Instant.now().plus(accessExpirationHours, ChronoUnit.HOURS)))    // JWT 토큰 만료 시간
                 .compact(); // JWT 토큰 생성
@@ -56,6 +55,12 @@ public class JwtProvider {
                 .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
                 .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))    // JWT 토큰 만료 시간
                 .compact(); // JWT 토큰 생성
+    }
+
+    public Long controllerJwt(String authorizationHeader){
+        String accessToken = getTokenFromHeader(authorizationHeader);
+        validateAccessToken(accessToken);
+        return getUserId(accessToken);
     }
 
     // 토큰 subject꺼내기 (유저 id)
@@ -85,8 +90,8 @@ public class JwtProvider {
     // refresh 토큰 확인
     public Boolean validateRefreshToken(String refreshToken) {
         try {
-             if(getHeaderFromJWT(refreshToken).get("type").toString().equals("refreshToken")) return true;
-             else throw new JwtException(TOKEN_TYPE_NOT_MATCH);
+            if (getHeaderFromJWT(refreshToken).get("type").toString().equals("refreshToken")) return true;
+            else throw new JwtException(TOKEN_TYPE_NOT_MATCH);
         } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
             throw new JwtException(EXPIRED_JWT_REFRESH_TOKEN);
@@ -111,8 +116,9 @@ public class JwtProvider {
     }
 
     public Header getHeaderFromJWT(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(secretKey.getBytes())
+                .build()
                 .parseClaimsJws(token)
                 .getHeader();
     }
