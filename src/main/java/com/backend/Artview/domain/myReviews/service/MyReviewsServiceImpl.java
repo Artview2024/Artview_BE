@@ -69,9 +69,9 @@ public class MyReviewsServiceImpl implements MyReviewsService {
 
     @Override
     @Transactional
-    public Long saveMyReviews(MyReviewsSaveRequestDto requestDto) {
+    public Long saveMyReviews(Long userId, MyReviewsSaveRequestDto requestDto) {
 
-        Users user = usersRepository.findById(requestDto.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
         MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(requestDto.getMainImage()) ,user);
 
         for(int i = 0; i<requestDto.getArtList().size(); i++) {
@@ -94,7 +94,7 @@ public class MyReviewsServiceImpl implements MyReviewsService {
 
     @Override
     @Transactional
-    public void refactorMyReviews(MyReviewsModifyRequestDto requestDto) {
+    public void refactorMyReviews(Long userId, MyReviewsModifyRequestDto requestDto) {
         MyReviews myReviews = findDetailMyReviewsByReviewsId(requestDto.getMyReviewsId());
         List<ModifyRequestArtList> artLists = requestDto.getArtList();
 

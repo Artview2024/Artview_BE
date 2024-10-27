@@ -25,4 +25,21 @@ public interface CommunicationsRepository extends JpaRepository<Communications,L
     Slice<Communications> findCommunicationsTopBy(PageRequest pageRequest);
 
     List<Communications> findAllByUsersId(Long userId);
+    @Query(
+            "SELECT DISTINCT co FROM Communications co " +
+                    "JOIN Users u ON co.users.id = u.id " +
+                    "JOIN Follow f ON u.id = f.takeFollowUsers.id " +
+                    "WHERE f.giveFollowUsers.id = :userId " +
+                    "ORDER BY co.createDate desc"
+    )
+    Slice<Communications> findFollowCommunicationsTopBy(PageRequest pageRequest, @Param("userId")Long userId);
+
+    @Query(
+            "SELECT DISTINCT co FROM Communications co " +
+                    "JOIN Users u ON co.users.id = u.id " +
+                    "JOIN Follow f ON u.id = f.takeFollowUsers.id " +
+                    "WHERE f.giveFollowUsers.id = :userId AND co.id < :cursor " +
+                    "ORDER BY co.createDate desc"
+    )
+    Slice<Communications> findFollowCommunicationsByCursorTopBy(@Param("cursor") Long cursor, @Param("userId") Long userId, PageRequest pageRequest);
 }

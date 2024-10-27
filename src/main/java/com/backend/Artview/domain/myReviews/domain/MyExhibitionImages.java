@@ -17,7 +17,7 @@ public class MyExhibitionImages extends BaseEntity {
     @Column(name = "my_exhibitions_images_id", unique = true)
     private Long id;
 
-    @Column(name = "my_exhibition_images_url")
+    @Column(name = "my_exhibition_images_url", length = 500)
     private String myExhibitionImagesUrl;
 
     @OneToOne

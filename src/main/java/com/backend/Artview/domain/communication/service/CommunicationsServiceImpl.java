@@ -17,6 +17,7 @@ import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
+import com.backend.Artview.global.jwt.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +45,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final CommunicationsCustomQueryRepository communicationsCustomQueryRepository;
+    private final JwtProvider jwtProvider;
 
     private final int DEFAULT_PAGE_SIZE = 2;
 
@@ -55,9 +57,9 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         MyReviews myReviews = myReviewsRepository.findByIdAndUsersId(reviewsId, userId).orElseThrow(() -> new MyReviewsException(USER_MY_REVIEWS_NOT_FOUND));
 
         Map<String, String> imageAndTitle = myReviews.getMyReviewsContents().stream().collect(
-                Collectors.toMap(myReviewsContents -> myReviewsContents.getMyExhibitionImage().getMyExhibitionImagesUrl(),MyReviewsContents::getArtTitle));
+                Collectors.toMap(myReviewsContents -> myReviewsContents.getMyExhibitionImage().getMyExhibitionImagesUrl(), MyReviewsContents::getArtTitle));
 
-        imageAndTitle.put(myReviews.getMainImageUrl(),"메인이미지 제목");
+        imageAndTitle.put(myReviews.getMainImageUrl(), "메인이미지 제목");
 
         return CommunicationRetrieveResponseDto.of(myReviews, imageAndTitle);
 
@@ -141,33 +143,72 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         Like like = getLike(dto, userId);
         // 유저가 좋아요를 눌렀는지 확인
         if (verifyUserSaveLike(dto.communicationsId(), userId)) //유저가 이미 like를 눌렀음
-            deleteLike(dto.isUserClickLick(),like);
+            deleteLike(dto.isUserClickLick(), like);
         else
             saveLike(dto.isUserClickLick(), like);
     }
 
     @Override
     @Transactional
+    //accessToken이 있어서 사용자의 좋아요 여부도 함께 보내줘야 할 때
     public CommunicationsMainResponseDto findAllCommunications(Long cursor, Long userId) {
 
-//        verifyExistCommunications(cursor);
+        //        verifyExistCommunications(cursor);
 
-        PageRequest pageRequest = PageRequest.of(0,DEFAULT_PAGE_SIZE,Sort.by("createDate").descending());
+        PageRequest pageRequest = createPageRequest();
 
-        Slice<Communications> communicationsList = cursor==0 ? communicationsRepository.findCommunicationsTopBy(pageRequest)
-            : communicationsRepository.findCommunicationsByCursorTopBy(cursor,pageRequest);
+        Slice<Communications> communicationsList = cursor == 0 ? communicationsRepository.findCommunicationsTopBy(pageRequest)
+                : communicationsRepository.findCommunicationsByCursorTopBy(cursor, pageRequest);
 
-        List<DetailCommunicationsContentResponseDto> list = communicationsList.stream().map(communications -> DetailCommunicationsContentResponseDto.of(communications,
-                verifyUserSaveLike(communications.getId(), userId), communicationsImageAndTitleToMap(communications))).toList();
+        List<DetailCommunicationsContentResponseDto> list = getDetailCommunicationsContentResponseDtos(userId, communicationsList);
+        Long nextCursor = checkHaveNextCursor(communicationsList);
 
-        Long nextCursor =  communicationsList.hasNext()? communicationsList.getContent().get(communicationsList.getSize() - 1).getId() : null;
-
-        return CommunicationsMainResponseDto.of(list,communicationsList,nextCursor);
+        return CommunicationsMainResponseDto.of(list, communicationsList, nextCursor);
     }
 
-    public Map<String,String> communicationsImageAndTitleToMap(Communications communications){
+    @Override
+    @Transactional
+    public CommunicationsMainResponseDto findFollowCommunications(Long cursor, Long userId) {
+        return findCommunicationsByType(cursor, userId, CommunicationsType.FOLLOW);
+    }
+
+    private CommunicationsMainResponseDto findCommunicationsByType(Long cursor, Long userId, CommunicationsType type) {
+        PageRequest pageRequest = createPageRequest();
+        Slice<Communications> communicationsList;
+
+
+        if (type==CommunicationsType.FOLLOW) {
+            communicationsList = (cursor == 0)
+                    ? communicationsRepository.findFollowCommunicationsTopBy(pageRequest, userId)
+                    : communicationsRepository.findFollowCommunicationsByCursorTopBy(cursor, userId, pageRequest);
+        } else if(type==CommunicationsType.ALL) {
+            communicationsList = (cursor == 0)
+                    ? communicationsRepository.findCommunicationsTopBy(pageRequest)
+                    : communicationsRepository.findCommunicationsByCursorTopBy(cursor, pageRequest);
+        } else return null;
+
+        List<DetailCommunicationsContentResponseDto> list = getDetailCommunicationsContentResponseDtos(userId, communicationsList);
+        Long nextCursor = checkHaveNextCursor(communicationsList);
+
+        return CommunicationsMainResponseDto.of(list, communicationsList, nextCursor);
+    }
+
+    private List<DetailCommunicationsContentResponseDto> getDetailCommunicationsContentResponseDtos(Long userId, Slice<Communications> communicationsList) {
+        return communicationsList.stream().map(communications -> DetailCommunicationsContentResponseDto.of(communications,
+                (userId != null) ? verifyUserSaveLike(communications.getId(), userId) : false, communicationsImageAndTitleToMap(communications))).toList();
+    }
+
+    private static Long checkHaveNextCursor(Slice<Communications> communicationsList) {
+        return communicationsList.hasNext() ? communicationsList.getContent().get(communicationsList.getSize() - 1).getId() : null;
+    }
+
+    private PageRequest createPageRequest() {
+        return PageRequest.of(0, DEFAULT_PAGE_SIZE, Sort.by("createDate").descending());
+    }
+
+    public Map<String, String> communicationsImageAndTitleToMap(Communications communications) {
         return communications.getCommunicationImagesList().stream().collect(
-                Collectors.toMap(CommunicationImages::getImageUrl,CommunicationImages::getImageTitle));
+                Collectors.toMap(CommunicationImages::getImageUrl, CommunicationImages::getImageTitle));
     }
 
     public void saveLike(boolean isUserClickLike, Like like) {
@@ -183,7 +224,6 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     public boolean verifyUserSaveLike(Long communicationsId, Long userId) {
         return likeRepository.existsByCommunicationsIdAndUsersId(communicationsId, userId);
     }
-
 
 
     private Like getLike(LikeRequestDto dto, Long userId) {
@@ -209,6 +249,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         if (!communicationsRepository.existsById(communicationsId))
             throw new CommunicationException(COMMUNICATIONS_NO_EXIST);
     }
+
     public void verifyMyReviewsIdExists(Long myReviewsId) {
         if (!(myReviewsRepository.existsById(myReviewsId))) throw new MyReviewsException(MY_REVIEWS_NOT_FOUND);
     }

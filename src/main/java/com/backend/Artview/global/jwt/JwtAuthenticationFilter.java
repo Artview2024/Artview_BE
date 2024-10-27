@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //소통 페이지 관련 URI
             new AntPathRequestMatcher("/api/communications/main/all/{cursor}"),
             new AntPathRequestMatcher("/api/communications/content/{communicationsId}"),
+            new AntPathRequestMatcher("/api/communications/comment/{communicationsId}"),
 
             //전시회 페이지 관련 UI
             new AntPathRequestMatcher("/api/exhibition/**"),
@@ -60,10 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         log.info("requst 인증하는중");
 
-        String accessToken = getAccessTokenFromHttpServletRequest(request);
-        jwtProvider.validateAccessToken(accessToken);
+        String accessToken = getAccessTokenFromHttpServletRequest(request); //JWT가 헤더에 있는지 판단
+        jwtProvider.validateAccessToken(accessToken); //JWT 유효성 검증
         Long userId = jwtProvider.getUserId(accessToken);
-        setAuthentication(request, userId);
+        setAuthentication(request, userId); //현재 Request의 Security Context에 접근권한 설정
+                    // -> Context에 이것이 추가된다는 것은 해당 요청이 필터를 거쳐 인가에 성공하여 승인된 Request라는 의미
         filterChain.doFilter(request, response);
     }
 

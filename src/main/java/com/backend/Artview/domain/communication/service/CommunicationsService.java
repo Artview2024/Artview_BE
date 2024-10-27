@@ -28,4 +28,5 @@ public interface CommunicationsService {
 
     CommunicationsMainResponseDto findAllCommunications(Long cursor, Long userId);
 
+    CommunicationsMainResponseDto findFollowCommunications(Long cursor, Long userId);
 }

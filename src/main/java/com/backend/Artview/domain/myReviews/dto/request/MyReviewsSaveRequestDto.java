@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @Setter
 public class MyReviewsSaveRequestDto {
-    Long id;
     String name;
     String date;
     String gallery;

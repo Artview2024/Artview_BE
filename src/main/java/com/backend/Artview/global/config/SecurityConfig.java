@@ -23,8 +23,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @AllArgsConstructor
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig {
+@EnableWebSecurity(debug = false) // true로 하면 request가 올 떄마다 어떤 filter를 사용하고 있는지 출력 .
+public class SecurityConfig{
     public final JwtProvider jwtProvider;
 
     @Bean

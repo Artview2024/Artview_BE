@@ -17,7 +17,7 @@ public class CommunicationImages extends BaseEntity {
     @Column(name = "communications_images_id")
     private Long id;
 
-    @Column(name = "communications_images_url")
+    @Column(name = "communications_images_url", length = 500)
     private String imageUrl;
 
     @Column(name = "communications_images_title")
