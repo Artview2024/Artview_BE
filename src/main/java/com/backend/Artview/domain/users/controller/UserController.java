@@ -1,10 +1,7 @@
 package com.backend.Artview.domain.users.controller;
 
+import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
-import com.backend.Artview.domain.users.dto.response.MyPageFollowAndMyReviewsNumberInfoResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageMyFollowListResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
 import com.backend.Artview.domain.users.service.UserService;
 import com.backend.Artview.global.customAnnotation.UserId;
 import lombok.RequiredArgsConstructor;
@@ -51,12 +48,12 @@ public class UserController {
         userService.deleteFollow(userId, dto);
     }
 
-    @GetMapping("/myPage/myFollowingList") //내가 팔로우 하는 사람 리스트
-    public MyPageMyFollowListResponseDto findMyPageMyFollowingList(@UserId Long userId){
+    @GetMapping("/myPage/myFollowingList") //내가 팔로잉 하는 사람 리스트
+    public List<MyPageFollowInfoDto> findMyPageMyFollowingList(@UserId Long userId){
         return userService.findMyPageMyFollowingList(userId);
     }
     @GetMapping("/myPage/myFollowerList") //나를 팔로우 하는 사람 리스트
-    public MyPageMyFollowListResponseDto findMyPageMyFollowerList(@UserId Long userId){
+    public List<MyPageFollowInfoDto> findMyPageMyFollowerList(@UserId Long userId){
         return userService.findMyPageMyFollowerList(userId);
     }
 }
