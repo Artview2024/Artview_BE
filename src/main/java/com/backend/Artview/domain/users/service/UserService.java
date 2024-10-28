@@ -1,10 +1,7 @@
 package com.backend.Artview.domain.users.service;
 
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
-import com.backend.Artview.domain.users.dto.response.MyPageFollowAndMyReviewsNumberInfoResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageMyFollowListResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
+import com.backend.Artview.domain.users.dto.response.*;
 
 import java.util.List;
 
@@ -22,7 +19,7 @@ public interface UserService {
 
     void deleteFollow(Long userId, FollowRequestDto dto);
 
-    MyPageMyFollowListResponseDto findMyPageMyFollowingList(Long userId);
+    List<MyPageFollowInfoDto> findMyPageMyFollowingList(Long userId);
 
-    MyPageMyFollowListResponseDto findMyPageMyFollowerList(Long userId);
+    List<MyPageFollowInfoDto> findMyPageMyFollowerList(Long userId);
 }

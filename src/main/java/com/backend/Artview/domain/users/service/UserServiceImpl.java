@@ -6,11 +6,8 @@ import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
-import com.backend.Artview.domain.users.dto.response.MyPageFollowAndMyReviewsNumberInfoResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageMyFollowListResponseDto;
-import com.backend.Artview.domain.users.dto.response.MyPageUserInfoResponseDto;
+import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.domain.Users;
-import com.backend.Artview.domain.users.dto.response.MyPageMyReviewsAndCommunicationsResponseDto;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.FollowRepository;
 import com.backend.Artview.domain.users.repository.UsersRepository;
@@ -48,7 +45,7 @@ public class UserServiceImpl implements UserService {
         int following = followRepository.countByGiveFollowUsers(user);
         int follower = followRepository.countByTakeFollowUsers(user);
         int numberOfReviews = myReviewsRepository.countMyReview(userId);
-        return MyPageFollowAndMyReviewsNumberInfoResponseDto.of(following,follower,numberOfReviews);
+        return MyPageFollowAndMyReviewsNumberInfoResponseDto.of(following, follower, numberOfReviews);
     }
 
     @Override
@@ -67,11 +64,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void registerFollow(Long userId , FollowRequestDto dto) {
+    public void registerFollow(Long userId, FollowRequestDto dto) {
         Users giveFollowUser = findUsersById(userId);
         Users takeFollowUser = findUsersById(dto.takeFollow());
 
-        if (validateUsersAlreadyFollow(giveFollowUser, takeFollowUser)) throw new UserException(USER_ALREADY_FOLLOW);
+        if (validateUsersFollow(giveFollowUser, takeFollowUser)) throw new UserException(USER_ALREADY_FOLLOW);
         followRepository.save(Follow.toEntity(giveFollowUser, takeFollowUser));
     }
 
@@ -81,28 +78,30 @@ public class UserServiceImpl implements UserService {
         Users giveFollowUser = findUsersById(userId);
         Users takeFollowUser = findUsersById(dto.takeFollow());
 
-        if (!validateUsersAlreadyFollow(giveFollowUser, takeFollowUser)) throw new UserException(USER_ALREADY_UNFOLLOW);
-        followRepository.deleteByGiveFollowUsersAndTakeFollowUsers(giveFollowUser,takeFollowUser);
+        if (!validateUsersFollow(giveFollowUser, takeFollowUser)) throw new UserException(USER_ALREADY_UNFOLLOW);
+        followRepository.deleteByGiveFollowUsersAndTakeFollowUsers(giveFollowUser, takeFollowUser);
     }
 
     @Override
     @Transactional
-    public MyPageMyFollowListResponseDto findMyPageMyFollowingList(Long userId) {
+    public List<MyPageFollowInfoDto> findMyPageMyFollowingList(Long userId) {
         Users users = findUsersById(userId);
-        List<Users> followingList= followRepository.findMyFollowingList(users);
-        return MyPageMyFollowListResponseDto.of(followingList);
+        List<Users> followingList = followRepository.findMyFollowingList(users);
+        return followingList.stream().map(myFollowing -> MyPageFollowInfoDto.of(myFollowing,
+                validateUsersFollow(myFollowing,users))).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public MyPageMyFollowListResponseDto findMyPageMyFollowerList(Long userId) {
+    public List<MyPageFollowInfoDto> findMyPageMyFollowerList(Long userId) {
         Users users = findUsersById(userId);
         List<Users> myFollowerList = followRepository.findMyFollowerList(users);
-        return MyPageMyFollowListResponseDto.of(myFollowerList);
+        return myFollowerList.stream().map(myFollower -> MyPageFollowInfoDto.of(myFollower,
+                validateUsersFollow(users,myFollower))).collect(Collectors.toList());
     }
 
-    private boolean validateUsersAlreadyFollow(Users giveFollowUser, Users takeFollowUser) {
-            return followRepository.existsByGiveFollowUsersAndTakeFollowUsers(giveFollowUser, takeFollowUser);
+    private boolean validateUsersFollow(Users giveFollowUser, Users takeFollowUser) {
+        return followRepository.existsByGiveFollowUsersAndTakeFollowUsers(giveFollowUser, takeFollowUser);
     }
 
     private Users findUsersById(Long userId) {
