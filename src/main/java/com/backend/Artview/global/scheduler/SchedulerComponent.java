@@ -19,7 +19,7 @@ import java.util.Date;
 public class SchedulerComponent {
     private final CrawlingExhibitionRepository crawlingExhibitionRepository;
 
-    @Scheduled(cron = "${schedule.cron}", zone = "${schedule.zone}")
+    @Scheduled(cron = "0 0 0 * * *", zone = "${schedule.zone}")
     @Transactional
     public void runScheduler() {
 
