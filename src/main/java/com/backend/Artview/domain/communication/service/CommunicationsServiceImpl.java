@@ -17,16 +17,13 @@ import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
-import com.backend.Artview.global.jwt.JwtProvider;
+import com.backend.Artview.global.util.PaginationUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,8 +41,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final UsersRepository usersRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-    private final CommunicationsCustomQueryRepository communicationsCustomQueryRepository;
-    private final JwtProvider jwtProvider;
+    private final PaginationUtil paginationUtil;
 
     private final int DEFAULT_PAGE_SIZE = 2;
 
@@ -203,7 +199,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     }
 
     private PageRequest createPageRequest() {
-        return PageRequest.of(0, DEFAULT_PAGE_SIZE, Sort.by("createDate").descending());
+        return paginationUtil.createPageRequest(DEFAULT_PAGE_SIZE, "createDate");
     }
 
     public Map<String, String> communicationsImageAndTitleToMap(Communications communications) {
