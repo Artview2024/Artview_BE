@@ -4,6 +4,7 @@ import com.backend.Artview.domain.communication.Repository.CommunicationsReposit
 import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
+import com.backend.Artview.domain.users.domain.UsersInterest;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
 import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
@@ -11,6 +12,7 @@ import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.FollowRepository;
+import com.backend.Artview.domain.users.repository.UsersInterestRepository;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import com.backend.Artview.global.jwt.JwtProvider;
 import com.backend.Artview.global.util.S3Util;
@@ -34,6 +36,7 @@ public class UserServiceImpl implements UserService {
     private final FollowRepository followRepository;
     private final JwtProvider jwtProvider;
     private final S3Util s3Util;
+    private final UsersInterestRepository usersInterestRepository;
 
     @Override
     @Transactional
@@ -116,11 +119,32 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void modifyMyPageInfo(Long userId, ModifyMyPageInfoRequestDto dto) {
         Users users = findUsersById(userId);
-        Object userImageUrl = dto.userImageUrl();
 
-        if (userImageUrl instanceof MultipartFile) {
-            users.updateUserInfo(dto.userName(), s3Util.uploadFileToS3Bucket((MultipartFile) userImageUrl));
-        } else users.updateUserInfo(dto.userName());
+        if (dto.userName() != null) users.updateUserName(dto.userName());
+
+        if (dto.userImageUrl() != null) {
+            if (dto.userImageUrl() instanceof MultipartFile) {
+                users.updateUserInfo(dto.userName(), s3Util.uploadFileToS3Bucket((MultipartFile) dto.userImageUrl()));
+            } else users.updateUserInfo(dto.userName());
+        }
+
+        List<String> usersNewInterest = dto.usersInterest();
+
+        if (usersNewInterest!=null) {
+
+            if (usersNewInterest.size() > 3) {
+                throw new UserException(INTEREST_LENGTH_EXCEED);
+            }
+
+            List<UsersInterest> updatedInterests = usersNewInterest.stream().map(newInterest -> UsersInterest.of(newInterest, users))
+                    .collect(Collectors.toList());
+
+            if (usersInterestRepository.existsByUsers(users)) {
+                usersInterestRepository.deleteAllByUsers(users);
+            }
+
+            usersInterestRepository.saveAll(updatedInterests);
+        }
     }
 
     public boolean validateUsersFollow(Users giveFollowUser, Users takeFollowUser) {

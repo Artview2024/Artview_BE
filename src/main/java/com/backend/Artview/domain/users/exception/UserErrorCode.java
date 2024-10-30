@@ -11,6 +11,10 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor
 public enum UserErrorCode implements BaseErrorCode {
 
+    //400 BadRequest
+    INTEREST_LENGTH_EXCEED(BAD_REQUEST,400,"usersInterest는 최대 3개까지만 가능합니다."),
+
+
     //404
     USER_NOT_FOUND(NOT_FOUND,404,"존재하지 않는 유저입니다."),
     DUPLICATE_KAKAO_ID(CONFLICT, 409,"이미 회원가입 된 카카오 계정 입니다."),
