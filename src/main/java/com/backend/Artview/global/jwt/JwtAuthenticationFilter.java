@@ -43,6 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //전시회 페이지 관련 UI
             new AntPathRequestMatcher("/api/exhibition/**"),
 
+            //다른 사용자 프로필 조회 api
+            new AntPathRequestMatcher("/api/user/userInfo/{writerId}"),
+            new AntPathRequestMatcher("/api/user/totalNumber/{writerId}"),
+            new AntPathRequestMatcher("/api/user/myReview/{writerId}"),
+            new AntPathRequestMatcher("/api/user/communication/{writerId}"),
+
             //기타 URI
             new AntPathRequestMatcher("/api/health")
 
