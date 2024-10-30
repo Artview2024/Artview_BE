@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface MyReviewsRepository extends JpaRepository<MyReviews,Long> {
 
-    List<MyReviews> findAllByUsersId(Long userId);
+    List<MyReviews> findAllByUsersIdOrderByCreateDateDesc(Long userId);
 
     Optional<MyReviews> findByIdAndUsersId(Long reviewId, Long userId);
 
