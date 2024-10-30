@@ -1,8 +1,11 @@
 package com.backend.Artview.domain.users.dto.response;
 
+import com.backend.Artview.domain.communication.domain.CommunicationImages;
 import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public record MyPageMyReviewsAndCommunicationsResponseDto(
@@ -26,10 +29,16 @@ public record MyPageMyReviewsAndCommunicationsResponseDto(
     public static MyPageMyReviewsAndCommunicationsResponseDto of(Communications communications){
         return MyPageMyReviewsAndCommunicationsResponseDto.builder()
                 .id(communications.getId())
-                .imageUrl(communications.getCommunicationImagesList().get(0).getImageUrl())
+                .imageUrl(checkImageUrlIsNull(communications.getCommunicationImagesList()))
                 .title(communications.getName())
                 .date(communications.getDate())
                 .gallery(communications.getGallery())
                 .build();
+    }
+
+    private static String checkImageUrlIsNull(List<CommunicationImages> communicationImagesList){
+        if(!communicationImagesList.isEmpty() && communicationImagesList.get(0) != null)
+            return communicationImagesList.get(0).getImageUrl();
+        else return null;
     }
 }

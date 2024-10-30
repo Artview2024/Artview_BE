@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.users.controller;
 
+import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
 import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.service.UserService;
@@ -56,4 +57,37 @@ public class UserController {
     public List<MyPageFollowInfoDto> findMyPageMyFollowerList(@UserId Long userId){
         return userService.findMyPageMyFollowerList(userId);
     }
+
+    @PatchMapping("/modify/myPage")
+    public void modifyMyPageInfo(@UserId Long userId, @ModelAttribute ModifyMyPageInfoRequestDto dto){
+        userService.modifyMyPageInfo(userId, dto);
+    }
+
+//    다른 사용자 프로필 조회 api
+    @GetMapping("/userInfo/{writerId}")
+    public MyPageUserInfoResponseDto getWriterUserInfo(@PathVariable Long writerId) {
+        return userService.getMyPageUserInfo(writerId);
+    }
+
+    @GetMapping("/totalNumber/{writerId}")
+    public MyPageFollowAndMyReviewsNumberInfoResponseDto getWriterTotalNumber(@PathVariable Long writerId) {
+        return userService.getMyPageTotalNumber(writerId);
+    }
+
+    @GetMapping("/myReview/{writerId}")
+    public List<MyPageMyReviewsAndCommunicationsResponseDto> getWriterMyReview(@PathVariable Long writerId) {
+        return userService.getMyPageMyReview(writerId);
+    }
+
+    @GetMapping("/communication/{writerId}")
+    public List<MyPageMyReviewsAndCommunicationsResponseDto> getWriterCommunication(@PathVariable Long writerId) {
+        return userService.getMyPageCommunication(writerId);
+    }
+
+    @GetMapping("/checkFollow/{writerId}")
+    public boolean checkUsersFollow(@UserId Long userId, @PathVariable Long writerId) {
+        return userService.checkUsersFollow(userId, writerId);
+    }
+//    다른 사용자 프로필 조회 api
+
 }

@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.users.service;
 
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
+import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
 import com.backend.Artview.domain.users.dto.response.*;
 
 import java.util.List;
@@ -11,9 +12,9 @@ public interface UserService {
 
     MyPageFollowAndMyReviewsNumberInfoResponseDto getMyPageTotalNumber(Long userId);
 
-    List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageMyReview(Long userId);
-
     List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication(Long userId);
+
+    List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageMyReview(Long userId);
 
     void registerFollow(Long userId, FollowRequestDto dto);
 
@@ -22,4 +23,8 @@ public interface UserService {
     List<MyPageFollowInfoDto> findMyPageMyFollowingList(Long userId);
 
     List<MyPageFollowInfoDto> findMyPageMyFollowerList(Long userId);
+
+    boolean checkUsersFollow(Long userId, Long writerId);
+
+    void modifyMyPageInfo(Long userId, ModifyMyPageInfoRequestDto dto);
 }

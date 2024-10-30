@@ -6,15 +6,18 @@ import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
+import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
 import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.FollowRepository;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import com.backend.Artview.global.jwt.JwtProvider;
+import com.backend.Artview.global.util.S3Util;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final CommunicationsRepository communicationsRepository;
     private final FollowRepository followRepository;
     private final JwtProvider jwtProvider;
+    private final S3Util s3Util;
 
     @Override
     @Transactional
@@ -50,16 +54,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageMyReview(Long userId) {
-        List<MyReviews> myReviewsList = myReviewsRepository.findAllByUsersId(userId);
-        return myReviewsList.stream().map(MyPageMyReviewsAndCommunicationsResponseDto::of).collect(Collectors.toList());
+    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication(Long userId) {
+        List<Communications> communicationsList = communicationsRepository.findAllByUsersId(userId);
+        return communicationsList.stream().map(MyPageMyReviewsAndCommunicationsResponseDto::of).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageCommunication(Long userId) {
-        List<Communications> communicationsList = communicationsRepository.findAllByUsersId(userId);
-        return communicationsList.stream().map(MyPageMyReviewsAndCommunicationsResponseDto::of).collect(Collectors.toList());
+    public List<MyPageMyReviewsAndCommunicationsResponseDto> getMyPageMyReview(Long userId) {
+        List<MyReviews> myReviewsList = myReviewsRepository.findAllByUsersIdOrderByCreateDateDesc(userId);
+        return myReviewsList.stream().map(MyPageMyReviewsAndCommunicationsResponseDto::of).collect(Collectors.toList());
     }
 
     @Override
@@ -88,7 +92,7 @@ public class UserServiceImpl implements UserService {
         Users users = findUsersById(userId);
         List<Users> followingList = followRepository.findMyFollowingList(users);
         return followingList.stream().map(myFollowing -> MyPageFollowInfoDto.of(myFollowing,
-                validateUsersFollow(myFollowing,users))).collect(Collectors.toList());
+                validateUsersFollow(myFollowing, users))).collect(Collectors.toList());
     }
 
     @Override
@@ -97,10 +101,29 @@ public class UserServiceImpl implements UserService {
         Users users = findUsersById(userId);
         List<Users> myFollowerList = followRepository.findMyFollowerList(users);
         return myFollowerList.stream().map(myFollower -> MyPageFollowInfoDto.of(myFollower,
-                validateUsersFollow(users,myFollower))).collect(Collectors.toList());
+                validateUsersFollow(users, myFollower))).collect(Collectors.toList());
     }
 
-    private boolean validateUsersFollow(Users giveFollowUser, Users takeFollowUser) {
+    @Override
+    @Transactional
+    public boolean checkUsersFollow(Long userId, Long writerId) {
+        Users users = findUsersById(userId);
+        Users writer = findUsersById(writerId);
+        return validateUsersFollow(users, writer);
+    }
+
+    @Override
+    @Transactional
+    public void modifyMyPageInfo(Long userId, ModifyMyPageInfoRequestDto dto) {
+        Users users = findUsersById(userId);
+        Object userImageUrl = dto.userImageUrl();
+
+        if (userImageUrl instanceof MultipartFile) {
+            users.updateUserInfo(dto.userName(), s3Util.uploadFileToS3Bucket((MultipartFile) userImageUrl));
+        } else users.updateUserInfo(dto.userName());
+    }
+
+    public boolean validateUsersFollow(Users giveFollowUser, Users takeFollowUser) {
         return followRepository.existsByGiveFollowUsersAndTakeFollowUsers(giveFollowUser, takeFollowUser);
     }
 

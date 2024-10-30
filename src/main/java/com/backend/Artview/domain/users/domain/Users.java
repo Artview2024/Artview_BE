@@ -7,6 +7,7 @@ import com.backend.Artview.domain.communication.domain.Communications;
 import com.backend.Artview.domain.communication.domain.Like;
 import com.backend.Artview.domain.communication.domain.Scrap;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
+import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -76,5 +77,14 @@ public class Users extends BaseEntity {
                 .name(kakaoUserInfo.getKakao_account().getProfile().getNickname())
                 .userImage(kakaoUserInfo.getKakao_account().getProfile().getProfile_image_url())
                 .build();
+    }
+
+    public void updateUserInfo(String name, String userImage) {
+        this.name = name;
+        this.userImage = userImage;
+    }
+
+    public void updateUserInfo(String name) {
+        this.name = name;
     }
 }
