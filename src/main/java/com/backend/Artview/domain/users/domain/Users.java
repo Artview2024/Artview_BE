@@ -70,6 +70,9 @@ public class Users extends BaseEntity {
     @OneToMany(mappedBy = "takeFollowUsers",fetch = FetchType.LAZY)
     private List<Follow> takeFollowUsers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "users",fetch = FetchType.LAZY)
+    private List<UsersInterest> usersInterests = new ArrayList<>();
+
     public static Users toEntity(KakaoUserInfoResponseDto kakaoUserInfo) {
         return Users.builder()
                 .kakaoId(kakaoUserInfo.getId())
@@ -82,9 +85,14 @@ public class Users extends BaseEntity {
     public void updateUserInfo(String name, String userImage) {
         this.name = name;
         this.userImage = userImage;
+
     }
 
     public void updateUserInfo(String name) {
+        this.name = name;
+    }
+
+    public void updateUserName(String name)  {
         this.name = name;
     }
 }
