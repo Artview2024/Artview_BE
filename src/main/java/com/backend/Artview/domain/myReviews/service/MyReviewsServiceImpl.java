@@ -157,6 +157,6 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     }
 
     public List<MyReviews> findAllMyReviewsFromRepository(Long userId) {
-        return myReviewsRepository.findAllByUsersId(userId);
+        return myReviewsRepository.findAllByUsersIdOrderByCreateDateDesc(userId);
     }
 }

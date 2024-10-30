@@ -37,28 +37,10 @@ public class MyReviewsController {
     }
 
     //전시 기록 작성하기(등록하기)
-//    @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public Long saveMyReviews(@RequestPart(value ="requestDto") MyReviewsSaveRequestDto requestDto,
-//                              @RequestPart(value="mainImage") MultipartFile mainImage,
-//                              @RequestPart(value = "contentImages") List<MultipartFile> contentImages
-//    ) {
-//        return myReviewsService.saveMyReviews(requestDto,mainImage,contentImages);
-//    }
-
-    //전시 기록 작성하기(등록하기)
     @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public Long saveMyReviews(@UserId Long userId, @ModelAttribute MyReviewsSaveRequestDto requestDto) {
         return myReviewsService.saveMyReviews(userId, requestDto);
     }
-
-
-    //전시 기록 수정하기
-//    @PatchMapping("/modify")
-//    public void refactorMyReviews(@RequestPart MyReviewsModifyRequestDto requestDto,
-//                                  @RequestPart(value="mainImage") MultipartFile mainImage,
-//                                  @RequestPart(value = "contentImages") List<MultipartFile> contentImages){
-//        myReviewsService.refactorMyReviews(requestDto,mainImage,contentImages);
-//    }
 
     //전시 기록 수정하기
     @PatchMapping("/modify")
