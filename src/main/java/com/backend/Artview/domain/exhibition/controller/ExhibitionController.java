@@ -21,9 +21,9 @@ public class ExhibitionController {
     private final ExhibitionService exhibitionService;
     private final UserService userService;
 
-    @GetMapping("/upcoming/{cursor}")
-    public ExhibitionResponseDto findUpcomingExhibition(@PathVariable Long cursor) {
-        return exhibitionService.findUpcomingExhibition(cursor);
+    @GetMapping("/free/{cursor}")
+    public ExhibitionResponseDto findFreeExhibition(@PathVariable Long cursor) {
+        return exhibitionService.findFreeExhibition(cursor);
     }
 
     @GetMapping("/ongoing/{cursor}")

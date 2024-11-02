@@ -5,5 +5,5 @@ import com.backend.Artview.domain.exhibition.dto.response.ExhibitionResponseDto;
 public interface ExhibitionService {
     ExhibitionResponseDto findOngoingExhibition(Long cursor);
 
-    ExhibitionResponseDto findUpcomingExhibition(Long cursor);
+    ExhibitionResponseDto findFreeExhibition(Long cursor);
 }

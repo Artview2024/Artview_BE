@@ -23,10 +23,10 @@ public class CrawlingExhibition extends BaseEntity {
     private String title;
 
     @Column(name = "start_date")
-    private Date startDate;
+    private String startDate;
 
     @Column(name = "finish_date")
-    private Date finishDate;
+    private String finishDate;
 
     @Column(name = "location")
     private String location;
@@ -36,6 +36,9 @@ public class CrawlingExhibition extends BaseEntity {
 
     @Column(name = "main_image_url", columnDefinition="varchar(500)")
     private String mainImageUrl;
+
+    @Column(name = "operating_hours")
+    private String operatingHours;
 
     @Column(name = "progress_type")
     private String progressType;

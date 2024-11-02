@@ -14,10 +14,10 @@ public interface CrawlingExhibitionRepository extends JpaRepository<CrawlingExhi
 
     List<CrawlingExhibition> findAllByProgressType(String number);
 
-    Slice<CrawlingExhibition> findCrawlingExhibitionTopByProgressType(PageRequest pageRequest, String code);
+    Slice<CrawlingExhibition> findCrawlingExhibitionTopByProgressTypeOrderByStartDateDesc(PageRequest pageRequest, String code);
 
     @Query(
             "SELECT ce FROM CrawlingExhibition ce WHERE ce.id < :cursor AND ce.progressType = :progressType"
     )
-    Slice<CrawlingExhibition> findCrawlingExhibitionByCursorTopByAndProgressType(@Param(value = "cursor")Long cursor, PageRequest pageRequest, String progressType);
+    Slice<CrawlingExhibition> findCrawlingExhibitionByCursorTopByAndProgressTypeOrderByStartDateDesc(@Param(value = "cursor")Long cursor, PageRequest pageRequest, String progressType);
 }

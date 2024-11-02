@@ -8,6 +8,7 @@ import com.backend.Artview.domain.users.domain.UsersInterest;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
 import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
+import com.backend.Artview.domain.users.dto.request.SaveUsersInterestRequestDto;
 import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
@@ -130,11 +131,9 @@ public class UserServiceImpl implements UserService {
 
         List<String> usersNewInterest = dto.usersInterest();
 
-        if (usersNewInterest!=null) {
+        if (usersNewInterest != null) {
 
-            if (usersNewInterest.size() > 3) {
-                throw new UserException(INTEREST_LENGTH_EXCEED);
-            }
+            IsUsersInterestSizeExceed3(usersNewInterest);
 
             List<UsersInterest> updatedInterests = usersNewInterest.stream().map(newInterest -> UsersInterest.of(newInterest, users))
                     .collect(Collectors.toList());
@@ -143,8 +142,32 @@ public class UserServiceImpl implements UserService {
                 usersInterestRepository.deleteAllByUsers(users);
             }
 
-            usersInterestRepository.saveAll(updatedInterests);
+            saveUsersInterest(updatedInterests);
         }
+    }
+
+
+    @Override
+    @Transactional
+    public void saveUsersInterest(Long userId,SaveUsersInterestRequestDto dto) {
+        Users users = findUsersById(userId);
+        IsUsersInterestSizeExceed3(dto.usersInterest());
+
+        List<UsersInterest> usersInterestList = dto.usersInterest().stream().map(interest -> UsersInterest.of(interest, users))
+                .collect(Collectors.toList());
+
+        saveUsersInterest(usersInterestList);
+
+    }
+
+    private static void IsUsersInterestSizeExceed3(List<String> usersNewInterest) {
+        if (usersNewInterest.size()>3) {
+            throw new UserException(INTEREST_LENGTH_EXCEED);
+        }
+    }
+
+    private void saveUsersInterest(List<UsersInterest> updatedInterests) {
+        usersInterestRepository.saveAll(updatedInterests);
     }
 
     public boolean validateUsersFollow(Users giveFollowUser, Users takeFollowUser) {
