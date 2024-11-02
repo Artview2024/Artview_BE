@@ -8,6 +8,7 @@ import com.backend.Artview.domain.users.domain.UsersInterest;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.domain.Follow;
 import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
+import com.backend.Artview.domain.users.dto.request.SaveUsersInterestRequestDto;
 import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
@@ -130,21 +131,57 @@ public class UserServiceImpl implements UserService {
 
         List<String> usersNewInterest = dto.usersInterest();
 
-        if (usersNewInterest!=null) {
+        if (usersNewInterest != null) {
 
-            if (usersNewInterest.size() > 3) {
-                throw new UserException(INTEREST_LENGTH_EXCEED);
-            }
+            IsUsersInterestSizeExceed3(usersNewInterest);
 
             List<UsersInterest> updatedInterests = usersNewInterest.stream().map(newInterest -> UsersInterest.of(newInterest, users))
                     .collect(Collectors.toList());
 
-            if (usersInterestRepository.existsByUsers(users)) {
-                usersInterestRepository.deleteAllByUsers(users);
-            }
+            ifUsersAlreadySaveInterestThenDelete(users);
 
-            usersInterestRepository.saveAll(updatedInterests);
+            saveUsersInterest(updatedInterests);
         }
+    }
+
+
+
+
+    @Override
+    @Transactional
+    public void saveUsersInterest(Long userId,SaveUsersInterestRequestDto dto) {
+        Users users = findUsersById(userId);
+
+        ifUsersAlreadySaveInterestThenDelete(users);
+        IsUsersInterestSizeExceed3(dto.usersInterest());
+
+        List<UsersInterest> usersInterestList = dto.usersInterest().stream().map(interest -> UsersInterest.of(interest, users))
+                .collect(Collectors.toList());
+
+        saveUsersInterest(usersInterestList);
+    }
+
+    private void ifUsersAlreadySaveInterestThenDelete(Users users) {
+        if (isUsersAlreadySaveInterest(users)) {
+            deleteInterestsByUsers(users);
+        }
+    }
+
+    private void deleteInterestsByUsers(Users users) {
+        usersInterestRepository.deleteAllByUsers(users);
+    }
+
+    private boolean isUsersAlreadySaveInterest(Users users) {
+        return usersInterestRepository.existsByUsers(users);
+    }
+    private static void IsUsersInterestSizeExceed3(List<String> usersNewInterest) {
+        if (usersNewInterest.size()>3) {
+            throw new UserException(INTEREST_LENGTH_EXCEED);
+        }
+    }
+
+    private void saveUsersInterest(List<UsersInterest> updatedInterests) {
+        usersInterestRepository.saveAll(updatedInterests);
     }
 
     public boolean validateUsersFollow(Users giveFollowUser, Users takeFollowUser) {

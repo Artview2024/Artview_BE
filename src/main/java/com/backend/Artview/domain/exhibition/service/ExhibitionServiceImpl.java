@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.backend.Artview.domain.exhibition.domain.ProgressType.ONGOING;
-import static com.backend.Artview.domain.exhibition.domain.ProgressType.UPCOMING;
+import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,20 +27,20 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     @Override
     @Transactional
     public ExhibitionResponseDto findOngoingExhibition(Long cursor) {
-        return test(cursor, ONGOING.getCode());
+        return findExhibitionsByType(cursor, ONGOING.getCode());
     }
 
     @Override
     @Transactional
-    public ExhibitionResponseDto findUpcomingExhibition(Long cursor) {
-        return test(cursor,UPCOMING.getCode());
+    public ExhibitionResponseDto findFreeExhibition(Long cursor) {
+        return findExhibitionsByType(cursor,FREE.getCode());
     }
 
-    private ExhibitionResponseDto test(Long cursor, String progressType) {
+    private ExhibitionResponseDto findExhibitionsByType(Long cursor, String progressType) {
         PageRequest pageRequest = createPageRequest();
 
-        Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findCrawlingExhibitionTopByProgressType(pageRequest, progressType)
-                : crawlingExhibitionRepository.findCrawlingExhibitionByCursorTopByAndProgressType(cursor, pageRequest, progressType);
+        Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findCrawlingExhibitionTopByProgressTypeOrderByStartDateDesc(pageRequest, progressType)
+                : crawlingExhibitionRepository.findCrawlingExhibitionByCursorTopByAndProgressTypeOrderByStartDateDesc(cursor, pageRequest, progressType);
 
         List<ExhibitionInfo> exhibitionInfoList = crawlingExhibitionList.stream().map(data -> ExhibitionInfo.of(data)).collect(Collectors.toList());
 

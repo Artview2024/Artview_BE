@@ -2,6 +2,7 @@ package com.backend.Artview.domain.users.service;
 
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
+import com.backend.Artview.domain.users.dto.request.SaveUsersInterestRequestDto;
 import com.backend.Artview.domain.users.dto.response.*;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface UserService {
     boolean checkUsersFollow(Long userId, Long writerId);
 
     void modifyMyPageInfo(Long userId, ModifyMyPageInfoRequestDto dto);
+
+    void saveUsersInterest(Long userId, SaveUsersInterestRequestDto dto);
 }

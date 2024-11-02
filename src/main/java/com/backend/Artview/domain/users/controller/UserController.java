@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.users.controller;
 
 import com.backend.Artview.domain.users.dto.request.ModifyMyPageInfoRequestDto;
+import com.backend.Artview.domain.users.dto.request.SaveUsersInterestRequestDto;
 import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.service.UserService;
@@ -61,6 +62,11 @@ public class UserController {
     @PatchMapping("/modify/myPage")
     public void modifyMyPageInfo(@UserId Long userId, @ModelAttribute ModifyMyPageInfoRequestDto dto){
         userService.modifyMyPageInfo(userId, dto);
+    }
+
+    @PostMapping("/save/interest")
+    public void saveUsersInterest(@UserId Long userId, @RequestBody SaveUsersInterestRequestDto dto){
+        userService.saveUsersInterest(userId,dto);
     }
 
 //    다른 사용자 프로필 조회 api
