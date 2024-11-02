@@ -138,28 +138,42 @@ public class UserServiceImpl implements UserService {
             List<UsersInterest> updatedInterests = usersNewInterest.stream().map(newInterest -> UsersInterest.of(newInterest, users))
                     .collect(Collectors.toList());
 
-            if (usersInterestRepository.existsByUsers(users)) {
-                usersInterestRepository.deleteAllByUsers(users);
-            }
+            ifUsersAlreadySaveInterestThenDelete(users);
 
             saveUsersInterest(updatedInterests);
         }
     }
 
 
+
+
     @Override
     @Transactional
     public void saveUsersInterest(Long userId,SaveUsersInterestRequestDto dto) {
         Users users = findUsersById(userId);
+
+        ifUsersAlreadySaveInterestThenDelete(users);
         IsUsersInterestSizeExceed3(dto.usersInterest());
 
         List<UsersInterest> usersInterestList = dto.usersInterest().stream().map(interest -> UsersInterest.of(interest, users))
                 .collect(Collectors.toList());
 
         saveUsersInterest(usersInterestList);
-
     }
 
+    private void ifUsersAlreadySaveInterestThenDelete(Users users) {
+        if (isUsersAlreadySaveInterest(users)) {
+            deleteInterestsByUsers(users);
+        }
+    }
+
+    private void deleteInterestsByUsers(Users users) {
+        usersInterestRepository.deleteAllByUsers(users);
+    }
+
+    private boolean isUsersAlreadySaveInterest(Users users) {
+        return usersInterestRepository.existsByUsers(users);
+    }
     private static void IsUsersInterestSizeExceed3(List<String> usersNewInterest) {
         if (usersNewInterest.size()>3) {
             throw new UserException(INTEREST_LENGTH_EXCEED);
