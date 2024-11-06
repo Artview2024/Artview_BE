@@ -30,4 +30,6 @@ public interface UserService {
     void modifyMyPageInfo(Long userId, ModifyMyPageInfoRequestDto dto);
 
     void saveUsersInterest(Long userId, SaveUsersInterestRequestDto dto);
+
+    List<String> findUsersInterest(Long userId);
 }

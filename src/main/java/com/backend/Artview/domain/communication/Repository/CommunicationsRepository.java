@@ -42,4 +42,6 @@ public interface CommunicationsRepository extends JpaRepository<Communications,L
                     "ORDER BY co.createDate desc"
     )
     Slice<Communications> findFollowCommunicationsByCursorTopBy(@Param("cursor") Long cursor, @Param("userId") Long userId, PageRequest pageRequest);
+
+    List<Communications> findAllByCrawlingExhibitionId(Long exhibitionId);
 }

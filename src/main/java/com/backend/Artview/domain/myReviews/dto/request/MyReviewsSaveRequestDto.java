@@ -16,4 +16,5 @@ public class MyReviewsSaveRequestDto {
     MultipartFile mainImage;
     String rating;
     List<SaveRequestArtList> artList;
+    Long exhibitionId;
 }

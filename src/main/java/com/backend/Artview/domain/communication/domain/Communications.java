@@ -1,6 +1,7 @@
 package com.backend.Artview.domain.communication.domain;
 
 import com.backend.Artview.domain.communication.dto.request.CommunicationSaveRequestDto;
+import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -51,8 +52,12 @@ public class Communications extends BaseEntity {
     @OneToMany(mappedBy = "communications",fetch = FetchType.LAZY)
     private List<Scrap> scrapList = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crawling_exhibition_id")
+    private CrawlingExhibition crawlingExhibition;
 
-    public static Communications toEntity(CommunicationSaveRequestDto dto, Users users) {
+
+    public static Communications toEntity(CommunicationSaveRequestDto dto, Users users, CrawlingExhibition crawlingExhibition) {
         return Communications.builder()
                 .name(dto.name())
                 .rate(dto.rate())
@@ -60,6 +65,7 @@ public class Communications extends BaseEntity {
                 .gallery(dto.gallery())
                 .content(dto.content())
                 .users(users)
+                .crawlingExhibition(crawlingExhibition)
                 .build();
     }
 

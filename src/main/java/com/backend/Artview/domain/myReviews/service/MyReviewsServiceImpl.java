@@ -1,6 +1,8 @@
 package com.backend.Artview.domain.myReviews.service;
 
 
+import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
+import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
 import com.backend.Artview.domain.myReviews.domain.MyExhibitionImages;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.IMAGE_TYPE_INCORRECT;
@@ -37,6 +40,7 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     private final MyReviewsRepository myReviewsRepository;
     private final UsersRepository usersRepository;
     private final S3Util s3Util;
+    private final CrawlingExhibitionRepository crawlingExhibitionRepository;
 
     @Override
     @Transactional
@@ -72,7 +76,8 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     public Long saveMyReviews(Long userId, MyReviewsSaveRequestDto requestDto) {
 
         Users user = usersRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(requestDto.getMainImage()) ,user);
+        CrawlingExhibition crawlingExhibition = findCrawlingExhibition(requestDto.getExhibitionId());
+        MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(requestDto.getMainImage()) ,user, crawlingExhibition);
 
         for(int i = 0; i<requestDto.getArtList().size(); i++) {
             MyReviewsContents myReviewsContents = addMyReviewsContentToMyReviews(myReviews, requestDto.getArtList().get(i));
@@ -80,6 +85,10 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         }
 
         return myReviewsRepository.save(myReviews).getId();
+    }
+
+    private CrawlingExhibition findCrawlingExhibition(Long exhibitionId){
+        return crawlingExhibitionRepository.findById(exhibitionId).orElse(null);
     }
 
 //    @Override

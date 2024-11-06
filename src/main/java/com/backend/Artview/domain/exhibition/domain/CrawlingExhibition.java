@@ -1,11 +1,14 @@
 package com.backend.Artview.domain.exhibition.domain;
 
+import com.backend.Artview.domain.communication.domain.Communications;
+import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "CrawlingExhibition")
@@ -42,6 +45,12 @@ public class CrawlingExhibition extends BaseEntity {
 
     @Column(name = "progress_type")
     private String progressType;
+
+    @OneToMany(mappedBy = "crawlingExhibition" ,fetch = FetchType.LAZY)
+    private List<MyReviews> myReviewsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "crawlingExhibition", fetch = FetchType.LAZY)
+    private List<Communications> communicationsList = new ArrayList<>();
 
     public void updateProgress(String progressType) {
         this.progressType = progressType;

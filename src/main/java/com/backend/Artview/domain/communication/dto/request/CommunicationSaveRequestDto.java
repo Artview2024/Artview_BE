@@ -13,6 +13,7 @@ public record CommunicationSaveRequestDto(
         Map<String,String> imageAndTitle,
 //        List<String> imageTitle,
         String content, //글쓰기 내용
-        List<String> keyword //감상 키워드
+        List<String> keyword, //감상 키워드
+        Long exhibitionId
 ) {
 }
