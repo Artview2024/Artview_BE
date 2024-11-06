@@ -161,6 +161,13 @@ public class UserServiceImpl implements UserService {
         saveUsersInterest(usersInterestList);
     }
 
+    @Override
+    @Transactional
+    public List<String> findUsersInterest(Long userId) {
+        List<UsersInterest> usersInterests = findUsersById(userId).getUsersInterests();
+        return usersInterests.stream().map(UsersInterest::getUsersInterestContent).collect(Collectors.toList());
+    }
+
     private void ifUsersAlreadySaveInterestThenDelete(Users users) {
         if (isUsersAlreadySaveInterest(users)) {
             deleteInterestsByUsers(users);

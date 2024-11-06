@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.myReviews.domain;
 
+import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.users.domain.Users;
@@ -49,7 +50,11 @@ public class MyReviews extends BaseEntity {
     @OneToMany(mappedBy = "myReviews", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MyReviewsContents> myReviewsContents = new ArrayList<>();
 
-    public static MyReviews toEntity(MyReviewsSaveRequestDto requestDto, String mainImageUrlFromS3 , Users users) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crawling_exhibition_id")
+    private CrawlingExhibition crawlingExhibition;
+
+    public static MyReviews toEntity(MyReviewsSaveRequestDto requestDto, String mainImageUrlFromS3 , Users users, CrawlingExhibition crawlingExhibition) {
         return MyReviews.builder()
                 .exhibitionsTitle(requestDto.getName())
                 .exhibitionsLocation(requestDto.getGallery())
@@ -58,6 +63,7 @@ public class MyReviews extends BaseEntity {
                 .mainImageUrl(mainImageUrlFromS3)
                 .users(users)
                 .myReviewsContents(new ArrayList<>())
+                .crawlingExhibition(crawlingExhibition)
                 .build();
     }
 

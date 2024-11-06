@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class StringUtil {
@@ -20,4 +23,7 @@ public class StringUtil {
         return otherDate;
     }
 
+    public static List<String> removeTextFromSentence(String sentence, String removeText){
+        return Arrays.asList(sentence.split(removeText));
+    }
 }

@@ -10,6 +10,8 @@ import com.backend.Artview.domain.communication.dto.response.CommunicationsMainR
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsCommentResponseDto;
 import com.backend.Artview.domain.communication.dto.response.DetailCommunicationsContentResponseDto;
 import com.backend.Artview.domain.communication.exception.CommunicationException;
+import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
+import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
 import com.backend.Artview.domain.myReviews.exception.MyReviewsException;
@@ -41,6 +43,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final UsersRepository usersRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
+    private final CrawlingExhibitionRepository crawlingExhibitionRepository;
     private final PaginationUtil paginationUtil;
 
     private final int DEFAULT_PAGE_SIZE = 2;
@@ -70,7 +73,9 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     @Transactional
     public Long saveCommunications(CommunicationSaveRequestDto dto, Long userId) {
         verifyMyReviewsIdExists(dto.myReviewId());
-        Communications communications = Communications.toEntity(dto, findUsersByUserId(userId));
+        CrawlingExhibition crawlingExhibition = findCrawlingExhibition(dto.exhibitionId());
+
+        Communications communications = Communications.toEntity(dto, findUsersByUserId(userId), crawlingExhibition);
 
         List<CommunicationImages> communicationImagesList = dto.imageAndTitle().entrySet().stream().map(image -> CommunicationImages.toEntity(image.getKey(), image.getValue(), communications)).toList();
         List<CommunicationsKeyword> communicationsKeywordList = dto.keyword().stream().map(keyword -> CommunicationsKeyword.toEntity(keyword, communications)).toList();
@@ -166,6 +171,10 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     @Transactional
     public CommunicationsMainResponseDto findFollowCommunications(Long cursor, Long userId) {
         return findCommunicationsByType(cursor, userId, CommunicationsType.FOLLOW);
+    }
+
+    private CrawlingExhibition findCrawlingExhibition(Long exhibitionId){
+        return crawlingExhibitionRepository.findById(exhibitionId).orElse(null);
     }
 
     private CommunicationsMainResponseDto findCommunicationsByType(Long cursor, Long userId, CommunicationsType type) {

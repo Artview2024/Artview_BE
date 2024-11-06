@@ -59,6 +59,11 @@ public class UserController {
         return userService.findMyPageMyFollowerList(userId);
     }
 
+    @GetMapping("/myPage/interest")
+    public List<String> findUsersInterest(@UserId Long userId){
+        return userService.findUsersInterest(userId);
+    }
+
     @PatchMapping("/modify/myPage")
     public void modifyMyPageInfo(@UserId Long userId, @ModelAttribute ModifyMyPageInfoRequestDto dto){
         userService.modifyMyPageInfo(userId, dto);
@@ -93,6 +98,15 @@ public class UserController {
     @GetMapping("/checkFollow/{writerId}")
     public boolean checkUsersFollow(@UserId Long userId, @PathVariable Long writerId) {
         return userService.checkUsersFollow(userId, writerId);
+    }
+
+    @GetMapping("/FollowingList/{writerId}")
+    public List<MyPageFollowInfoDto> findWriterMyFollowingList(@PathVariable Long writerId){
+        return userService.findMyPageMyFollowingList(writerId);
+    }
+    @GetMapping("/FollowerList/{writerId}")
+    public List<MyPageFollowInfoDto> findWriterMyFollowerList(@PathVariable Long writerId){
+        return userService.findMyPageMyFollowerList(writerId);
     }
 //    다른 사용자 프로필 조회 api
 
