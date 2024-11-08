@@ -6,6 +6,7 @@ import com.backend.Artview.domain.users.dto.response.*;
 import com.backend.Artview.domain.users.dto.request.FollowRequestDto;
 import com.backend.Artview.domain.users.service.UserService;
 import com.backend.Artview.global.customAnnotation.UserId;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -72,6 +73,11 @@ public class UserController {
     @PostMapping("/save/interest")
     public void saveUsersInterest(@UserId Long userId, @RequestBody SaveUsersInterestRequestDto dto){
         userService.saveUsersInterest(userId,dto);
+    }
+
+    @GetMapping("/recommend/follower")
+    public List<MyPageUserInfoResponseDto> recommendFollowerBasedOnInterests(@UserId Long userId){
+        return userService.recommendFollowerBasedOnInterests(userId);
     }
 
 //    다른 사용자 프로필 조회 api

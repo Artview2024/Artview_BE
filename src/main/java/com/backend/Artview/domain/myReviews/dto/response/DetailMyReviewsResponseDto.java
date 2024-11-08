@@ -15,10 +15,11 @@ public record DetailMyReviewsResponseDto(
         String gallery,//갤러리 이름
         String mainImage,
         String rating,//별점
-        List<ResponseArtList> artList//내용
+        List<ResponseArtList> artList,//내용
+        Long exhibitionId
 ) {
 
-    public static DetailMyReviewsResponseDto of(MyReviews myReview, List<MyReviewsContents> myReviewsContents) {
+    public static DetailMyReviewsResponseDto of(MyReviews myReview, List<MyReviewsContents> myReviewsContents, Long exhibitionId) {
         return DetailMyReviewsResponseDto.builder()
                 .id(myReview.getId())
                 .name(myReview.getExhibitionsTitle())
@@ -26,7 +27,8 @@ public record DetailMyReviewsResponseDto(
                 .gallery(myReview.getExhibitionsLocation())
                 .mainImage(myReview.getMainImageUrl())
                 .rating(myReview.getGrade())
-                .artList(myReviewsContents.stream().map(v->ResponseArtList.of(v)).collect(Collectors.toList())) //
+                .artList(myReviewsContents.stream().map(v->ResponseArtList.of(v)).collect(Collectors.toList()))
+                .exhibitionId(exhibitionId)
                 .build();
     }
 }
