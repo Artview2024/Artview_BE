@@ -3,6 +3,7 @@ package com.backend.Artview.domain.communication.dto.request;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public record CommunicationSaveRequestDto(
         Long myReviewId,
@@ -14,6 +15,6 @@ public record CommunicationSaveRequestDto(
 //        List<String> imageTitle,
         String content, //글쓰기 내용
         List<String> keyword, //감상 키워드
-        Long exhibitionId
+        Optional<Long> exhibitionId
 ) {
 }

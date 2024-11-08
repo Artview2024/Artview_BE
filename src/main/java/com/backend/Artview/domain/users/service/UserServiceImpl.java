@@ -16,13 +16,15 @@ import com.backend.Artview.domain.users.repository.FollowRepository;
 import com.backend.Artview.domain.users.repository.UsersInterestRepository;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import com.backend.Artview.global.jwt.JwtProvider;
+import com.backend.Artview.global.util.PaginationUtil;
 import com.backend.Artview.global.util.S3Util;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.backend.Artview.domain.users.exception.UserErrorCode.*;
@@ -38,6 +40,9 @@ public class UserServiceImpl implements UserService {
     private final JwtProvider jwtProvider;
     private final S3Util s3Util;
     private final UsersInterestRepository usersInterestRepository;
+    private final PaginationUtil paginationUtil;
+
+    private static int recommendUsersSize = 8;
 
     @Override
     @Transactional
@@ -145,11 +150,9 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
     @Override
     @Transactional
-    public void saveUsersInterest(Long userId,SaveUsersInterestRequestDto dto) {
+    public void saveUsersInterest(Long userId, SaveUsersInterestRequestDto dto) {
         Users users = findUsersById(userId);
 
         ifUsersAlreadySaveInterestThenDelete(users);
@@ -168,6 +171,41 @@ public class UserServiceImpl implements UserService {
         return usersInterests.stream().map(UsersInterest::getUsersInterestContent).collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public List<MyPageUserInfoResponseDto> recommendFollowerBasedOnInterests(Long userId) {
+        Users users = findUsersById(userId);
+        List<String> interestList = users.getUsersInterests().stream().map(UsersInterest::getUsersInterestContent).toList();
+        List<Users> recommendFollower = findRecommendFollower(userId, interestList);
+        return recommendFollower.stream().map(MyPageUserInfoResponseDto::of).collect(Collectors.toList());
+    }
+
+    public List<Users> findRecommendFollower(Long userId, List<String> interestList) {
+        List<Users> usersNotFollowAndSameInterests;
+
+        //내가 팔로잉 하지 않는 사용자들 중 관심 분야가 같은 사람을 뽑는다.
+        usersNotFollowAndSameInterests = usersRepository.findRecommendUsersNotFollowAndSameInterests(userId, interestList, makePageRequest(recommendUsersSize));
+        if (usersNotFollowAndSameInterests.size() < recommendUsersSize) {
+            int defaultPageSize = recommendUsersSize - usersNotFollowAndSameInterests.size();
+            List<Long> selectRecommendUsersId = selectRecommendUsers(usersNotFollowAndSameInterests);
+            usersNotFollowAndSameInterests.addAll(findRandomUsersNotFollowed(userId, makePageRequest(defaultPageSize), selectRecommendUsersId));
+        }
+
+        return usersNotFollowAndSameInterests;
+    }
+
+    private List<Long> selectRecommendUsers(List<Users> usersNotFollowAndSameInterests) {
+        return usersNotFollowAndSameInterests.stream().map(Users::getId).collect(Collectors.toList());
+    }
+
+    private PageRequest makePageRequest(int defaultPageSize) {
+        return paginationUtil.createPageRequest(defaultPageSize, "createDate");
+    }
+
+    private List<Users> findRandomUsersNotFollowed(Long userId, PageRequest pageRequest, List<Long> selectRecommendUsersId) {
+        return usersRepository.findRandomUsersNotFollowed(userId, pageRequest, selectRecommendUsersId);
+    }
+
     private void ifUsersAlreadySaveInterestThenDelete(Users users) {
         if (isUsersAlreadySaveInterest(users)) {
             deleteInterestsByUsers(users);
@@ -181,8 +219,9 @@ public class UserServiceImpl implements UserService {
     private boolean isUsersAlreadySaveInterest(Users users) {
         return usersInterestRepository.existsByUsers(users);
     }
+
     private static void IsUsersInterestSizeExceed3(List<String> usersNewInterest) {
-        if (usersNewInterest.size()>3) {
+        if (usersNewInterest.size() > 3) {
             throw new UserException(INTEREST_LENGTH_EXCEED);
         }
     }

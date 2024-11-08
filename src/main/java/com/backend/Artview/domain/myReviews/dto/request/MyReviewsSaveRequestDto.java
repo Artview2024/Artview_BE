@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Getter
@@ -16,5 +17,5 @@ public class MyReviewsSaveRequestDto {
     MultipartFile mainImage;
     String rating;
     List<SaveRequestArtList> artList;
-    Long exhibitionId;
+    Optional<Long> exhibitionId;
 }

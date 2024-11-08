@@ -15,7 +15,8 @@ public record CommunicationRetrieveResponseDto(
         String date,
         String gallery,
 //        List<String> images
-        Map<String,String> imageAndTitle
+        Map<String,String> imageAndTitle,
+        Long exhibitionId
 ) {
 
     public static CommunicationRetrieveResponseDto of(MyReviews myReviews,Map<String,String> imageAndTitle) {
@@ -27,6 +28,7 @@ public record CommunicationRetrieveResponseDto(
                 .gallery(myReviews.getExhibitionsLocation())
 //                .images(images)
                 .imageAndTitle(imageAndTitle)
+                .exhibitionId(myReviews.getCrawlingExhibition().getId())
                 .build();
     }
 }

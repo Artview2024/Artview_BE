@@ -61,20 +61,15 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         imageAndTitle.put(myReviews.getMainImageUrl(), "메인이미지 제목");
 
         return CommunicationRetrieveResponseDto.of(myReviews, imageAndTitle);
-
-//        List<String> imagesTitleList = myReviews.getMyReviewsContents().stream().map(MyReviewsContents::getArtTitle).toList();
-//        List<String> imagesList = new ArrayList<>(myReviews.getMyReviewsContents().stream().map(myReviewsContents -> myReviewsContents.getMyExhibitionImage().getMyExhibitionImagesUrl()).toList());
-//        imagesList.add(myReviews.getMainImageUrl());
-
-//        return CommunicationRetrieveResponseDto.of(myReviews, imagesList);
     }
 
     @Override
     @Transactional
     public Long saveCommunications(CommunicationSaveRequestDto dto, Long userId) {
         verifyMyReviewsIdExists(dto.myReviewId());
-        CrawlingExhibition crawlingExhibition = findCrawlingExhibition(dto.exhibitionId());
 
+        CrawlingExhibition crawlingExhibition = dto.exhibitionId().isPresent()
+                ? findCrawlingExhibition(dto.exhibitionId().get()) : null;
         Communications communications = Communications.toEntity(dto, findUsersByUserId(userId), crawlingExhibition);
 
         List<CommunicationImages> communicationImagesList = dto.imageAndTitle().entrySet().stream().map(image -> CommunicationImages.toEntity(image.getKey(), image.getValue(), communications)).toList();
@@ -173,7 +168,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         return findCommunicationsByType(cursor, userId, CommunicationsType.FOLLOW);
     }
 
-    private CrawlingExhibition findCrawlingExhibition(Long exhibitionId){
+    private CrawlingExhibition findCrawlingExhibition(Long exhibitionId) {
         return crawlingExhibitionRepository.findById(exhibitionId).orElse(null);
     }
 
@@ -182,11 +177,11 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         Slice<Communications> communicationsList;
 
 
-        if (type==CommunicationsType.FOLLOW) {
+        if (type == CommunicationsType.FOLLOW) {
             communicationsList = (cursor == 0)
                     ? communicationsRepository.findFollowCommunicationsTopBy(pageRequest, userId)
                     : communicationsRepository.findFollowCommunicationsByCursorTopBy(cursor, userId, pageRequest);
-        } else if(type==CommunicationsType.ALL) {
+        } else if (type == CommunicationsType.ALL) {
             communicationsList = (cursor == 0)
                     ? communicationsRepository.findCommunicationsTopBy(pageRequest)
                     : communicationsRepository.findCommunicationsByCursorTopBy(cursor, pageRequest);

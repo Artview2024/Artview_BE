@@ -46,37 +46,23 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     @Transactional
     public List<AllMyReviewsResponseDto> findAllMyReviews(Long userId) {
         List<MyReviews> allMyReviewsFromRepository = findAllMyReviewsFromRepository(userId);
-        return allMyReviewsFromRepository.stream().map(v -> AllMyReviewsResponseDto.of(v)).collect(Collectors.toList());
+        return allMyReviewsFromRepository.stream().map(v -> AllMyReviewsResponseDto.of(v,checkCrawlingExhibitionIsNull(v.getCrawlingExhibition()))).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public DetailMyReviewsResponseDto findDetailMyReviews(Long reviewsId) {
         MyReviews myReview = findDetailMyReviewsByReviewsId(reviewsId);
-        return DetailMyReviewsResponseDto.of(myReview, myReview.getMyReviewsContents());
+        return DetailMyReviewsResponseDto.of(myReview, myReview.getMyReviewsContents(), checkCrawlingExhibitionIsNull(myReview.getCrawlingExhibition()));
     }
-
-//    @Override
-//    @Transactional
-//    public Long saveMyReviews(MyReviewsSaveRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages) {
-//
-//        Users user = usersRepository.findById(requestDto.id()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
-//        MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(mainImage) ,user);
-//
-//        for(int i = 0; i<requestDto.artList().size(); i++) {
-//            MyReviewsContents myReviewsContents = addMyReviewsContentToMyReviews(myReviews, requestDto.artList().get(i));
-//            addMyExhibitionImagesToMyReviewsContent(myReviewsContents,contentImages.get(i));
-//        }
-//
-//        return myReviewsRepository.save(myReviews).getId();
-//    }
 
     @Override
     @Transactional
     public Long saveMyReviews(Long userId, MyReviewsSaveRequestDto requestDto) {
 
         Users user = usersRepository.findById(userId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        CrawlingExhibition crawlingExhibition = findCrawlingExhibition(requestDto.getExhibitionId());
+        CrawlingExhibition crawlingExhibition = requestDto.getExhibitionId().isPresent()
+                ? findCrawlingExhibition(requestDto.getExhibitionId().get()) : null;
         MyReviews myReviews = MyReviews.toEntity(requestDto, uploadImageUrlToS3(requestDto.getMainImage()) ,user, crawlingExhibition);
 
         for(int i = 0; i<requestDto.getArtList().size(); i++) {
@@ -91,16 +77,6 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         return crawlingExhibitionRepository.findById(exhibitionId).orElse(null);
     }
 
-//    @Override
-//    @Transactional
-//    public void refactorMyReviews(MyReviewsModifyRequestDto requestDto, MultipartFile mainImage, List<MultipartFile> contentImages) {
-//        MyReviews myReviews = findDetailMyReviewsByReviewsId(requestDto.myReviewsId());
-//        List<SaveRequestArtList> artLists = requestDto.artList();
-//
-//        updateAccordingToType(myReviews,artLists,contentImages); //update타입에 따라 update를 진행
-//        myReviews.updateMyReviews(requestDto,uploadImageUrlToS3(mainImage));
-//    }
-
     @Override
     @Transactional
     public void refactorMyReviews(Long userId, MyReviewsModifyRequestDto requestDto) {
@@ -109,6 +85,11 @@ public class MyReviewsServiceImpl implements MyReviewsService {
 
         updateAccordingToType(myReviews,artLists); //update타입에 따라 update를 진행
         myReviews.updateMyReviews(requestDto,distinguishImageType(requestDto.getMainImage()));
+    }
+
+    public static Long checkCrawlingExhibitionIsNull(CrawlingExhibition crawlingExhibition){
+        if(crawlingExhibition==null) return null;
+        else return crawlingExhibition.getId();
     }
 
     public <T>String distinguishImageType(T mainImage){

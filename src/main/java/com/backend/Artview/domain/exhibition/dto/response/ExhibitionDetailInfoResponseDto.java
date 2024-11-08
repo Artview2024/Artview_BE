@@ -29,4 +29,8 @@ public record ExhibitionDetailInfoResponseDto(
     private static boolean checkExhibitionProgressType(String progressType) {
         return (progressType.equals(ONGOING.getCode()) || progressType.equals(FREE.getCode()));
     }
+
+    private static boolean checkOperatingHours(String operatingHours){
+        return (operatingHours.isEmpty());
+    }
 }

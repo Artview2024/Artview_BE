@@ -32,4 +32,7 @@ public interface UserService {
     void saveUsersInterest(Long userId, SaveUsersInterestRequestDto dto);
 
     List<String> findUsersInterest(Long userId);
+
+    List<MyPageUserInfoResponseDto> recommendFollowerBasedOnInterests(Long userId);
+
 }
