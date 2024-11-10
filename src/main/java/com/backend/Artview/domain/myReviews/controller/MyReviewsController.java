@@ -10,6 +10,7 @@ import com.backend.Artview.domain.myReviews.service.MyReviewsService;
 import com.backend.Artview.global.customAnnotation.UserId;
 import com.backend.Artview.global.util.S3Util;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;

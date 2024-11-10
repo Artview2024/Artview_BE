@@ -67,6 +67,8 @@ public class UserController {
 
     @PatchMapping("/modify/myPage")
     public void modifyMyPageInfo(@UserId Long userId, @ModelAttribute ModifyMyPageInfoRequestDto dto){
+        log.info("사용자가 입력한 수정 내용1 : " + dto.userName());
+        log.info("사용자가 입력한 수정 내용2 : " + dto.userImageUrl());
         userService.modifyMyPageInfo(userId, dto);
     }
 
