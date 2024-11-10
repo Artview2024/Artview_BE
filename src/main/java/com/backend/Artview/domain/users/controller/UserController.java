@@ -114,6 +114,11 @@ public class UserController {
     public List<MyPageFollowInfoDto> findWriterMyFollowerList(@PathVariable Long writerId){
         return userService.findMyPageMyFollowerList(writerId);
     }
+
+    @GetMapping("interest/{writerId}")
+    public List<String> findWriterInterest(@PathVariable Long writerId){
+        return userService.findUsersInterest(writerId);
+    }
 //    다른 사용자 프로필 조회 api
 
 }
