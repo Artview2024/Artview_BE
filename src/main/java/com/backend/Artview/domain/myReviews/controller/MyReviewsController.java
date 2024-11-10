@@ -51,9 +51,14 @@ public class MyReviewsController {
     }
 
     //전시회 위치 자동 반영 api
-    @GetMapping("/exhibition/{keyword}")
-    public List<> findExhibitionLocationByKeyword(@PathVariable String keyword){
-        myReviewsService.findExhibitionLocationByKeyword(keyword);
+    @GetMapping("/exhibition_title/{keyword}")
+    public List<MyReviewExhibitionInfoResDto> findExhibitionTitleByKeyword(@PathVariable String keyword){
+        return myReviewsService.findExhibitionTitleByKeyword(keyword);
+    }
+
+    @GetMapping("/exhibition_location/{exhibitionId}")
+    public MyReviewExhibitionInfoResDto findExhibitionLocationByKeyword(@PathVariable Long exhibitionId){
+        return myReviewsService.findExhibitionLocationByKeyword(exhibitionId);
     }
 
     //전시 기록 작성하기(등록하기)

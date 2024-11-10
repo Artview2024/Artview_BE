@@ -2,7 +2,10 @@ package com.backend.Artview.domain.myReviews.service;
 
 
 import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
+import com.backend.Artview.domain.exhibition.exception.ExhibitionErrorCode;
+import com.backend.Artview.domain.exhibition.exception.ExhibitionException;
 import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
+import com.backend.Artview.domain.myReviews.controller.MyReviewExhibitionInfoResDto;
 import com.backend.Artview.domain.myReviews.domain.MyExhibitionImages;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.backend.Artview.domain.exhibition.exception.ExhibitionErrorCode.EXHIBITION_NOT_FOUND;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.IMAGE_TYPE_INCORRECT;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.users.exception.UserErrorCode.USER_NOT_FOUND;
@@ -85,6 +89,24 @@ public class MyReviewsServiceImpl implements MyReviewsService {
 
         updateAccordingToType(myReviews,artLists); //update타입에 따라 update를 진행
         myReviews.updateMyReviews(requestDto,distinguishImageType(requestDto.getMainImage()));
+    }
+
+    @Override
+    @Transactional
+    public List<MyReviewExhibitionInfoResDto> findExhibitionTitleByKeyword(String keyword) {
+        return crawlingExhibitionRepository.findAllExhibitionByKeyword(keyword).stream().map(MyReviewExhibitionInfoResDto::ofTitle).collect(Collectors.toList());
+
+    }
+
+    @Override
+    @Transactional
+    public MyReviewExhibitionInfoResDto findExhibitionLocationByKeyword(Long exhibitionId) {
+        CrawlingExhibition crawlingExhibition = findExhibitionById(exhibitionId);
+        return MyReviewExhibitionInfoResDto.ofLocation(crawlingExhibition);
+    }
+
+    private CrawlingExhibition findExhibitionById(Long exhibitionId) {
+        return crawlingExhibitionRepository.findById(exhibitionId).orElseThrow(() -> new ExhibitionException(EXHIBITION_NOT_FOUND));
     }
 
     public static Long checkCrawlingExhibitionIsNull(CrawlingExhibition crawlingExhibition){

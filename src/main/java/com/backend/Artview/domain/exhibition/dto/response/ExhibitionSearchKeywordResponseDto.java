@@ -1,7 +1,6 @@
-package com.backend.Artview.domain.exhibition.controller;
+package com.backend.Artview.domain.exhibition.dto.response;
 
 import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailInfoResponseDto;
 import com.backend.Artview.global.pagination.PaginationNextInfoDto;
 import lombok.Builder;
 import org.springframework.data.domain.Slice;

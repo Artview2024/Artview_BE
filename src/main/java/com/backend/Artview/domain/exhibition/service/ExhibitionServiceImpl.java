@@ -2,7 +2,7 @@ package com.backend.Artview.domain.exhibition.service;
 
 import com.backend.Artview.domain.communication.Repository.CommunicationsRepository;
 import com.backend.Artview.domain.communication.domain.Communications;
-import com.backend.Artview.domain.exhibition.controller.ExhibitionSearchKeywordResponseDto;
+import com.backend.Artview.domain.exhibition.dto.response.ExhibitionSearchKeywordResponseDto;
 import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
 import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailInfoResponseDto;
 import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailReviewResponseDto;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.*;
@@ -63,7 +62,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     @Transactional
     public ExhibitionSearchKeywordResponseDto searchExhibitionInfoByKeyword(String keyword, Long cursor) {
         PageRequest pageRequest = createPageRequest(DEFAULT_PAGE_SIZE);
-        Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findAllByKeyword(pageRequest,keyword) :
+        Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findAllExhibitionByKeyword(pageRequest,keyword) :
          crawlingExhibitionRepository.findAllByKeyword(cursor, pageRequest,keyword);
         Long nextCursor = checkHaveNextCursor(crawlingExhibitionList);
         if (crawlingExhibitionList.isEmpty()) return null;

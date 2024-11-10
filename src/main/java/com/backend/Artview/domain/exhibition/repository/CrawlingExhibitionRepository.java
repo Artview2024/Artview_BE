@@ -20,15 +20,20 @@ public interface CrawlingExhibitionRepository extends JpaRepository<CrawlingExhi
     @Query(
             "SELECT ce FROM CrawlingExhibition ce WHERE ce.id < :cursor AND ce.progressType = :progressType"
     )
-    Slice<CrawlingExhibition> findCrawlingExhibitionByCursorTopByAndProgressTypeOrderByStartDateDesc(@Param(value = "cursor")Long cursor, PageRequest pageRequest, String progressType);
+    Slice<CrawlingExhibition> findCrawlingExhibitionByCursorTopByAndProgressTypeOrderByStartDateDesc(@Param(value = "cursor") Long cursor, PageRequest pageRequest, String progressType);
 
     @Query(
             "SELECT ce FROM CrawlingExhibition ce WHERE ce.title LIKE %:keyword% or ce.location LIKE %:keyword% Order By ce.id DESC"
     )
-        Slice<CrawlingExhibition> findAllByKeyword(PageRequest pageRequest, String keyword);
+    Slice<CrawlingExhibition> findAllExhibitionByKeyword(PageRequest pageRequest, String keyword);
+
+    @Query(
+            "SELECT ce FROM CrawlingExhibition ce WHERE ce.title LIKE %:keyword% Order By ce.id DESC"
+    )
+    List<CrawlingExhibition> findAllExhibitionByKeyword(String keyword);
 
     @Query(
             "SELECT ce FROM CrawlingExhibition ce WHERE ce.id < :cursor AND ce.title LIKE %:keyword% or ce.location LIKE %:keyword% Order By ce.id DESC"
     )
-    Slice<CrawlingExhibition> findAllByKeyword(@Param(value = "cursor")Long cursor, PageRequest pageRequest, String keyword);
+    Slice<CrawlingExhibition> findAllByKeyword(@Param(value = "cursor") Long cursor, PageRequest pageRequest, String keyword);
 }
