@@ -16,7 +16,7 @@ import com.backend.Artview.domain.users.repository.FollowRepository;
 import com.backend.Artview.domain.users.repository.UsersInterestRepository;
 import com.backend.Artview.domain.users.repository.UsersRepository;
 import com.backend.Artview.global.jwt.JwtProvider;
-import com.backend.Artview.global.util.PaginationUtil;
+import com.backend.Artview.global.pagination.PaginationUtil;
 import com.backend.Artview.global.util.S3Util;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

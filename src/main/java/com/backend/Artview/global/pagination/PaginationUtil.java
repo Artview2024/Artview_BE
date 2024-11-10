@@ -1,4 +1,4 @@
-package com.backend.Artview.global.util;
+package com.backend.Artview.global.pagination;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -7,7 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaginationUtil {
 
-    public PageRequest createPageRequest(int defaultPageSize, String sort) {
+    public static PageRequest createPageRequest(int defaultPageSize, String sort) {
         return PageRequest.of(0, defaultPageSize, Sort.by(sort).descending());
+    }
+
+    public static PageRequest createPageRequest(int defaultPageSize) {
+        return PageRequest.of(0, defaultPageSize);
     }
 }

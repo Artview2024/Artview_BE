@@ -30,12 +30,6 @@ import java.util.List;
 @Getter
 @Setter
 public class TestDto {
-        Long id;
-        String name;
-        String date;
-        String gallery;
         MultipartFile mainImage;
-        String rating;
-        List<TestRequestArtList> artList;
 }
 

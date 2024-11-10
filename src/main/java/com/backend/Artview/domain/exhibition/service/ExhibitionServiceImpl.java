@@ -2,6 +2,7 @@ package com.backend.Artview.domain.exhibition.service;
 
 import com.backend.Artview.domain.communication.Repository.CommunicationsRepository;
 import com.backend.Artview.domain.communication.domain.Communications;
+import com.backend.Artview.domain.exhibition.dto.response.ExhibitionSearchKeywordResponseDto;
 import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
 import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailInfoResponseDto;
 import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailReviewResponseDto;
@@ -9,21 +10,18 @@ import com.backend.Artview.domain.exhibition.dto.response.ExhibitionInfo;
 import com.backend.Artview.domain.exhibition.dto.response.ExhibitionResponseDto;
 import com.backend.Artview.domain.exhibition.exception.ExhibitionException;
 import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
-import com.backend.Artview.global.util.PaginationUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.*;
 import static com.backend.Artview.domain.exhibition.exception.ExhibitionErrorCode.EXHIBITION_NOT_FOUND;
-import static com.backend.Artview.domain.exhibition.exception.ExhibitionErrorCode.EXHIBITION_REVIEWS_NOT_FOUND;
+import static com.backend.Artview.global.pagination.PaginationUtil.createPageRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,6 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 
     private final CrawlingExhibitionRepository crawlingExhibitionRepository;
     private final CommunicationsRepository communicationsRepository;
-    private final PaginationUtil paginationUtil;
     private final int DEFAULT_PAGE_SIZE = 6;
 
     @Override
@@ -57,9 +54,20 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     @Override
     @Transactional
     public List<ExhibitionDetailReviewResponseDto> findExhibitionDetailReview(Long exhibitionId) {
-
         List<Communications> communications = findCommunicationsByExhibitionId(exhibitionId);
         return communications.stream().map(ExhibitionDetailReviewResponseDto::of).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public ExhibitionSearchKeywordResponseDto searchExhibitionInfoByKeyword(String keyword, Long cursor) {
+        PageRequest pageRequest = createPageRequest(DEFAULT_PAGE_SIZE);
+        Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findAllExhibitionByKeyword(pageRequest,keyword) :
+         crawlingExhibitionRepository.findAllByKeyword(cursor, pageRequest,keyword);
+        Long nextCursor = checkHaveNextCursor(crawlingExhibitionList);
+        if (crawlingExhibitionList.isEmpty()) return null;
+        List<ExhibitionDetailInfoResponseDto> exhibitionDetailInfo = crawlingExhibitionList.stream().map(ExhibitionDetailInfoResponseDto::of).toList();
+        return ExhibitionSearchKeywordResponseDto.of(exhibitionDetailInfo, crawlingExhibitionList, nextCursor);
     }
 
     private List<Communications> findCommunicationsByExhibitionId(Long exhibitionId) {
@@ -71,7 +79,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     }
 
     private ExhibitionResponseDto findExhibitionsByType(Long cursor, String progressType) {
-        PageRequest pageRequest = createPageRequest();
+        PageRequest pageRequest = createPageRequest(DEFAULT_PAGE_SIZE,"id");
 
         Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findCrawlingExhibitionTopByProgressTypeOrderByStartDateDesc(pageRequest, progressType)
                 : crawlingExhibitionRepository.findCrawlingExhibitionByCursorTopByAndProgressTypeOrderByStartDateDesc(cursor, pageRequest, progressType);
@@ -80,10 +88,6 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 
         Long nextCursor = checkHaveNextCursor(crawlingExhibitionList);
         return ExhibitionResponseDto.of(exhibitionInfoList, crawlingExhibitionList, nextCursor);
-    }
-
-    private PageRequest createPageRequest() {
-        return paginationUtil.createPageRequest(DEFAULT_PAGE_SIZE, "id");
     }
 
     private Long checkHaveNextCursor(Slice<CrawlingExhibition> exhibitionsList) {

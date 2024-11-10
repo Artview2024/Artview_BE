@@ -19,7 +19,7 @@ import com.backend.Artview.domain.myReviews.repository.MyReviewsRepository;
 import com.backend.Artview.domain.users.domain.Users;
 import com.backend.Artview.domain.users.exception.UserException;
 import com.backend.Artview.domain.users.repository.UsersRepository;
-import com.backend.Artview.global.util.PaginationUtil;
+import com.backend.Artview.global.pagination.PaginationUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

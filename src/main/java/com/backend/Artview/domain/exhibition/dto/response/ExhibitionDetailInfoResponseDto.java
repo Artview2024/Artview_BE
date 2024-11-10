@@ -5,8 +5,7 @@ import lombok.Builder;
 
 import java.util.List;
 
-import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.FREE;
-import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.ONGOING;
+import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.*;
 import static com.backend.Artview.global.util.StringUtil.removeTextFromSentence;
 
 @Builder
@@ -27,7 +26,7 @@ public record ExhibitionDetailInfoResponseDto(
     }
 
     private static boolean checkExhibitionProgressType(String progressType) {
-        return (progressType.equals(ONGOING.getCode()) || progressType.equals(FREE.getCode()));
+        return (!progressType.equals(COMPLETED.getCode()));
     }
 
     private static boolean checkOperatingHours(String operatingHours){
