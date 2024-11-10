@@ -4,7 +4,8 @@ public enum ExhibitionType {
     UPCOMING("0"),
     ONGOING("1"),
     COMPLETED("2"),
-    FREE("3");
+    FREE("3"),
+    ONLINE("4");
 
     private final String code;
 

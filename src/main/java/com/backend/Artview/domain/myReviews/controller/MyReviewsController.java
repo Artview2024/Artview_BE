@@ -1,5 +1,6 @@
 package com.backend.Artview.domain.myReviews.controller;
 
+import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.TestDto;
@@ -46,6 +47,12 @@ public class MyReviewsController {
     @PatchMapping("/modify")
     public void refactorMyReviews(@UserId Long userId, @ModelAttribute MyReviewsModifyRequestDto requestDto){
         myReviewsService.refactorMyReviews(userId, requestDto);
+    }
+
+    //전시회 위치 자동 반영 api
+    @GetMapping("/exhibition/{keyword}")
+    public List<> findExhibitionLocationByKeyword(@PathVariable String keyword){
+        myReviewsService.findExhibitionLocationByKeyword(keyword);
     }
 
     //전시 기록 작성하기(등록하기)
