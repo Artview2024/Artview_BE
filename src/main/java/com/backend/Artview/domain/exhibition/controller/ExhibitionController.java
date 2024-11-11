@@ -27,6 +27,11 @@ public class ExhibitionController {
         return exhibitionService.findOngoingExhibition(cursor);
     }
 
+    @GetMapping("/online/{cursor}")
+    public ExhibitionResponseDto findOnlineExhibition(@PathVariable Long cursor) {
+        return exhibitionService.findOnlineExhibition(cursor);
+    }
+
     @GetMapping("/detail/info/{exhibitionId}")
     public ExhibitionDetailInfoResponseDto findExhibitionDetailInfo(@PathVariable Long exhibitionId) {
         return exhibitionService.findExhibitionDetailInfo(exhibitionId);

@@ -2,10 +2,9 @@ package com.backend.Artview.domain.myReviews.service;
 
 
 import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
-import com.backend.Artview.domain.exhibition.exception.ExhibitionErrorCode;
 import com.backend.Artview.domain.exhibition.exception.ExhibitionException;
 import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
-import com.backend.Artview.domain.myReviews.controller.MyReviewExhibitionInfoResDto;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewExhibitionInfoResDto;
 import com.backend.Artview.domain.myReviews.domain.MyExhibitionImages;
 import com.backend.Artview.domain.myReviews.domain.MyReviews;
 import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
@@ -27,14 +26,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.backend.Artview.domain.exhibition.exception.ExhibitionErrorCode.EXHIBITION_NOT_FOUND;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.IMAGE_TYPE_INCORRECT;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.users.exception.UserErrorCode.USER_NOT_FOUND;
-import static java.rmi.server.LogStream.log;
 
 @Service
 @RequiredArgsConstructor

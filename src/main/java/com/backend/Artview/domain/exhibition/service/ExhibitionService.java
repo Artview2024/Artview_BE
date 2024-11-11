@@ -17,4 +17,6 @@ public interface ExhibitionService {
     List<ExhibitionDetailReviewResponseDto> findExhibitionDetailReview(Long exhibitionId);
 
     ExhibitionSearchKeywordResponseDto searchExhibitionInfoByKeyword(String keyword, Long cursor);
+
+    ExhibitionResponseDto findOnlineExhibition(Long cursor);
 }

@@ -1,6 +1,6 @@
 package com.backend.Artview.domain.myReviews.service;
 
-import com.backend.Artview.domain.myReviews.controller.MyReviewExhibitionInfoResDto;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewExhibitionInfoResDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;

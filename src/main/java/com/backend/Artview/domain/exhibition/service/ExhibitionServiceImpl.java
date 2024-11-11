@@ -45,6 +45,12 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 
     @Override
     @Transactional
+    public ExhibitionResponseDto findOnlineExhibition(Long cursor) {
+        return findExhibitionsByType(cursor, ONLINE.getCode());
+    }
+
+    @Override
+    @Transactional
     public ExhibitionDetailInfoResponseDto findExhibitionDetailInfo(Long exhibitionId) {
         CrawlingExhibition exhibition = findExhibitionById(exhibitionId);
         return ExhibitionDetailInfoResponseDto.of(exhibition);

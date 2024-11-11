@@ -1,4 +1,4 @@
-package com.backend.Artview.domain.myReviews.controller;
+package com.backend.Artview.domain.myReviews.dto.request;
 
 import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
 import lombok.Builder;

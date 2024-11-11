@@ -1,6 +1,6 @@
 package com.backend.Artview.domain.myReviews.controller;
 
-import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
+import com.backend.Artview.domain.myReviews.dto.request.MyReviewExhibitionInfoResDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.TestDto;
@@ -10,9 +10,6 @@ import com.backend.Artview.domain.myReviews.service.MyReviewsService;
 import com.backend.Artview.global.customAnnotation.UserId;
 import com.backend.Artview.global.util.S3Util;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
