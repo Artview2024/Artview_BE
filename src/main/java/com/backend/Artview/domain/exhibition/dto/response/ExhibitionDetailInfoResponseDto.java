@@ -18,8 +18,7 @@ public record ExhibitionDetailInfoResponseDto(
     public static ExhibitionDetailInfoResponseDto of(CrawlingExhibition crawlingExhibition) {
         return ExhibitionDetailInfoResponseDto.builder()
                 .exhibitionInfo(ExhibitionInfo.of(crawlingExhibition))
-                .operatingHours(crawlingExhibition.getOperatingHours().isEmpty() ?
-                        null : removeTextFromSentence(crawlingExhibition.getOperatingHours(), "\n"))
+                .operatingHours(checkOperatingHours(crawlingExhibition))
                 .isOngoing(checkExhibitionProgressType(crawlingExhibition.getProgressType()))
                 .locationLink(crawlingExhibition.getLocationLink())
                 .build();
@@ -29,7 +28,8 @@ public record ExhibitionDetailInfoResponseDto(
         return (!progressType.equals(COMPLETED.getCode()));
     }
 
-    private static boolean checkOperatingHours(String operatingHours){
-        return (operatingHours.isEmpty());
+    private static List<String> checkOperatingHours(CrawlingExhibition crawlingExhibition){
+        if (crawlingExhibition.getOperatingHours() == null) return null;
+        else return removeTextFromSentence(crawlingExhibition.getOperatingHours(), "\n");
     }
 }
