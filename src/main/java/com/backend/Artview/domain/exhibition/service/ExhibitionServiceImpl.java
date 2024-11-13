@@ -2,12 +2,8 @@ package com.backend.Artview.domain.exhibition.service;
 
 import com.backend.Artview.domain.communication.Repository.CommunicationsRepository;
 import com.backend.Artview.domain.communication.domain.Communications;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionSearchKeywordResponseDto;
+import com.backend.Artview.domain.exhibition.dto.response.*;
 import com.backend.Artview.domain.exhibition.domain.CrawlingExhibition;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailInfoResponseDto;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailReviewResponseDto;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionInfo;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionResponseDto;
 import com.backend.Artview.domain.exhibition.exception.ExhibitionException;
 import com.backend.Artview.domain.exhibition.repository.CrawlingExhibitionRepository;
 import jakarta.transaction.Transactional;
@@ -47,6 +43,14 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     @Transactional
     public ExhibitionResponseDto findOnlineExhibition(Long cursor) {
         return findExhibitionsByType(cursor, ONLINE.getCode());
+    }
+
+    @Override
+    @Transactional
+    public ExhibitionAverageResDto searchExhibitionAverage(Long exhibitionId) {
+        List<Communications> communicationsList = findCommunicationsByExhibitionId(exhibitionId);
+        double average = communicationsList.stream().mapToInt(communications -> Integer.parseInt(communications.getRate())).average().orElse(0);
+        return ExhibitionAverageResDto.of(String.valueOf(average),communicationsList.size());
     }
 
     @Override

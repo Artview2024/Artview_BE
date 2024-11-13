@@ -51,10 +51,6 @@ public class MyReviewsServiceImpl implements MyReviewsService {
         return myReviewsTop4.stream().map(data -> AllMyReviewsMainResDto.of(data)).collect(Collectors.toList());
     }
 
-    private List<MyReviews> findMyReviewsTop4(Long userId) {
-        return myReviewsRepository.findTop4ByUsersIdOrderByCreateDateDesc(userId);
-    }
-
     @Override
     @Transactional
     public List<AllMyReviewsResponseDto> findAllMyReviews(Long userId) {
@@ -112,6 +108,10 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     public MyReviewExhibitionInfoResDto findExhibitionLocationByKeyword(Long exhibitionId) {
         CrawlingExhibition crawlingExhibition = findExhibitionById(exhibitionId);
         return MyReviewExhibitionInfoResDto.ofLocation(crawlingExhibition);
+    }
+
+    private List<MyReviews> findMyReviewsTop4(Long userId) {
+        return myReviewsRepository.findTop4ByUsersIdOrderByCreateDateDesc(userId);
     }
 
     private CrawlingExhibition findExhibitionById(Long exhibitionId) {

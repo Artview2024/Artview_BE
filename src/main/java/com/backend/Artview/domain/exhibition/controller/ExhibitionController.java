@@ -1,9 +1,6 @@
 package com.backend.Artview.domain.exhibition.controller;
 
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionSearchKeywordResponseDto;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailInfoResponseDto;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionDetailReviewResponseDto;
-import com.backend.Artview.domain.exhibition.dto.response.ExhibitionResponseDto;
+import com.backend.Artview.domain.exhibition.dto.response.*;
 import com.backend.Artview.domain.exhibition.service.ExhibitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +42,10 @@ public class ExhibitionController {
     @GetMapping("/search/{keyword}/{cursor}")
     public ExhibitionSearchKeywordResponseDto searchExhibitionInfoByKeyword(@PathVariable(name = "keyword") String keyword, @PathVariable(name = "cursor") Long cursor){
         return exhibitionService.searchExhibitionInfoByKeyword(keyword, cursor);
+    }
+
+    @GetMapping("/average/{exhibitionId}")
+    public ExhibitionAverageResDto searchExhibitionAverage(@PathVariable Long exhibitionId){
+        return exhibitionService.searchExhibitionAverage(exhibitionId);
     }
 }

@@ -83,6 +83,7 @@ public class CommunicationsController {
         return communicationsService.findAllCommunications(cursor, userId);
     }
 
+    //소통 페이지 둘러보기 - 팔로우
     @GetMapping("/main/follow/{cursor}") //cursor : 페이지번호
     public CommunicationsMainResponseDto findFollowCommunications(@UserId Long userId, @PathVariable Long cursor) {
         return communicationsService.findFollowCommunications(cursor, userId);
