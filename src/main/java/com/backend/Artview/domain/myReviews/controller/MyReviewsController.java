@@ -4,6 +4,7 @@ import com.backend.Artview.domain.myReviews.dto.request.MyReviewExhibitionInfoRe
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.TestDto;
+import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsMainResDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.service.MyReviewsService;
@@ -22,6 +23,12 @@ public class MyReviewsController {
 
     private final MyReviewsService myReviewsService;
     private final S3Util s3Util;
+
+    //메인페이지 내 전시기록
+    @GetMapping("/main")
+    public List<AllMyReviewsMainResDto> findMainPageMyReviews(@UserId Long userId){
+        return myReviewsService.findMainPageMyReviews(userId);
+    }
 
     //나의 전시 기록을 조회
     @GetMapping("/all")
