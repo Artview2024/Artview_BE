@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface MyReviewsRepository extends JpaRepository<MyReviews,Long> {
+public interface MyReviewsRepository extends JpaRepository<MyReviews, Long> {
 
     List<MyReviews> findAllByUsersIdOrderByCreateDateDesc(Long userId);
 
@@ -16,4 +16,6 @@ public interface MyReviewsRepository extends JpaRepository<MyReviews,Long> {
 
     @Query("SELECT COUNT(*) FROM MyReviews mr WHERE mr.users.id = :userId")
     int countMyReview(Long userId);
+
+    List<MyReviews> findTop4ByUsersIdOrderByCreateDateDesc(Long userId);
 }

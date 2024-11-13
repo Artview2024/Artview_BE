@@ -11,6 +11,7 @@ import com.backend.Artview.domain.myReviews.domain.MyReviewsContents;
 import com.backend.Artview.domain.myReviews.dto.request.ModifyRequestArtList;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsModifyRequestDto;
 import com.backend.Artview.domain.myReviews.dto.request.MyReviewsSaveRequestDto;
+import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsMainResDto;
 import com.backend.Artview.domain.myReviews.dto.response.AllMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.dto.response.DetailMyReviewsResponseDto;
 import com.backend.Artview.domain.myReviews.exception.MyReviewsException;
@@ -42,6 +43,17 @@ public class MyReviewsServiceImpl implements MyReviewsService {
     private final UsersRepository usersRepository;
     private final S3Util s3Util;
     private final CrawlingExhibitionRepository crawlingExhibitionRepository;
+
+    @Override
+    @Transactional
+    public List<AllMyReviewsMainResDto> findMainPageMyReviews(Long userId) {
+        List<MyReviews> myReviewsTop4 = findMyReviewsTop4(userId);
+        return myReviewsTop4.stream().map(data -> AllMyReviewsMainResDto.of(data)).collect(Collectors.toList());
+    }
+
+    private List<MyReviews> findMyReviewsTop4(Long userId) {
+        return myReviewsRepository.findTop4ByUsersIdOrderByCreateDateDesc(userId);
+    }
 
     @Override
     @Transactional
