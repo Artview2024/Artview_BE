@@ -49,8 +49,9 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     @Transactional
     public ExhibitionAverageResDto searchExhibitionAverage(Long exhibitionId) {
         List<Communications> communicationsList = findCommunicationsByExhibitionId(exhibitionId);
-        double average = communicationsList.stream().mapToInt(communications -> Integer.parseInt(communications.getRate())).average().orElse(0);
-        return ExhibitionAverageResDto.of(String.valueOf(average),communicationsList.size());
+        double average = communicationsList.stream().mapToDouble(communications -> Double.parseDouble(communications.getRate())).average().orElse(0);
+        String formattedAverage = String.format("%.1f", average); // 소수점 첫 번째 자리까지 포맷
+        return ExhibitionAverageResDto.of(formattedAverage,communicationsList.size());
     }
 
     @Override
