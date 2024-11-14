@@ -15,7 +15,7 @@ import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
-public interface CommunicationsRepository extends JpaRepository<Communications,Long> {
+public interface CommunicationsRepository extends JpaRepository<Communications, Long> {
 
     @Query(
             "SELECT co FROM Communications co WHERE co.id < :cursor ORDER BY co.createDate DESC"
@@ -25,6 +25,7 @@ public interface CommunicationsRepository extends JpaRepository<Communications,L
     Slice<Communications> findCommunicationsTopBy(PageRequest pageRequest);
 
     List<Communications> findAllByUsersId(Long userId);
+
     @Query(
             "SELECT DISTINCT co FROM Communications co " +
                     "JOIN Users u ON co.users.id = u.id " +
@@ -32,7 +33,7 @@ public interface CommunicationsRepository extends JpaRepository<Communications,L
                     "WHERE f.giveFollowUsers.id = :userId " +
                     "ORDER BY co.createDate desc"
     )
-    Slice<Communications> findFollowCommunicationsTopBy(PageRequest pageRequest, @Param("userId")Long userId);
+    Slice<Communications> findFollowCommunicationsTopBy(PageRequest pageRequest, @Param("userId") Long userId);
 
     @Query(
             "SELECT DISTINCT co FROM Communications co " +
@@ -44,4 +45,16 @@ public interface CommunicationsRepository extends JpaRepository<Communications,L
     Slice<Communications> findFollowCommunicationsByCursorTopBy(@Param("cursor") Long cursor, @Param("userId") Long userId, PageRequest pageRequest);
 
     List<Communications> findAllByCrawlingExhibitionId(Long exhibitionId);
+
+    @Query(
+            "SELECT c FROM Communications c WHERE c.content LIKE %:keyword% " +
+                    "or c.name LIKE %:keyword% or c.gallery LIKE %:keyword% " +
+                    "Order By c.createDate DESC"
+    )
+    Slice<Communications> findAllCommunicationsByKeyword(PageRequest pageRequest, String keyword);
+
+    @Query(
+            "SELECT c FROM Communications c WHERE c.id < :cursor AND c.content LIKE %:keyword% or c.name LIKE %:keyword% or c.gallery LIKE %:keyword% Order By c.createDate DESC"
+    )
+    Slice<Communications> findAllByKeyword(PageRequest pageRequest, String keyword, Long cursor);
 }

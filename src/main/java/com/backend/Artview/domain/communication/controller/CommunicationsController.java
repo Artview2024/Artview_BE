@@ -88,4 +88,13 @@ public class CommunicationsController {
     public CommunicationsMainResponseDto findFollowCommunications(@UserId Long userId, @PathVariable Long cursor) {
         return communicationsService.findFollowCommunications(cursor, userId);
     }
+
+    @GetMapping("/search/{keyword}/{cursor}")
+    public CommunicationsMainResponseDto searchCommunicationsInfoByKeyword(@RequestHeader(name = "Authorization", required = false) String authorizationHeader, @PathVariable(name = "keyword") String keyword, @PathVariable(name = "cursor") Long cursor){
+        Long userId;
+        if (authorizationHeader != null) {
+            userId = jwtProvider.controllerJwt(authorizationHeader);
+        } else userId = null;
+        return communicationsService.searchCommunicationsInfoByKeyword(keyword, cursor, userId);
+    }
 }

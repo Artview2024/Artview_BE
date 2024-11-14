@@ -33,6 +33,7 @@ import static com.backend.Artview.domain.communication.exception.CommunicationEr
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.myReviews.exception.MyReviewsErrorCode.USER_MY_REVIEWS_NOT_FOUND;
 import static com.backend.Artview.domain.users.exception.UserErrorCode.*;
+import static com.backend.Artview.global.pagination.PaginationUtil.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +46,6 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final LikeRepository likeRepository;
     private final CrawlingExhibitionRepository crawlingExhibitionRepository;
     private final PaginationUtil paginationUtil;
-
-    private final int DEFAULT_PAGE_SIZE = 2;
-
 
     @Override
     @Transactional
@@ -151,7 +149,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
 
         //        verifyExistCommunications(cursor);
 
-        PageRequest pageRequest = createPageRequest();
+        PageRequest pageRequest = createCommunicationsPageRequest(COMMUNICATIONS_DEFAULT_PAGE_SIZE);
 
         Slice<Communications> communicationsList = cursor == 0 ? communicationsRepository.findCommunicationsTopBy(pageRequest)
                 : communicationsRepository.findCommunicationsByCursorTopBy(cursor, pageRequest);
@@ -168,12 +166,24 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         return findCommunicationsByType(cursor, userId, CommunicationsType.FOLLOW);
     }
 
+    @Override
+    @Transactional
+    public CommunicationsMainResponseDto searchCommunicationsInfoByKeyword(String keyword, Long cursor, Long userId) {
+        PageRequest pageRequest = createCommunicationsPageRequest(SEARCH_DEFAULT_PAGE_SIZE);
+        Slice<Communications> communicationsList = cursor == 0 ? communicationsRepository.findAllCommunicationsByKeyword(pageRequest, keyword) :
+                communicationsRepository.findAllByKeyword(pageRequest, keyword, cursor);
+        if (communicationsList.isEmpty()) return null;
+        Long nextCursor = checkHaveNextCursor(communicationsList);
+        List<DetailCommunicationsContentResponseDto> list = getDetailCommunicationsContentResponseDtos(userId, communicationsList);
+        return CommunicationsMainResponseDto.of(list,communicationsList,nextCursor);
+    }
+
     private CrawlingExhibition findCrawlingExhibition(Long exhibitionId) {
         return crawlingExhibitionRepository.findById(exhibitionId).orElse(null);
     }
 
     private CommunicationsMainResponseDto findCommunicationsByType(Long cursor, Long userId, CommunicationsType type) {
-        PageRequest pageRequest = createPageRequest();
+        PageRequest pageRequest = createCommunicationsPageRequest(COMMUNICATIONS_DEFAULT_PAGE_SIZE);
         Slice<Communications> communicationsList;
 
 
@@ -202,8 +212,8 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         return communicationsList.hasNext() ? communicationsList.getContent().get(communicationsList.getSize() - 1).getId() : null;
     }
 
-    private PageRequest createPageRequest() {
-        return paginationUtil.createPageRequest(DEFAULT_PAGE_SIZE, "createDate");
+    private PageRequest createCommunicationsPageRequest(int defaultPageSize) {
+        return PaginationUtil.createPageRequest(defaultPageSize, "createDate");
     }
 
     public Map<String, String> communicationsImageAndTitleToMap(Communications communications) {
