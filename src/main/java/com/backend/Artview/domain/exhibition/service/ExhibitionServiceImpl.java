@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.*;
 import static com.backend.Artview.domain.exhibition.exception.ExhibitionErrorCode.EXHIBITION_NOT_FOUND;
-import static com.backend.Artview.global.pagination.PaginationUtil.createPageRequest;
+import static com.backend.Artview.global.pagination.PaginationUtil.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,6 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 
     private final CrawlingExhibitionRepository crawlingExhibitionRepository;
     private final CommunicationsRepository communicationsRepository;
-    private final int DEFAULT_PAGE_SIZE = 6;
 
     @Override
     @Transactional
@@ -72,7 +71,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     @Override
     @Transactional
     public ExhibitionSearchKeywordResponseDto searchExhibitionInfoByKeyword(String keyword, Long cursor) {
-        PageRequest pageRequest = createPageRequest(DEFAULT_PAGE_SIZE);
+        PageRequest pageRequest = createPageRequest(SEARCH_DEFAULT_PAGE_SIZE);
         Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findAllExhibitionByKeyword(pageRequest,keyword) :
          crawlingExhibitionRepository.findAllByKeyword(cursor, pageRequest,keyword);
         Long nextCursor = checkHaveNextCursor(crawlingExhibitionList);
@@ -90,7 +89,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     }
 
     private ExhibitionResponseDto findExhibitionsByType(Long cursor, String progressType) {
-        PageRequest pageRequest = createPageRequest(DEFAULT_PAGE_SIZE,"id");
+        PageRequest pageRequest = createPageRequest(SEARCH_DEFAULT_PAGE_SIZE,"id");
 
         Slice<CrawlingExhibition> crawlingExhibitionList = cursor == 0 ? crawlingExhibitionRepository.findCrawlingExhibitionTopByProgressTypeOrderByStartDateDesc(pageRequest, progressType)
                 : crawlingExhibitionRepository.findCrawlingExhibitionByCursorTopByAndProgressTypeOrderByStartDateDesc(cursor, pageRequest, progressType);
