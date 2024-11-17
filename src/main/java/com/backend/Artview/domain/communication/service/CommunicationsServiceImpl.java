@@ -55,7 +55,7 @@ public class CommunicationsServiceImpl implements CommunicationsService {
         Map<String, String> imageAndTitle = myReviews.getMyReviewsContents().stream().collect(
                 Collectors.toMap(myReviewsContents -> myReviewsContents.getMyExhibitionImage().getMyExhibitionImagesUrl(), MyReviewsContents::getArtTitle));
 
-        imageAndTitle.put(myReviews.getMainImageUrl(), "메인이미지 제목");
+//        imageAndTitle.put(myReviews.getMainImageUrl(), "메인이미지 제목");
 
         return CommunicationRetrieveResponseDto.of(myReviews, imageAndTitle);
     }

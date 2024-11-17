@@ -26,7 +26,6 @@ public record CommunicationRetrieveResponseDto(
                 .rate(myReviews.getGrade())
                 .date(myReviews.getVisitedDate())
                 .gallery(myReviews.getExhibitionsLocation())
-//                .images(images)
                 .imageAndTitle(imageAndTitle)
                 .exhibitionId(checkExhibitionId(myReviews))
                 .build();
