@@ -28,7 +28,14 @@ public record CommunicationRetrieveResponseDto(
                 .gallery(myReviews.getExhibitionsLocation())
 //                .images(images)
                 .imageAndTitle(imageAndTitle)
-                .exhibitionId(myReviews.getCrawlingExhibition().getId())
+                .exhibitionId(checkExhibitionId(myReviews))
                 .build();
+    }
+
+    private static Long checkExhibitionId(MyReviews myReviews){
+        if (myReviews.getCrawlingExhibition()==null)
+            return null;
+        else
+            return myReviews.getCrawlingExhibition().getId();
     }
 }

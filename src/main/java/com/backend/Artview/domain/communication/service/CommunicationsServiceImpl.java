@@ -45,7 +45,6 @@ public class CommunicationsServiceImpl implements CommunicationsService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final CrawlingExhibitionRepository crawlingExhibitionRepository;
-    private final PaginationUtil paginationUtil;
 
     @Override
     @Transactional
