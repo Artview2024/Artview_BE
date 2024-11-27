@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import static com.backend.Artview.domain.exhibition.domain.ExhibitionType.*;
+import static com.backend.Artview.global.util.StringUtil.checkDateType;
 
 @Component
 @Slf4j
@@ -47,6 +48,10 @@ public class SchedulerComponent {
 
 
     private void updateProgressType(CrawlingExhibition exhibition, LocalDate todayDate, String code) {
+
+        if (!(checkDateType(exhibition.getStartDate()) && checkDateType(exhibition.getFinishDate())))
+            return;
+
         LocalDate startDate = stringUtil.stringToLocalDate(exhibition.getStartDate());
         LocalDate finishDate = stringUtil.stringToLocalDate(exhibition.getFinishDate());
 
