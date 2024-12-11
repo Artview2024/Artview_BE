@@ -32,7 +32,8 @@ public class SecurityConfig{
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:8081");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("https://lse415.github.io/Artview_landing/");
         config.addAllowedHeader("*");
         config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         source.registerCorsConfiguration("/**",config);
@@ -43,8 +44,9 @@ public class SecurityConfig{
         httpSecurity.
                 formLogin(AbstractHttpConfigurer::disable) //form 기반 로그인 방식을 비활성화. UsernamePasswordAuthenticationFilter를 거치지 않음
                 .httpBasic(HttpBasicConfigurer::disable)
-                .cors(withDefaults())
+//                .cors(corsFilter())
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilter(corsFilter())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class);
         return httpSecurity.build();
