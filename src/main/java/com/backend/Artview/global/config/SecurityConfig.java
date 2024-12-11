@@ -34,6 +34,7 @@ public class SecurityConfig{
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedOrigin("https://lse415.github.io/Artview_landing/");
+        config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         source.registerCorsConfiguration("/**",config);
