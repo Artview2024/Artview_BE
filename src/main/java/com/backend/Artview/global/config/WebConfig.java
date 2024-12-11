@@ -16,14 +16,6 @@ public class WebConfig implements WebMvcConfigurer {
     private final UserIdArgumentResolver userIdArgumentResolver;
 
     @Override
-    public void addCorsMappings(CorsRegistry corsRegistry) {
-        corsRegistry.addMapping("/**")
-                .allowCredentials(true)
-                .allowedOrigins("https://lse415.github.io/Artview_landing/", "https://lse415.github.io/Artview_landing")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
-    }
-
-    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(userIdArgumentResolver);
     }
