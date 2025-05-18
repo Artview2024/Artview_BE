@@ -3,14 +3,14 @@ package com.backend.Artview.global.exception;
 import com.backend.Artview.global.code.BaseErrorCode;
 import com.backend.Artview.global.constant.CommonErrorCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApplicationException.class)
     protected ResponseEntity<Object> handleApplicationException(ApplicationException exception) {
@@ -21,9 +21,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     //잘못된 파라미터
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException exception) {
-        log.warn("handleIllegalArgument : ", exception);
+        log.error("handleIllegalArgument : ", exception);
         BaseErrorCode errorCode = CommonErrorCode.BAD_REQUEST;
         return handleExceptionInternal(errorCode);
+    }
+
+    @ExceptionHandler(TypeMismatchException.class)
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException exception){
+        log.error("TypeMismatchException : "+exception);
+        BaseErrorCode typeMismatch = CommonErrorCode.TYPE_MISMATCH;
+        return handleExceptionInternal(typeMismatch);
     }
 
     private ResponseEntity<Object> handleExceptionInternal(BaseErrorCode errorCode) {
