@@ -2,7 +2,6 @@ package com.backend.Artview.global.jwt;
 
 
 import com.backend.Artview.global.code.BaseErrorCode;
-import com.backend.Artview.global.constant.CommonErrorCode;
 import com.backend.Artview.global.exception.ErrorResponse;
 import com.backend.Artview.global.exception.ForbiddenException;
 import com.backend.Artview.global.jwt.jwtException.JwtException;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,6 +28,8 @@ OncePerRequestFilter를 사용하면 인증,인가를 한번만 거치고 바로
 
 //JwtFilter을 통과하기전에 토큰이 만료되었거나 토큰이 비었을 경우 Exception을 발생시켜 처리하는 exceptionFilter
 //요청된 API 컨트롤러로 넘어가기 전에 바로 클라이언트에게 response를 보낼 수 있음
+
+/// TODO: 2025-05-15 jwt가 아예 없을 때 ,jwt가 있는데 값이 변경되었을 때를 클라한테는 인증 불가로 메시지 남기고,서버 로그에는 각각 다르게 처리되도록
 @RequiredArgsConstructor
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
@@ -38,15 +38,9 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JwtExceptionFilter 진입");
-        log.info("CONNECT URL : " + request.getRequestURI());
         try {
             filterChain.doFilter(request, response);
-        } catch (JwtException e) { //HttpStatus.UNAUTHORIZED -> 인가
-            handleJwtException(response, e);
-        } catch (ForbiddenException e) { //AuthenticationException -> 인증
-            handleJwtException(response, e);
-        } catch (HttpClientErrorException e) {
+        } catch (JwtException | ForbiddenException | HttpClientErrorException e) {
             handleJwtException(response, e);
         } catch (Exception e) {
             handleJwtException(response, e);
@@ -56,8 +50,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
     // Send Error Message to Client
     private void handleJwtException(HttpServletResponse response, Exception exception) throws IOException {
-        log.error("handleJwtException response : " + response);
-        log.error("handleJwtException 에러 : " + exception.getMessage());
+        log.error(exception.getMessage());
 
         BaseErrorCode baseErrorCode;
 

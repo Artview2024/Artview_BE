@@ -1,7 +1,7 @@
 package com.backend.Artview.domain.communication.dto.response;
 
 import com.backend.Artview.domain.communication.domain.Comment;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -12,6 +12,7 @@ import java.util.List;
 public record DetailCommunicationsCommentResponseDto(
         Long commentId, //댓글 id
         Long writerId,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yy-MM-dd HH-mm")
         LocalDateTime createDate,
         String writerName,
         String writerImage,

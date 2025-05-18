@@ -51,14 +51,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             //기타 URI
             new AntPathRequestMatcher("/api/health"),
-            new AntPathRequestMatcher("/api/graduation")
-
+            new AntPathRequestMatcher("/api/graduation"),
+            new AntPathRequestMatcher("/actuator/**")
     );
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JwtAuthenticationFilter 진입");
-
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //whiteUrlMatcher url일 경우 jwt 인증 건너뛰기
         for (RequestMatcher requestMatcher : whiteUrlMatchers) {
             if (requestMatcher.matches(request)) {
@@ -66,19 +64,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        log.info("requst 인증하는중");
+        log.info("CONNECT URL : " + request.getRequestURI());
 
         String accessToken = getAccessTokenFromHttpServletRequest(request); //JWT가 헤더에 있는지 판단
         jwtProvider.validateAccessToken(accessToken); //JWT 유효성 검증
         Long userId = jwtProvider.getUserId(accessToken);
         setAuthentication(request, userId); //현재 Request의 Security Context에 접근권한 설정
-                    // -> Context에 이것이 추가된다는 것은 해당 요청이 필터를 거쳐 인가에 성공하여 승인된 Request라는 의미
+        // -> Context에 이것이 추가된다는 것은 해당 요청이 필터를 거쳐 인가에 성공하여 승인된 Request라는 의미
         filterChain.doFilter(request, response);
     }
 
     //AccessToken 가져오기
     private String getAccessTokenFromHttpServletRequest(HttpServletRequest request) {
-        log.info("getAccessTokenFromHttpServletRequest 진입");
         String accessToken = request.getHeader(AuthConstants.AUTH_HEADER);
 
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(AuthConstants.TOKEN_TYPE)) {
