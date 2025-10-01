@@ -4,10 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ParentConfig {
+public class StorageConfig {
 
     @Bean
-    public StorageBase parent() {
+    public StorageBase storageBase() {
         return new S3();
     }
 }
