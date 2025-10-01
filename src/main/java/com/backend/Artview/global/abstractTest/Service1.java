@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class Service1 {
-    private final Parent parent;
+    private final StorageBase storageBase;
 
-    public void helloService(){
-        String s = parent.printHello();
-        System.out.println(s);
+    public void uploadFile(){
+        String upload = storageBase.upload();
+        System.out.println(upload);
     }
 
-    public void helloService2(){
-        parent.printName("제니");
+    public void deleteFile(){
+        storageBase.delete("Service1-파일");
     }
 }

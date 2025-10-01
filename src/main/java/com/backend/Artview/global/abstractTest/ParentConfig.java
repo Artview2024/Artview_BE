@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 public class ParentConfig {
 
     @Bean
-    public Parent parent() {
-        return new Son();
+    public StorageBase parent() {
+        return new S3();
     }
 }
