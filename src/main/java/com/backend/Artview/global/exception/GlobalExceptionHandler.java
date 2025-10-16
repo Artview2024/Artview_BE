@@ -14,21 +14,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApplicationException.class)
     protected ResponseEntity<Object> handleApplicationException(ApplicationException exception) {
-        log.info("{}: {}", exception.getClass().getSimpleName(), exception.getMessage(), exception);
+        log.error("{}: {}", exception.getClass().getSimpleName(), exception.getMessage(), exception);
         return handleExceptionInternal(exception.getErrorCode());
     }
 
     //잘못된 파라미터
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException exception) {
-        log.error("handleIllegalArgument : ", exception);
+        log.error("잘못된 인수 예외 처리 : ", exception);
         BaseErrorCode errorCode = CommonErrorCode.BAD_REQUEST;
         return handleExceptionInternal(errorCode);
     }
 
     @ExceptionHandler(TypeMismatchException.class)
     protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException exception){
-        log.error("TypeMismatchException : "+exception);
+        log.error("타입 불일치 예외 : "+exception);
         BaseErrorCode typeMismatch = CommonErrorCode.TYPE_MISMATCH;
         return handleExceptionInternal(typeMismatch);
     }

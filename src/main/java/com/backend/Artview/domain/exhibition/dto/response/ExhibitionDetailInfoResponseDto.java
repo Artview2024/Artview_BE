@@ -15,7 +15,7 @@ public record ExhibitionDetailInfoResponseDto(
         boolean isOngoing,
         String locationLink
 ) {
-    public static ExhibitionDetailInfoResponseDto of(CrawlingExhibition crawlingExhibition) {
+        public static ExhibitionDetailInfoResponseDto of(CrawlingExhibition crawlingExhibition) {
         return ExhibitionDetailInfoResponseDto.builder()
                 .exhibitionInfo(ExhibitionInfo.of(crawlingExhibition))
                 .operatingHours(checkOperatingHours(crawlingExhibition))
